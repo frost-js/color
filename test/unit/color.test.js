@@ -135,6 +135,62 @@ describe('Color', function() {
         });
     });
 
+    describe('#composite', function() {
+        it('composites over an opaque background', function() {
+            const foreground = Color.fromString('color(srgb 1 0 0 / 0.5)');
+            const background = Color.fromString('color(srgb 0 0 1)');
+            const result = foreground.composite(background);
+
+            assert.strictEqual(result.constructor, foreground.constructor);
+            assert.strictEqual(result.toString(), 'color(srgb 0.5 0 0.5)');
+        });
+
+        it('preserves an opaque foreground', function() {
+            const foreground = Color.fromString('rgb(255 0 0)');
+            const background = Color.fromString('rgb(0 0 255 / 50%)');
+            const result = foreground.composite(background);
+
+            assert.strictEqual(result.constructor, foreground.constructor);
+            assert.strictEqual(result.toString(), 'rgb(255 0 0)');
+        });
+
+        it('composites two translucent colors', function() {
+            const foreground = Color.fromString('rgb(255 0 0 / 50%)');
+            const background = Color.fromString('rgb(0 0 255 / 50%)');
+            const result = foreground.composite(background);
+
+            assert.strictEqual(result.constructor, foreground.constructor);
+            assert.strictEqual(result.toString(), 'rgb(170 0 85 / 75%)');
+        });
+
+        it('preserves a foreground over a transparent background', function() {
+            const foreground = Color.fromString('rgb(255 0 0 / 50%)');
+            const background = Color.fromString('rgb(0 0 255 / 0%)');
+            const result = foreground.composite(background);
+
+            assert.strictEqual(result.constructor, foreground.constructor);
+            assert.strictEqual(result.toString(), 'rgb(255 0 0 / 50%)');
+        });
+
+        it('preserves the foreground when both colors are transparent', function() {
+            const foreground = Color.fromString('rgb(255 0 0 / 0%)');
+            const background = Color.fromString('rgb(0 0 255 / 0%)');
+            const result = foreground.composite(background);
+
+            assert.strictEqual(result.constructor, foreground.constructor);
+            assert.strictEqual(result.toString(), 'rgb(255 0 0 / 0%)');
+        });
+
+        it('uses the background beneath a transparent foreground', function() {
+            const foreground = Color.fromString('rgb(255 0 0 / 0%)');
+            const background = Color.fromString('rgb(0 0 255)');
+            const result = foreground.composite(background);
+
+            assert.strictEqual(result.constructor, foreground.constructor);
+            assert.strictEqual(result.toString(), 'rgb(0 0 255)');
+        });
+    });
+
     describe('#contrast', function() {
         it('rejects a translucent source color', function() {
             const color = Color.fromRgb(0, 0, 0, 0.5);

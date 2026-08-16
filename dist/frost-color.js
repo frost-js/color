@@ -779,6 +779,35 @@
         }
 
         /**
+         * Composites this color over a background color using source-over alpha compositing in sRGB.
+         * @param {Color} background The background color.
+         * @return {this} The composited color in the foreground's concrete class.
+         */
+        composite(background) {
+            const foreground = this.toSrgb();
+            const convertedBackground = background.toSrgb();
+            const foregroundAlpha = foreground.getAlpha();
+            const backgroundAlpha = convertedBackground.getAlpha();
+            const backgroundContribution = backgroundAlpha * (1 - foregroundAlpha);
+            const alpha = foregroundAlpha + backgroundContribution;
+
+            if (alpha === 0) {
+                return this;
+            }
+
+            const foregroundWeight = foregroundAlpha / alpha;
+            const backgroundWeight = backgroundContribution / alpha;
+            const red = (foreground.getRed() * foregroundWeight) +
+                (convertedBackground.getRed() * backgroundWeight);
+            const green = (foreground.getGreen() * foregroundWeight) +
+                (convertedBackground.getGreen() * backgroundWeight);
+            const blue = (foreground.getBlue() * foregroundWeight) +
+                (convertedBackground.getBlue() * backgroundWeight);
+
+            return this.constructor.fromSrgb(red, green, blue, alpha);
+        }
+
+        /**
          * Calculates the contrast between this and another color.
          * @param {Color} other The other color.
          * @return {number} The contrast ratio.

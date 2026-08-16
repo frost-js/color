@@ -169,6 +169,16 @@ The complete named conversion API is:
 
 Alpha is preserved through conversions. Converting to the instance's existing space returns that same instance; other conversions return a new concrete instance.
 
+### Alpha compositing
+
+Use `foreground.composite(background)` to composite a color over a background using source-over alpha compositing in sRGB. The result uses the foreground color's concrete class:
+
+```javascript
+const foreground = Color.fromString('rgb(255 255 255 / 50%)');
+const background = Color.fromString('#000');
+const result = foreground.composite(background);
+```
+
 ### Gamut fitting
 
 Normal conversions preserve extended channel values. Use `fitGamut(target)` when output must fit a bounded RGB gamut:
@@ -198,6 +208,7 @@ Every concrete color supports these methods:
 | `getAlpha()` | Alpha in the 0–1 range |
 | `space()` | The current color-space identifier |
 | `toObject()` | A new object containing the three channels and alpha |
+| `composite(background)` | Source-over alpha composite calculated in sRGB |
 | `luma()` | Relative sRGB luminance |
 | `contrast(other)` | Ratio calculated from the relative luminance of two fully opaque colors |
 | `label()` | The nearest CSS named color by Euclidean channel distance in the current color space |
