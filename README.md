@@ -199,10 +199,10 @@ Every concrete color supports these methods:
 | `space()` | The current color-space identifier |
 | `toObject()` | A new object containing the three channels and alpha |
 | `luma()` | Relative sRGB luminance |
-| `contrast(other)` | Ratio calculated directly from the two colors' relative luminance values |
+| `contrast(other)` | Ratio calculated from the relative luminance of two fully opaque colors |
 | `label()` | The nearest CSS named color by Euclidean channel distance in the current color space |
 
-`contrast()` and `luma()` ignore alpha. Extended out-of-range channels are not clamped before either calculation.
+`contrast()` requires both colors to be fully opaque. `luma()` ignores alpha. Extended out-of-range channels are not clamped before either calculation.
 
 ## Reading and replacing channels
 
@@ -252,6 +252,7 @@ FrostColor throws `TypeError` when:
 
 - a color string is malformed or unsupported;
 - a channel is not a finite number;
+- contrast is requested with a translucent color;
 - an unknown conversion space is requested;
 - gamut fitting is requested for an unsupported space;
 - the abstract `Color` class is constructed directly.

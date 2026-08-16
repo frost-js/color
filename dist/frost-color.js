@@ -782,8 +782,13 @@
          * Calculates the contrast between this and another color.
          * @param {Color} other The other color.
          * @return {number} The contrast ratio.
+         * @throws {TypeError} Thrown when either color is not fully opaque.
          */
         contrast(other) {
+            if (this.alpha < 1 || other.alpha < 1) {
+                throw new TypeError('Contrast can only be calculated between fully opaque colors.');
+            }
+
             const l1 = this.luma();
             const l2 = other.luma();
 

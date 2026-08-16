@@ -135,6 +135,28 @@ describe('Color', function() {
         });
     });
 
+    describe('#contrast', function() {
+        it('rejects a translucent source color', function() {
+            const color = Color.fromRgb(0, 0, 0, 0.5);
+            const other = Color.fromRgb();
+
+            assert.throws(
+                () => color.contrast(other),
+                (error) => error instanceof TypeError && error.message === 'Contrast can only be calculated between fully opaque colors.',
+            );
+        });
+
+        it('rejects a translucent comparison color', function() {
+            const color = Color.fromRgb();
+            const other = Color.fromRgb(0, 0, 0, 0.5);
+
+            assert.throws(
+                () => color.contrast(other),
+                (error) => error instanceof TypeError && error.message === 'Contrast can only be calculated between fully opaque colors.',
+            );
+        });
+    });
+
     const stringCases = [
         ['color(a98-rgb 0.9 0.9 0.98)', A98Rgb, 'color(a98-rgb 0.9 0.9 0.98)'],
         ['color(a98-rgb 90% 90% 98%)', A98Rgb, 'color(a98-rgb 0.9 0.9 0.98)'],
