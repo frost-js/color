@@ -1,474 +1,277 @@
 # FrostColor
 
-**FrostColor** is a free, open-source immutable color manipulation library for *JavaScript*.
+[![CI](https://github.com/elusivecodes/FrostColor/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/elusivecodes/FrostColor/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/%40fr0st%2Fcolor?style=flat-square)](https://www.npmjs.com/package/@fr0st/color)
+[![npm downloads](https://img.shields.io/npm/dm/%40fr0st%2Fcolor?style=flat-square)](https://www.npmjs.com/package/@fr0st/color)
+[![minzipped size](https://img.shields.io/bundlejs/size/%40fr0st%2Fcolor?format=minzip&style=flat-square)](https://bundlejs.com/?q=@fr0st/color)
+[![license](https://img.shields.io/github/license/elusivecodes/FrostColor?style=flat-square)](./LICENSE)
 
-It is a lightweight (~4kb gzipped) and modern library, and features full support for RGB, HSL, HSV, CMY and CMYK color-spaces.
+FrostColor is a dependency-free JavaScript library for parsing, converting, inspecting, and formatting colors. It supports modern CSS color spaces as well as linear-light working spaces, preserves out-of-gamut channel values during conversion, and provides explicit gamut fitting when a bounded output is required.
 
+Version 5 is a JavaScript reimplementation of FyrePHP's `Utility/Color` package. Its parsing rules, conversion constants, gamut fitting, contrast calculation, labeling behavior, and known numerical quirks intentionally follow the PHP implementation.
 
-## Table Of Contents
-- [Installation](#installation)
-- [Basic Usage](#basic-usage)
-- [Color Creation](#color-creation)
-- [Color Formatting](#color-formatting)
-- [Color Attributes](#color-attributes)
-- [Color Manipulation](#color-manipulation)
-- [Color Schemes](#color-schemes)
-- [Color Palettes](#color-palettes)
-- [Static Methods](#static-methods)
+## Highlights
 
+- Default ESM `Color` export for Node and bundlers
+- Browser UMD bundle in `dist/` exposed as `globalThis.Color`
+- No runtime dependencies
+- Immutable color instances and transformations
+- Modern CSS color parsing, formatting, and named colors
+- Conversion across bounded, wide-gamut, perceptual, and linear-light spaces
+- Explicit gamut fitting without clipping intermediate conversions
 
 ## Installation
 
-**In Browser**
+### Node / bundlers
 
-```html
-<script type="text/javascript" src="/path/to/frost-color.min.js"></script>
+Install the package from npm:
+
+```shell
+npm install @fr0st/color
 ```
 
-**Using NPM**
-
-```
-npm i @fr0st/color
-```
-
-In Node.js:
+FrostColor is an ES module:
 
 ```javascript
 import Color from '@fr0st/color';
 ```
 
+### Browser (UMD)
 
-## Basic Usage
+For a classic browser script, load either published UMD bundle from your own copy or a CDN. It creates a global `Color` class:
 
-**From RGB**
-
-- `red` is a number between *0* and *255*.
-- `green` is a number between *0* and *255*.
-- `blue` is a number between *0* and *255*.
-- `alpha` is a number between *0* and *1*, and will default to *1*.
-
-```javascript
-const color = new Color(red, green, blue, alpha);
+```html
+<script src="./node_modules/@fr0st/color/dist/frost-color.min.js"></script>
+<!-- or -->
+<script src="https://cdn.jsdelivr.net/npm/@fr0st/color@latest/dist/frost-color.min.js"></script>
+<script>
+    const color = Color.fromString('oklch(0.7 0.15 250)');
+</script>
 ```
 
-**From Brightness**
+The package exposes only `@fr0st/color` to Node and bundlers. The `dist/` files remain published for direct browser and CDN URLs, but package subpaths, internal `src/` paths, and package metadata are not part of the JavaScript API.
 
-- `brightness` is a number between *0* and *100*.
-- `alpha` is a number between *0* and *1*, and will default to *1*.
+## Version 5 migration
 
-```javascript
-const color = new Color(brightness, alpha);
-```
+Version 5 reflects a breaking redesign of the library:
 
+- `Color` is now an abstract base class and API namespace. Use a factory such as `Color.fromRgb(...)`, parse a string, or construct a concrete class such as `new Color.Rgb(...)`.
+- Factory and conversion names use camel case, for example `fromHsl`, `toOkLch`, and `toXyzD65`.
+- HSV, CMY, CMYK, manipulation, palette, and color-scheme APIs from version 4 are no longer present.
+- Formatting now uses modern CSS color syntax and each instance retains its concrete color-space type.
 
-## Color Creation
-
-**From String**
-
-Create a new *Color* from a HTML color string.
-
-- `colorString` is a string containing a color value in either hexadecimal, RGB, RGBA, HSL, HSLA or a standard HTML color name.
+## Quick Start
 
 ```javascript
-const color = Color.fromString(colorString);
+import Color from '@fr0st/color';
+
+const source = Color.fromString('color(display-p3 1 0.2 0.1 / 80%)');
+const srgb = source.fitGamut('srgb').toSrgb();
+const translucent = srgb.withAlpha(0.5);
+
+console.log(source.space());       // display-p3
+console.log(srgb.toString());      // color(srgb ... / 0.8)
+console.log(translucent.getAlpha()); // 0.5
+console.log(source.getAlpha());    // 0.8; source was not changed
 ```
 
-**From CMY**
+Color instances are immutable and frozen. Conversion and `with...` methods do not mutate their source; they return either a new instance or, when no conversion is needed, the same instance. Channel fields remain readable, but use the provided getters and `with...` methods instead of assigning them.
 
-Create a new *Color* from CMY values.
+## Creating colors
 
-- `cyan` is a number between *0* and *100*.
-- `magenta` is a number between *0* and *100*.
-- `yellow` is a number between *0* and *100*.
-- `alpha` is a number between *0* and *1*, and will default to *1*.
+### Parse a color string
+
+`Color.fromString(value)` accepts the following forms:
+
+- CSS named colors and `transparent`
+- Hex colors: `#rgb`, `#rgba`, `#rrggbb`, and `#rrggbbaa`
+- `rgb()` and legacy `rgba()`
+- `hsl()` and legacy `hsla()`
+- `hwb()`, `lab()`, `lch()`, `oklab()`, and `oklch()`
+- `color()` using `a98-rgb`, `display-p3`, `display-p3-linear`, `prophoto-rgb`, `rec2020`, `srgb`, `srgb-linear`, `xyz`, `xyz-d50`, or `xyz-d65`
+
+Space-separated syntax, commas and slashes, percentage channels, percentage alpha, and CSS angle units are normalized while parsing. The parser intentionally follows the permissive parsing behavior of FyrePHP's `Color` utility rather than enforcing the complete CSS grammar:
 
 ```javascript
-const color = Color.fromCMY(cyan, magenta, yellow, alpha);
+const hex = Color.fromString('#663399cc');
+const hsl = Color.fromString('hsl(270deg 50% 40% / 80%)');
+const p3 = Color.fromString('color(display-p3 90% 20% 10%)');
+const lab = Color.fromString('lab(60% 30 -20)');
 ```
 
-**From CMYK**
+This is a focused color-value parser, not a complete CSS value engine. CSS-wide keywords, `var()`, `calc()`, relative colors, and custom color profiles are outside its scope.
 
-Create a new *Color* from CMYK values.
+### Factories and concrete classes
 
-- `cyan` is a number between *0* and *100*.
-- `magenta` is a number between *0* and *100*.
-- `yellow` is a number between *0* and *100*.
-- `key` is a number between *0* and *100*.
-- `alpha` is a number between *0* and *1*, and will default to *1*.
+The default export exposes every concrete class as a static property. Each `from...` factory takes three channels followed by optional `alpha = 1`.
+
+| Factory or constructor | Concrete class | `space()` identifier | Channels | Native `toString()` form |
+| --- | --- | --- | --- | --- |
+| `fromA98Rgb(r, g, b, alpha)` | `Color.A98Rgb` | `a98-rgb` | normalized red, green, blue | `color(a98-rgb ...)` |
+| `fromDisplayP3(r, g, b, alpha)` | `Color.DisplayP3` | `display-p3` | normalized red, green, blue | `color(display-p3 ...)` |
+| `fromDisplayP3Linear(r, g, b, alpha)` | `Color.DisplayP3Linear` | `display-p3-linear` | linear red, green, blue | `color(display-p3-linear ...)` |
+| `new Color.Hex(r, g, b, alpha)` or `fromString(...)` | `Color.Hex` | `hex` | red, green, blue on a 0–255 scale | `#rgb`, `#rgba`, `#rrggbb`, or `#rrggbbaa` |
+| `fromHsl(h, s, l, alpha)` | `Color.Hsl` | `hsl` | hue in degrees, saturation and lightness in percent | `hsl(...)` |
+| `fromHwb(h, w, b, alpha)` | `Color.Hwb` | `hwb` | hue in degrees, whiteness and blackness in percent | `hwb(...)` |
+| `fromLab(l, a, b, alpha)` | `Color.Lab` | `lab` | lightness on a 0–100 scale, a, b | `lab(...)` |
+| `fromLch(l, c, h, alpha)` | `Color.Lch` | `lch` | lightness on a 0–100 scale, chroma, hue in degrees | `lch(...)` |
+| `fromOkLab(l, a, b, alpha)` | `Color.OkLab` | `oklab` | lightness on a 0–1 scale, a, b | `oklab(...)` |
+| `fromOkLch(l, c, h, alpha)` | `Color.OkLch` | `oklch` | lightness on a 0–1 scale, chroma, hue in degrees | `oklch(...)` |
+| `fromProPhotoRgb(r, g, b, alpha)` | `Color.ProPhotoRgb` | `prophoto-rgb` | normalized red, green, blue | `color(prophoto-rgb ...)` |
+| `fromRec2020(r, g, b, alpha)` | `Color.Rec2020` | `rec2020` | normalized red, green, blue | `color(rec2020 ...)` |
+| `fromRgb(r, g, b, alpha)` | `Color.Rgb` | `rgb` | red, green, blue on a 0–255 scale | `rgb(...)` |
+| `fromSrgb(r, g, b, alpha)` | `Color.Srgb` | `srgb` | normalized red, green, blue | `color(srgb ...)` |
+| `fromSrgbLinear(r, g, b, alpha)` | `Color.SrgbLinear` | `srgb-linear` | linear red, green, blue | `color(srgb-linear ...)` |
+| `fromXyzD50(x, y, z, alpha)` | `Color.XyzD50` | `xyz-d50` | D50-relative x, y, z | `color(xyz-d50 ...)` |
+| `fromXyzD65(x, y, z, alpha)` | `Color.XyzD65` | `xyz-d65` | D65-relative x, y, z | `color(xyz-d65 ...)` |
+
+Factories on `Color` return the corresponding source-space class. The same inherited factories can construct directly in a chosen destination space:
 
 ```javascript
-const color = Color.fromCMYK(cyan, magenta, yellow, key, alpha);
+const okLch = Color.fromOkLch(0.7, 0.15, 250);
+const lab = Color.Lab.fromOkLch(0.7, 0.15, 250);
+
+console.log(okLch instanceof Color.OkLch); // true
+console.log(lab instanceof Color.Lab);     // true
 ```
 
-**From HSL**
+All channel inputs must be finite numbers. Alpha is clamped to 0–1 and hue is wrapped into 0–360 degrees. Other constructor channels deliberately retain finite extended values rather than being silently clipped, which allows out-of-gamut intermediate results.
 
-Create a new *Color* from HSL values.
+## Converting colors
 
-- `hue` is a number between *0* and *360*.
-- `saturation` is a number between *0* and *100*.
-- `lightness` is a number between *0* and *100*.
-- `alpha` is a number between *0* and *1*, and will default to *1*.
+Use `to(space)` with any `space()` identifier from the table, or call a named conversion method. The `xyz` alias is accepted while parsing `color(...)`, but conversion uses the canonical `xyz-d65` identifier:
 
 ```javascript
-const color = Color.fromHSL(hue, saturation, lightness, alpha);
+const color = Color.fromString('#663399');
+
+const lab = color.to('lab');
+const p3 = color.toDisplayP3();
+const rgb = color.toRgb();
 ```
 
-**From HSV**
+The complete named conversion API is:
 
-Create a new *Color* from HSV values.
+- `toA98Rgb()`
+- `toDisplayP3()`
+- `toDisplayP3Linear()`
+- `toHex()`
+- `toHsl()`
+- `toHwb()`
+- `toLab()`
+- `toLch()`
+- `toOkLab()`
+- `toOkLch()`
+- `toProPhotoRgb()`
+- `toRec2020()`
+- `toRgb()`
+- `toSrgb()`
+- `toSrgbLinear()`
+- `toXyzD50()`
+- `toXyzD65()`
 
-- `hue` is a number between *0* and *360*.
-- `saturation` is a number between *0* and *100*.
-- `value` is a number between *0* and *100*.
-- `alpha` is a number between *0* and *1*, and will default to *1*.
+Alpha is preserved through conversions. Converting to the instance's existing space returns that same instance; other conversions return a new concrete instance.
+
+### Gamut fitting
+
+Normal conversions preserve extended channel values. Use `fitGamut(target)` when output must fit a bounded RGB gamut:
 
 ```javascript
-const color = Color.fromHSV(hue, saturation, value, alpha);
+const vivid = Color.fromOkLch(0.72, 0.4, 30);
+const displayable = vivid.fitGamut('srgb').toSrgb();
 ```
 
+Gamut fitting maps through OKLCH and performs 24 binary-search iterations to reduce chroma until the converted channels fall within the target range. It preserves OKLCH lightness and returns the result in the source instance's color space. Supported targets are:
 
-## Color Formatting
+- `a98-rgb`
+- `display-p3`
+- `display-p3-linear`
+- `prophoto-rgb`
+- `rec2020`
+- `rgb`
+- `srgb`
+- `srgb-linear`
 
-**To String**
+## Inspecting and comparing colors
 
-Return a HTML string representation of the color.
+Every concrete color supports these methods:
 
-The `colorString` returned will be a string containing either a HTML color name (if one exists), a hexadecimal string (if alpha is *1*) or an RGBA string.
+| Method | Result |
+| --- | --- |
+| `getAlpha()` | Alpha in the 0–1 range |
+| `space()` | The current color-space identifier |
+| `toObject()` | A new object containing the three channels and alpha |
+| `luma()` | Relative sRGB luminance |
+| `contrast(other)` | Ratio calculated directly from the two colors' relative luminance values |
+| `label()` | The nearest CSS named color by Euclidean channel distance in the current color space |
+
+Like the PHP implementation, `contrast()` and `luma()` ignore alpha. Extended out-of-range channels are not clamped before either calculation.
+
+## Reading and replacing channels
+
+Channel-specific getters and copy methods depend on the concrete class:
+
+| Class family | Getters | Copy methods |
+| --- | --- | --- |
+| A98 RGB, Display P3, Display P3 Linear, Hex, ProPhoto RGB, Rec. 2020, RGB, sRGB, linear sRGB | `getRed()`, `getGreen()`, `getBlue()` | `withRed()`, `withGreen()`, `withBlue()` |
+| Lab and OKLab | `getLightness()`, `getA()`, `getB()` | `withLightness()`, `withA()`, `withB()` |
+| LCH and OKLCH | `getLightness()`, `getChroma()`, `getHue()` | `withLightness()`, `withChroma()`, `withHue()` |
+| HSL | `getHue()`, `getSaturation()`, `getLightness()` | `withHue()`, `withSaturation()`, `withLightness()` |
+| HWB | `getHue()`, `getWhiteness()`, `getBlackness()` | `withHue()`, `withWhiteness()`, `withBlackness()` |
+| XYZ D50 and XYZ D65 | `getX()`, `getY()`, `getZ()` | `withX()`, `withY()`, `withZ()` |
+
+All classes also provide `withAlpha(alpha)`:
 
 ```javascript
-const colorString = color.toString();
+const original = Color.fromRgb(102, 51, 153);
+const changed = original.withRed(120).withAlpha(0.5);
+
+console.log(original.toString()); // rgb(102 51 153)
+console.log(changed.toString());  // rgb(120 51 153 / 50%)
 ```
 
-**To Hex String**
+## Formatting
 
-Return a hexadecimal string representation of the color.
+`toString(alpha = null, precision = 2, ...options)` emits the native form listed in the spaces table. With `alpha = null`, alpha is included automatically only when it is below 1. Pass `true` to force it or `false` to omit it.
 
 ```javascript
-const hexString = color.toHexString();
+const color = Color.fromRgb(102.1234, 51, 153, 0.8);
+
+color.toString();         // rgb(102.12 51 153 / 80%)
+color.toString(false, 0); // rgb(102 51 153)
+color.toHex().toString(); // #663399cc
 ```
 
-**To RGB String**
+Additional formatting methods and options are:
 
-Return a RGB/RGBA string representation of the color.
+- `Rgb#getHex(alpha = false, shortenHex = true)` returns hex digits without `#`.
+- `Rgb#toString(alpha = null, precision = 2, name = false)` can prefer an exact CSS color name.
+- `Hex#toString(alpha = null, precision = 2, shortenHex = true, name = false)` can shorten hex and prefer an exact CSS color name. Its `precision` argument is accepted for a consistent signature but is unused.
+- `toColorString(alpha = null, precision = 2)` is the shared low-level serializer used by spaces whose native representation is `color(...)`.
 
-```javascript
-const rgbString = color.toRGBString();
+## Errors
+
+FrostColor throws `TypeError` when:
+
+- a color string is malformed or unsupported;
+- a channel is not a finite number;
+- an unknown conversion space is requested;
+- gamut fitting is requested for an unsupported space;
+- the abstract `Color` class is constructed directly.
+
+## Development
+
+FrostColor supports Node.js `^20.19.0`, `^22.13.0`, or `>=24`.
+
+```shell
+npm ci
+npm test
+npm run js-lint
+npm run build
+npm pack --dry-run
 ```
 
-**To HSL String**
+CI tests all supported Node.js release lines, rebuilds the browser bundles, verifies that `dist/` is current, and validates the package contents. Publishing an npm release through GitHub runs the same checks and publishes with provenance.
 
-Return a HSL/HSLA string representation of the color.
+## License
 
-```javascript
-const hslString = color.toHSLString();
-```
-
-**Label**
-
-Get the closest color name for the color.
-
-```javascript
-const label = color.label();
-```
-
-
-## Color Attributes
-
-**Get Alpha**
-
-Get the alpha value of the color (between *0* and *1*).
-
-```javascript
-const alpha = color.getAlpha();
-```
-
-**Get Brightness**
-
-Get the brightness value of the color (between *0* and *100*).
-
-```javascript
-const brightness = color.getBrightness();
-```
-
-**Get Hue**
-
-Get the hue value of the color (between *0* and *360*).
-
-```javascript
-const hue = color.getHue();
-```
-
-**Get Saturation**
-
-Get the saturation value of the color (between *0* and *100*).
-
-```javascript
-const saturation = color.getSaturation();
-```
-
-**Luma**
-
-Get the relative luminance value of the color (between *0* and *1*).
-
-```javascript
-const luma = color.luma();
-```
-
-**Set Alpha**
-
-Set the alpha value of the color.
-
-- `alpha` is a number between *0* and *1*.
-
-```javascript
-const newColor = color.setAlpha(alpha);
-```
-
-**Set Brightness**
-
-Set the brightness value of the color.
-
-- `brightness` is a number between *0* and *100*.
-
-```javascript
-const newColor = color.setBrightness(brightness);
-```
-
-**Set Hue**
-
-Set the hue value of the color.
-
-- `hue` is a number between *0* and *360*.
-
-```javascript
-const newColor = color.setHue(hue);
-```
-
-**Set Saturation**
-
-Set the saturation value of the color.
-
-- `saturation` is a number between *0* and *100*.
-
-```javascript
-const newColor = color.setSaturation(saturation);
-```
-
-
-## Color Manipulation
-
-**Darken**
-
-Darken the color by a specified amount.
-
-- `amount` is a number between *0* and *1*.
-
-```javascript
-const newColor = color.darken(amount);
-```
-
-**Invert**
-
-Invert the color.
-
-```javascript
-const newColor = color.invert();
-```
-
-**Lighten**
-
-Lighten the color by a specified amount.
-
-- `amount` is a number between *0* and *1*.
-
-```javascript
-const newColor = color.lighten(amount);
-```
-
-**Shade**
-
-Shade the color by a specified amount.
-
-- `amount` is a number between *0* and *1*.
-
-```javascript
-const newColor = color.shade(amount);
-```
-
-**Tint**
-
-Tint the color by a specified amount.
-
-- `amount` is a number between *0* and *1*.
-
-```javascript
-const newColor = color.tint(amount);
-```
-
-**Tone**
-
-Tone the color by a specified amount.
-
-- `amount` is a number between *0* and *1*.
-
-```javascript
-const newColor = color.tone(amount);
-```
-
-
-## Color Schemes
-
-**Complementary**
-
-Create a complementary color variation.
-
-```javascript
-const complementary = color.complementary();
-```
-
-**Split**
-
-Create an array with 2 split color variations.
-
-```javascript
-const [secondary, accent] = color.split();
-```
-
-**Analogous**
-
-Create an array with 2 analogous color variations.
-
-```javascript
-const [secondary, accent] = color.analogous();
-```
-
-**Triadic**
-
-Create an array with 2 triadic color variations.
-
-```javascript
-const [secondary, accent] = color.triadic();
-```
-
-**Tetradic**
-
-Create an array with 3 tetradic color variations.
-
-```javascript
-const [secondary, alternate, accent] = color.tetradic();
-```
-
-
-## Color Palettes
-
-Create a palette of colors from a *Color* object you have created using the following methods.
-
-**Shades**
-
-Create an array with a specified number of shade variations.
-
-- `shades` is a number indicating how many shades you wish to generate, and will default to *10*.
-
-```javascript
-const colorShades = color.shades(shades);
-```
-
-**Tints**
-
-Create an array with a specified number of tint variations.
-
-- `tints` is a number indicating how many tints you wish to generate, and will default to *10*.
-
-```javascript
-const colorTints = color.tints(tints);
-```
-
-**Tones**
-
-Create an array with a specified number of tone variations.
-
-- `tones` is a number indicating how many tones you wish to generate, and will default to *10*.
-
-```javascript
-const colorTones = color.tones(tones);
-```
-
-**Palette**
-
-Create a palette object with a specified number of shades, tints and tone variations.
-
-- `options` is an object containing options for how the palette should be generated.
-    - `shades` is a number indicating how many shades you wish to generate, and will default to *10*.
-    - `tints` is a number indicating how many tints you wish to generate, and will default to *10*.
-    - `tones` is a number indicating how many tones you wish to generate, and will default to *10*.
-
-```javascript
-const colorPalette = color.palette(options);
-```
-
-
-## Static Methods
-
-**Contrast**
-
-Calculate the contrast between two colors (between *1* and *21*).
-
-- `color1` is a *Color* object.
-- `color2` is a *Color* object.
-
-```javascript
-const contrast = Color.contrast(color1, color2);
-```
-
-**Distance**
-
-Calculate the distance between two colors.
-
-- `color1` is a *Color* object.
-- `color2` is a *Color* object.
-
-```javascript
-const distance = Color.dist(color1, color2);
-```
-
-**Find Contrast**
-
-Find an optimally contrasting color for another color.
-
-- `color1` is a *Color* object.
-- `color2` is a *Color* object, and will default to *null*.
-- `options` is an object containing options for how the contrasting color should be found.
-    - `minContrast` is a number between *1* and *21* indicating the minimum valid contrast, and will default to *4.5*.
-    - `stepSize` is a number between *0* and *1* indicating the amount to darken/lighten the color on each iteration, and will default to *0.01*.
-
-```javascript
-const contrastColor = Color.findContrast(color1, color2, options);
-```
-
-If `color2` value is *null*, `color1` will be used instead.
-
-This method will tint/shade `color2` until it meets a minimum contrast threshold with `color1`, then the new color will be returned. If no valid contrast value can be found, this method will return *null* instead.
-
-**Mix**
-
-Create a new *Color* by mixing two colors together by a specified amount.
-
-- `color1` is a *Color* object.
-- `color2` is a *Color* object.
-- `amount` is a number between *0* and *1*.
-
-```javascript
-const mixed = Color.mix(color1, color2, amount);
-```
-
-**Multiply**
-
-Create a new *Color* by multiplying two colors together by a specified amount.
-
-- `color1` is a *Color* object.
-- `color2` is a *Color* object.
-- `amount` is a number between *0* and *1*.
-
-```javascript
-const multiplied = Color.multiply(color1, color2, amount);
-```
+FrostColor is available under the [MIT License](LICENSE).

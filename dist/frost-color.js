@@ -5,151 +5,49 @@
 })(this, (function () { 'use strict';
 
     /**
-     * Color Helpers
+     * Maps CSS color-space identifiers to instance conversion method names.
+     * @type {Readonly<Record<string, string>>}
      */
+    const CONVERSION_MAP = Object.freeze({
+        'a98-rgb': 'toA98Rgb',
+        'display-p3': 'toDisplayP3',
+        'display-p3-linear': 'toDisplayP3Linear',
+        'hex': 'toHex',
+        'hsl': 'toHsl',
+        'hwb': 'toHwb',
+        'lab': 'toLab',
+        'lch': 'toLch',
+        'oklab': 'toOkLab',
+        'oklch': 'toOkLch',
+        'prophoto-rgb': 'toProPhotoRgb',
+        'rec2020': 'toRec2020',
+        'rgb': 'toRgb',
+        'srgb': 'toSrgb',
+        'srgb-linear': 'toSrgbLinear',
+        'xyz-d50': 'toXyzD50',
+        'xyz-d65': 'toXyzD65',
+    });
 
     /**
-     * Clamp a value between a min and max.
-     * @param {number} val The value to clamp.
-     * @param {number} [min=0] The minimum value of the clamped range.
-     * @param {number} [max=1] The maximum value of the clamped range.
-     * @return {number} The clamped value.
+     * Declares the channel bounds used when fitting colors into supported gamuts.
+     * @type {Readonly<Record<string, [number, number]>>}
      */
-    const clamp = (val, min = 0, max = 100) => {
-        return Math.max(
-            min,
-            Math.min(max, val),
-        );
-    };
+    const FIT_GAMUT_RANGES = Object.freeze({
+        'a98-rgb': [0, 1],
+        'display-p3': [0, 1],
+        'display-p3-linear': [0, 1],
+        'prophoto-rgb': [0, 1],
+        'rec2020': [0, 1],
+        'rgb': [0, 255],
+        'srgb': [0, 1],
+        'srgb-linear': [0, 1],
+    });
 
     /**
-     * Linear interpolation from one value to another.
-     * @param {number} a The starting value.
-     * @param {number} b The ending value.
-     * @param {number} amount The amount to interpolate.
-     * @return {number} The interpolated value.
+     * Maps CSS named color keywords to canonical hex values.
+     * @type {Readonly<Record<string, string>>}
      */
-    const lerp = (a, b, amount) => {
-        const value = a * (1 - amount) + b * amount;
-        return round(value);
-    };
-
-    /**
-     * Round a number to a specified precision.
-     * @param {number} num The number to round.
-     * @param {number} [precision=2] The precision to use.
-     * @return {number} The rounded number.
-     */
-    const round = (num, precision = 2) => {
-        return parseFloat(parseFloat(num).toFixed(precision));
-    };
-
-    /**
-     * Shorten a hex string (if possible).
-     * @param {string} hex The hex string.
-     * @return {string} The hex string.
-     */
-    const toHex = (hex) => {
-        if (hex.length === 9 &&
-            hex[1] === hex[2] &&
-            hex[3] === hex[4] &&
-            hex[5] === hex[6] &&
-            hex[7] === hex[8]) {
-            return `#${hex[1]}${hex[3]}${hex[5]}${hex[7]}`;
-        }
-
-        if (hex.length === 7 &&
-            hex[1] === hex[2] &&
-            hex[3] === hex[4] &&
-            hex[5] === hex[6]) {
-            return `#${hex[1]}${hex[3]}${hex[5]}`;
-        }
-
-        return hex;
-    };
-
-    /**
-     * Color class
-     * @class
-     */
-    class Color {
-        /**
-         * New Color constructor.
-         * @param {number} [r=0] The red value, or the brightness value.
-         * @param {number} [g=1] The green value or the alpha value.
-         * @param {null|number} [b=null] The blue value.
-         * @param {number} [a=1] The alpha value.
-         */
-        constructor(r = 0, g = 1, b = null, a = 1) {
-            if (b === null) {
-                a = g;
-                b = g = r = round(r * 2.55);
-            }
-
-            this._r = clamp(r, 0, 255);
-            this._g = clamp(g, 0, 255);
-            this._b = clamp(b, 0, 255);
-            this._a = clamp(a, 0, 1);
-        }
-
-        /**
-         * Return the luminance value of the color.
-         * @return {number} The luminance value. (0, 1)
-         */
-        valueOf() {
-            return this.luma();
-        }
-
-        /**
-         * Return a primitive value of the color.
-         * @param {string} hint The type hint.
-         * @return {string|number} The HTML color string, or the luminance value.
-         */
-        [Symbol.toPrimitive](hint) {
-            return hint === 'number' ?
-                this.valueOf() :
-                this.toString();
-        }
-
-        /**
-         * Get the alpha value of the color.
-         * @return {number} The alpha value. (0, 1)
-         */
-        get a() {
-            return this._a;
-        }
-
-        /**
-         * Get the blue value of the color.
-         * @return {number} The blue value. (0, 255)
-         */
-        get b() {
-            return this._b;
-        }
-
-        /**
-         * Get the green value of the color.
-         * @return {number} The green value. (0, 255)
-         */
-        get g() {
-            return this._g;
-        }
-
-        /**
-         * Get the red value of the color.
-         * @return {number} The red value. (0, 255)
-         */
-        get r() {
-            return this._r;
-        }
-    }
-
-    /**
-     * Color Names
-     */
-
-    // HTML color names
-    const colors = {
+    const CSS_COLORS = Object.freeze({
         aliceblue: '#f0f8ff',
         antiquewhite: '#faebd7',
         aqua: '#00ffff',
@@ -175,8 +73,8 @@
         darkcyan: '#008b8b',
         darkgoldenrod: '#b8860b',
         darkgray: '#a9a9a9',
-        darkgrey: '#a9a9a9',
         darkgreen: '#006400',
+        darkgrey: '#a9a9a9',
         darkkhaki: '#bdb76b',
         darkmagenta: '#8b008b',
         darkolivegreen: '#556b2f',
@@ -204,9 +102,9 @@
         gold: '#ffd700',
         goldenrod: '#daa520',
         gray: '#808080',
-        grey: '#808080',
         green: '#008000',
         greenyellow: '#adff2f',
+        grey: '#808080',
         honeydew: '#f0fff0',
         hotpink: '#ff69b4',
         indianred: '#cd5c5c',
@@ -222,8 +120,8 @@
         lightcyan: '#e0ffff',
         lightgoldenrodyellow: '#fafad2',
         lightgray: '#d3d3d3',
-        lightgrey: '#d3d3d3',
         lightgreen: '#90ee90',
+        lightgrey: '#d3d3d3',
         lightpink: '#ffb6c1',
         lightsalmon: '#ffa07a',
         lightseagreen: '#20b2aa',
@@ -298,1066 +196,2819 @@
         whitesmoke: '#f5f5f5',
         yellow: '#ffff00',
         yellowgreen: '#9acd32',
-    };
-
-    const hexLookup = Object.fromEntries(
-        Object.entries(colors)
-            .map(([key, value]) => [value, key]),
-    );
+    });
 
     /**
-     * Color Conversions
+     * Rounds a number to a fixed precision while normalizing negative zero.
+     * @param {number} value The input value.
+     * @param {number} [precision=0] The decimal precision.
+     * @return {number} The rounded value.
      */
+    const roundValue = (value, precision = 0) => {
+        const factor = 10 ** precision;
+        const sign = value < 0 ? -1 : 1;
+        const rounded = sign * (Math.round((Math.abs(value) + Number.EPSILON) * factor) / factor);
 
-    /**
-     * Convert CMY color values to RGB.
-     * @param {number} c The cyan value. (0, 100)
-     * @param {number} m The magenta value. (0, 100)
-     * @param {number} y The yellow value. (0, 100)
-     * @return {number[]} An array containing the RGB values.
-     */
-    const cmy2rgb = (c, m, y) => {
-        return [
-            round((1 - c / 100) * 255),
-            round((1 - m / 100) * 255),
-            round((1 - y / 100) * 255),
-        ];
+        return Object.is(rounded, -0) ? 0 : rounded;
     };
 
     /**
-     * Convert CMYK color values to CMY.
-     * @param {number} c The cyan value. (0, 100)
-     * @param {number} m The magenta value. (0, 100)
-     * @param {number} y The yellow value. (0, 100)
-     * @param {number} k The key value. (0, 100)
-     * @return {number[]} An array containing the CMY values.
+     * Ensures a numeric value is finite.
+     * @param {number} value The value to validate.
+     * @return {void}
+     * @throws {TypeError} Thrown when the value is not finite.
      */
-    const cmyk2cmy = (c, m, y, k) => {
-        k /= 100;
-
-        return [
-            round((c / 100 * (1 - k) + k) * 100),
-            round((m / 100 * (1 - k) + k) * 100),
-            round((y / 100 * (1 - k) + k) * 100),
-        ];
+    const ensureFinite = (value) => {
+        if (!Number.isFinite(value)) {
+            throw new TypeError('Color channel values must be finite numbers.');
+        }
     };
 
     /**
-     * Calculate the R, G or B value of a hue.
-     * @param {number} v1 The first value.
-     * @param {number} v2 The second value.
-     * @param {number} vH The hue value.
-     * @return {number} The R, G or B value.
+     * Clamps a value between a minimum and maximum bound.
+     * @param {number} value The value to clamp.
+     * @param {number} [min=0] The minimum value.
+     * @param {number} [max=1] The maximum value.
+     * @return {number} The clamped value.
      */
-    const rgbHue = (v1, v2, vH) => {
-        vH = (vH + 1) % 1;
+    const clamp = (value, min = 0, max = 1) => {
+        ensureFinite(value);
 
-        if (6 * vH < 1) {
-            return v1 + (v2 - v1) * 6 * vH;
-        }
-
-        if (2 * vH < 1) {
-            return v2;
-        }
-
-        if (3 * vH < 2) {
-            return v1 + (v2 - v1) * ((2 / 3) - vH) * 6;
-        }
-
-        return v1;
+        return Math.max(min, Math.min(max, value));
     };
 
     /**
-     * Convert HSL color values to RGB.
-     * @param {number} h The hue value. (0, 360)
-     * @param {number} s The saturation value. (0, 100)
-     * @param {number} l The lightness value. (0, 100)
-     * @return {number[]} An array containing the RGB values.
+     * Wraps a hue value into the 0-360 range.
+     * @param {number} value The hue value.
+     * @return {number} The wrapped hue.
      */
-    const hsl2rgb = (h, s, l) => {
-        if (!l) {
-            return [0, 0, 0];
+    const clampHue = (value) => {
+        ensureFinite(value);
+        value %= 360;
+
+        if (value < 0) {
+            value += 360;
         }
 
-        h /= 360;
-        s /= 100;
-        l /= 100;
-
-        const v2 = l < .5 ?
-            l * (1 + s) :
-            (l + s) - (s * l);
-        const v1 = 2 * l - v2;
-        const r = rgbHue(v1, v2, h + (1 / 3));
-        const g = rgbHue(v1, v2, h);
-        const b = rgbHue(v1, v2, h - (1 / 3));
-
-        return [
-            round(r * 255),
-            round(g * 255),
-            round(b * 255),
-        ];
+        return value;
     };
 
     /**
-     * Convert HSV color values to RGB.
-     * @param {number} h The hue value. (0, 360)
-     * @param {number} s The saturation value. (0, 100)
-     * @param {number} v The brightness value (0, 100)
-     * @return {number[]} An array containing the RGB values.
+     * Checks whether a color is within gamut bounds for the target space.
+     * @param {{toObject(): Record<string, number>}} color The color to inspect.
+     * @param {string} space The target color space key.
+     * @param {Record<string, [number, number]>} gamutRanges The gamut map.
+     * @return {boolean} True when all primary channels fall within range.
      */
-    const hsv2rgb = (h, s, v) => {
-        v /= 100;
+    const isInGamut = (color, space, gamutRanges) => {
+        const [min, max] = gamutRanges[space];
+        const values = Object.values(color.toObject());
 
-        if (!s) {
-            return [
-                round(v * 255),
-                round(v * 255),
-                round(v * 255),
-            ];
+        for (const value of values.slice(0, 3)) {
+            if (!Number.isFinite(value) || value < min || value > max) {
+                return false;
+            }
         }
 
-        h = (h / 60) % 6;
-        s /= 100;
-
-        const vi = Math.floor(h);
-        const v1 = v * (1 - s);
-        const v2 = v * (1 - s * (h - vi));
-        const v3 = v * (1 - s * (1 - (h - vi)));
-
-        let r; let g; let b;
-
-        switch (vi) {
-            case 0:
-                r = v;
-                g = v3;
-                b = v1;
-                break;
-            case 1:
-                r = v2;
-                g = v;
-                b = v1;
-                break;
-            case 2:
-                r = v1;
-                g = v;
-                b = v3;
-                break;
-            case 3:
-                r = v1;
-                g = v2;
-                b = v;
-                break;
-            case 4:
-                r = v3;
-                g = v1;
-                b = v;
-                break;
-            default:
-                r = v;
-                g = v1;
-                b = v2;
-                break;
-        }
-
-        return [
-            round(r * 255),
-            round(g * 255),
-            round(b * 255),
-        ];
+        return true;
     };
 
     /**
-     * Convert RGB color values to HSL.
-     * @param {number} r The red value. (0, 255)
-     * @param {number} g The green value. (0, 255)
-     * @param {number} b The blue value. (0, 255)
-     * @return {number[]} An array containing the HSL values.
+     * Parses a CSS angle token into degrees.
+     * @param {string} value The raw CSS angle token.
+     * @return {number} The angle in degrees.
      */
-    const rgb2hsl = (r, g, b) => {
-        r /= 255;
-        g /= 255;
-        b /= 255;
-
-        const min = Math.min(r, g, b);
-        const max = Math.max(r, g, b);
-        const diff = max - min;
-        const l = (max + min) / 2;
-
-        if (!diff) {
-            return [
-                0,
-                0,
-                round(l * 100),
-            ];
+    const parseCssAngle = (value) => {
+        if (typeof value !== 'string') {
+            throw new TypeError('CSS angle values must be strings.');
         }
 
-        const s = l < .5 ?
-            diff / (max + min) :
-            diff / (2 - max - min);
-        const deltaR = (((max - r) / 6) + (diff / 2)) / diff;
-        const deltaG = (((max - g) / 6) + (diff / 2)) / diff;
-        const deltaB = (((max - b) / 6) + (diff / 2)) / diff;
+        value = String(value);
+        const number = Number.parseFloat(value) || 0;
 
-        let h = 0;
-
-        switch (max) {
-            case r:
-                h = deltaB - deltaG;
-                break;
-            case g:
-                h = 1 / 3 + deltaR - deltaB;
-                break;
-            case b:
-                h = 2 / 3 + deltaG - deltaR;
-                break;
+        if (value.endsWith('%')) {
+            return (number / 100) * 360;
         }
 
-        h = (h + 1) % 1;
+        if (value.endsWith('grad')) {
+            return number * 0.9;
+        }
 
-        return [
-            round(h * 360),
-            round(s * 100),
-            round(l * 100),
-        ];
+        if (value.endsWith('rad')) {
+            return number * 180 / Math.PI;
+        }
+
+        if (value.endsWith('turn')) {
+            return number * 360;
+        }
+
+        return number;
     };
 
     /**
-     * Convert RGB color values to HSV.
-     * @param {number} r The red value. (0, 255)
-     * @param {number} g The green value. (0, 255)
-     * @param {number} b The blue value. (0, 255)
-     * @return {number[]} An array containing the HSV values.
+     * Parses a CSS numeric token, optionally mapping percentages into a range.
+     * @param {string} value The raw CSS numeric token.
+     * @param {number} [percentMultiplier=1] The range used for percentages.
+     * @return {number} The parsed numeric value.
      */
-    const rgb2hsv = (r, g, b) => {
-        r /= 255;
-        g /= 255;
-        b /= 255;
-
-        const min = Math.min(r, g, b);
-        const max = Math.max(r, g, b);
-        const diff = max - min;
-        const v = max;
-
-        if (!diff) {
-            return [
-                0,
-                0,
-                round(v * 100),
-            ];
+    const parseCssNumber = (value, percentMultiplier = 1) => {
+        if (typeof value !== 'string') {
+            throw new TypeError('CSS number values must be strings.');
         }
 
-        const s = diff / max;
-        const deltaR = (((max - r) / 6) + (diff / 2)) / diff;
-        const deltaG = (((max - g) / 6) + (diff / 2)) / diff;
-        const deltaB = (((max - b) / 6) + (diff / 2)) / diff;
+        value = String(value);
+        const number = Number.parseFloat(value) || 0;
 
-        let h = 0;
-
-        switch (max) {
-            case r:
-                h = deltaB - deltaG;
-                break;
-            case g:
-                h = 1 / 3 + deltaR - deltaB;
-                break;
-            case b:
-                h = 2 / 3 + deltaG - deltaR;
-                break;
-        }
-
-        h = (h + 1) % 1;
-
-        return [
-            round(h * 360),
-            round(s * 100),
-            round(v * 100),
-        ];
+        return value.endsWith('%') ?
+            (number / 100) * percentMultiplier :
+            number;
     };
 
     /**
-     * Convert RGBA color values to hex.
-     * @param {number} r The red value. (0, 255)
-     * @param {number} g The green value. (0, 255)
-     * @param {number} b The blue value. (0, 255)
-     * @param {number} a The alpha value. (0, 1)
-     * @return {string} The hex string.
+     * Finds an exact CSS color keyword for a hex triplet.
+     * @param {string} hex The lowercase or uppercase hex string without `#`.
+     * @return {string|null} The matching CSS color keyword, if any.
      */
-    const rgba2hex = (r, g, b, a) => {
-        [r, g, b] = [r, g, b].map(
-            (value) => (Math.round(value) | 1 << 8)
-                .toString(16)
-                .slice(1),
-        );
-        const hex = `#${r}${g}${b}`;
-
-        if (a >= 1) {
-            return hex;
-        }
-
-        return hex +
-            (Math.round(a * 255) | 1 << 8)
-                .toString(16)
-                .slice(1);
+    const findCssColorName = (hex) => {
+        return Object.entries(CSS_COLORS)
+            .find(([, value]) => value === `#${hex}`)?.[0] ?? null;
     };
 
     /**
-     * Calculate the relative R, G or B value for luma calculation.
-     * @param {number} v The value.
-     * @return {number} The R, G or B value.
-     */
-    const rgbLumaVlaue = (v) => {
-        v /= 255;
-
-        if (v <= .03928) {
-            return v / 12.92;
-        }
-
-        return Math.pow(((v + .055) / 1.055), 2.4);
-    };
-
-    /**
-     * Calculate the relative luminance of an RGB color.
-     * @param {number} r The red value. (0, 255)
-     * @param {number} g The green value. (0, 255)
-     * @param {number} b The blue value. (0, 255)
-     * @return {number} The relative luminance value.
-     */
-    const rgbLuma = (r, g, b) => {
-        r = rgbLumaVlaue(r);
-        g = rgbLumaVlaue(g);
-        b = rgbLumaVlaue(b);
-
-        return (.2126 * r) + (.7152 * g) + (.0722 * b);
-    };
-
-    /**
-     * Color (Static) Creation
+     * @typedef {import('./spaces/a98-rgb.js').default} A98Rgb
+     * @typedef {import('./spaces/display-p3.js').default} DisplayP3
+     * @typedef {import('./spaces/display-p3-linear.js').default} DisplayP3Linear
+     * @typedef {import('./spaces/hex.js').default} Hex
+     * @typedef {import('./spaces/hsl.js').default} Hsl
+     * @typedef {import('./spaces/hwb.js').default} Hwb
+     * @typedef {import('./spaces/lab.js').default} Lab
+     * @typedef {import('./spaces/lch.js').default} Lch
+     * @typedef {import('./spaces/ok-lab.js').default} OkLab
+     * @typedef {import('./spaces/ok-lch.js').default} OkLch
+     * @typedef {import('./spaces/pro-photo-rgb.js').default} ProPhotoRgb
+     * @typedef {import('./spaces/rec-2020.js').default} Rec2020
+     * @typedef {import('./spaces/rgb.js').default} Rgb
+     * @typedef {import('./spaces/srgb.js').default} Srgb
+     * @typedef {import('./spaces/srgb-linear.js').default} SrgbLinear
+     * @typedef {import('./spaces/xyz-d50.js').default} XyzD50
+     * @typedef {import('./spaces/xyz-d65.js').default} XyzD65
      */
 
     /**
-     * Create a new Color from CMY values.
-     * @param {number} c The cyan value. (0, 100)
-     * @param {number} m The magenta value. (0, 100)
-     * @param {number} y The yellow value. (0, 100)
-     * @param {number} [a=1] The alpha value. (0, 1)
-     * @return {Color} A new Color object.
+     * Provides color parsing, formatting, and conversion utilities.
+     *
+     * Note: Hue values are wrapped to 0-360 and alpha values are clamped to 0-1.
+     * Other channels preserve extended values to avoid conversion clipping.
      */
-    function fromCMY(c, m, y, a = 1) {
-        const [r, g, b] = cmy2rgb(c, m, y);
-        return new Color(r, g, b, a);
-    }
-    /**
-     * Create a new Color from CMYK values.
-     * @param {number} c The cyan value. (0, 100)
-     * @param {number} m The magenta value. (0, 100)
-     * @param {number} y The yellow value. (0, 100)
-     * @param {number} k The key value. (0, 100)
-     * @param {number} [a=1] The alpha value. (0, 1)
-     * @return {Color} A new Color object.
-     */
-    function fromCMYK(c, m, y, k, a = 1) {
-        [c, m, y] = cmyk2cmy(c, m, y, k);
-        return fromCMY(c, m, y, a);
-    }
-    /**
-     * Create a new Color from a hex color string.
-     * @param {string} string The hex color string.
-     * @return {Color} A new Color object.
-     */
-    function fromHexString(string) {
-        string = string.trim();
+    class Color {
+        static COLOR_SPACE = '';
 
-        const hexMatch = string.length > 6 ?
-            string.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?$/i) :
-            string.match(/^#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f]?)$/i);
-
-        if (!hexMatch) {
-            throw new Error('Invalid hex string');
+        /**
+         * Creates a color from A98 RGB channels.
+         * @param {number} [red=0] The red channel value.
+         * @param {number} [green=0] The green channel value.
+         * @param {number} [blue=0] The blue channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromA98Rgb(red = 0, green = 0, blue = 0, alpha = 1) {
+            return new this.A98Rgb(red, green, blue, alpha).to(this.COLOR_SPACE);
         }
 
-        const rgb = hexMatch.slice(1, 5).map((value) =>
-            value ?
-                parseInt(
-                    value.length == 2 ?
-                        value :
-                        value + value,
-                    16,
-                ) :
-                null,
-        );
-
-        return new Color(rgb[0],
-            rgb[1],
-            rgb[2],
-            rgb[3] ?
-                rgb[3] / 255 :
-                1,
-        );
-    }
-    /**
-     * Create a new Color from HSL values.
-     * @param {number} h The hue value. (0, 360)
-     * @param {number} s The saturation value. (0, 100)
-     * @param {number} l The lightness value. (0, 100)
-     * @param {number} [a=1] The alpha value. (0, 1)
-     * @return {Color} A new Color object.
-     */
-    function fromHSL(h, s, l, a = 1) {
-        const [r, g, b] = hsl2rgb(h, s, l);
-        return new Color(r, g, b, a);
-    }
-    /**
-     * Create a new Color from a HSL color string.
-     * @param {string} string The HSL color string.
-     * @return {Color} A new Color object.
-     */
-    function fromHSLString(string) {
-        string = string.trim();
-
-        const HSL2Match = string.match(/^hsl\(((?:\d*\.)?\d+)deg\s+((?:\d*\.)?\d+)\%\s+((?:\d*\.)?\d+)\%\)$/i);
-
-        if (HSL2Match) {
-            return fromHSL(HSL2Match[1], HSL2Match[2], HSL2Match[3]);
+        /**
+         * Creates a color from Display P3 channels.
+         * @param {number} [red=0] The red channel value.
+         * @param {number} [green=0] The green channel value.
+         * @param {number} [blue=0] The blue channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromDisplayP3(red = 0, green = 0, blue = 0, alpha = 1) {
+            return new this.DisplayP3(red, green, blue, alpha).to(this.COLOR_SPACE);
         }
 
-        const HSLA2Match = string.match(/^hsl\(((?:\d*\.)?\d+)deg\s+((?:\d*\.)?\d+)\%\s+((?:\d*\.)?\d+)\%\s*\/\s*((?:\d*\.)?\d+)(\%?)\)$/i);
-
-        if (HSLA2Match) {
-            return fromHSL(
-                HSLA2Match[1],
-                HSLA2Match[2],
-                HSLA2Match[3],
-                HSLA2Match[5] ?
-                    HSLA2Match[4] / 100 :
-                    HSLA2Match[4],
-            );
+        /**
+         * Creates a color from linear Display P3 channels.
+         * @param {number} [red=0] The red channel value.
+         * @param {number} [green=0] The green channel value.
+         * @param {number} [blue=0] The blue channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromDisplayP3Linear(red = 0, green = 0, blue = 0, alpha = 1) {
+            return new this.DisplayP3Linear(red, green, blue, alpha).to(this.COLOR_SPACE);
         }
 
-        const HSLMatch = string.match(/^hsl\(((?:\d*\.)?\d+),\s*((?:\d*\.)?\d+)\%,\s*((?:\d*\.)?\d+)\%\)$/i);
-
-        if (HSLMatch) {
-            return fromHSL(HSLMatch[1], HSLMatch[2], HSLMatch[3]);
+        /**
+         * Creates a color from HSL channels.
+         * @param {number} [hue=0] The hue channel value in degrees.
+         * @param {number} [saturation=0] The saturation channel value.
+         * @param {number} [lightness=0] The lightness channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromHsl(hue = 0, saturation = 0, lightness = 0, alpha = 1) {
+            return new this.Hsl(hue, saturation, lightness, alpha).to(this.COLOR_SPACE);
         }
 
-        const HSLAMatch = string.match(/^hsla\(((?:\d*\.)?\d+),\s*((?:\d*\.)?\d+)\%,\s*((?:\d*\.)?\d+)\%,\s*((?:\d*\.)?\d+)(\%?)\)$/i);
-
-        if (HSLAMatch) {
-            return fromHSL(
-                HSLAMatch[1],
-                HSLAMatch[2],
-                HSLAMatch[3],
-                HSLAMatch[5] ?
-                    HSLAMatch[4] / 100 :
-                    HSLAMatch[4],
-            );
+        /**
+         * Creates a color from HWB channels.
+         * @param {number} [hue=0] The hue channel value in degrees.
+         * @param {number} [whiteness=0] The whiteness channel value.
+         * @param {number} [blackness=0] The blackness channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromHwb(hue = 0, whiteness = 0, blackness = 0, alpha = 1) {
+            return new this.Hwb(hue, whiteness, blackness, alpha).to(this.COLOR_SPACE);
         }
 
-        throw new Error('Invalid HSL string');
-    }
-    /**
-     * Create a new Color from HSV values.
-     * @param {number} h The hue value. (0, 360)
-     * @param {number} s The saturation value. (0, 100)
-     * @param {number} v The brightness value. (0, 100)
-     * @param {number} [a=1] The alpha value. (0, 1)
-     * @return {Color} A new Color object.
-     */
-    function fromHSV(h, s, v, a = 1) {
-        const [r, g, b] = hsv2rgb(h, s, v);
-        return new Color(r, g, b, a);
-    }
-    /**
-     * Create a new Color from RGB values.
-     * @param {number} r The red value. (0, 255)
-     * @param {number} g The green value. (0, 255)
-     * @param {number} b The blue value. (0, 255)
-     * @param {number} [a=1] The alpha value. (0, 1)
-     * @return {Color} A new Color object.
-     */
-    function fromRGB(r, g, b, a = 1) {
-        return new Color(r, g, b, a);
-    }
-    /**
-     * Create a new Color from a RGB color string.
-     * @param {string} string The RGB color string.
-     * @return {Color} A new Color object.
-     */
-    function fromRGBString(string) {
-        string = string.trim();
-
-        const RGB2Match = string.match(/^rgb\(((?:\d*\.)?\d+)\s+((?:\d*\.)?\d+)\s+((?:\d*\.)?\d+)\)$/i);
-
-        if (RGB2Match) {
-            return new Color(RGB2Match[1], RGB2Match[2], RGB2Match[3]);
+        /**
+         * Creates a color from Lab channels.
+         * @param {number} [lightness=0] The lightness channel value.
+         * @param {number} [a=0] The a channel value.
+         * @param {number} [b=0] The b channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromLab(lightness = 0, a = 0, b = 0, alpha = 1) {
+            return new this.Lab(lightness, a, b, alpha).to(this.COLOR_SPACE);
         }
 
-        const RGBA2Match = string.match(/^rgb\(((?:\d*\.)?\d+)\s+((?:\d*\.)?\d+)\s+((?:\d*\.)?\d+)\s*\/\s*((?:\d*\.)?\d+)(\%?)\)$/i);
-
-        if (RGBA2Match) {
-            return new Color(
-                RGBA2Match[1],
-                RGBA2Match[2],
-                RGBA2Match[3],
-                RGBA2Match[5] ?
-                    RGBA2Match[4] / 100 :
-                    RGBA2Match[4],
-            );
+        /**
+         * Creates a color from LCH channels.
+         * @param {number} [lightness=0] The lightness channel value.
+         * @param {number} [chroma=0] The chroma channel value.
+         * @param {number} [hue=0] The hue channel value in degrees.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromLch(lightness = 0, chroma = 0, hue = 0, alpha = 1) {
+            return new this.Lch(lightness, chroma, hue, alpha).to(this.COLOR_SPACE);
         }
 
-        const RGBMatch = string.match(/^rgb\(((?:\d*\.)?\d+),\s*((?:\d*\.)?\d+),\s*((?:\d*\.)?\d+)\)$/i);
-
-        if (RGBMatch) {
-            return new Color(RGBMatch[1], RGBMatch[2], RGBMatch[3]);
+        /**
+         * Creates a color from OKLab channels.
+         * @param {number} [lightness=0] The lightness channel value.
+         * @param {number} [a=0] The a channel value.
+         * @param {number} [b=0] The b channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromOkLab(lightness = 0, a = 0, b = 0, alpha = 1) {
+            return new this.OkLab(lightness, a, b, alpha).to(this.COLOR_SPACE);
         }
 
-        const RGBAMatch = string.match(/^rgba\(((?:\d*\.)?\d+),\s*((?:\d*\.)?\d+),\s*((?:\d*\.)?\d+),\s*((?:\d*\.)?\d+)(\%?)\)$/i);
-
-        if (RGBAMatch) {
-            return new Color(
-                RGBAMatch[1],
-                RGBAMatch[2],
-                RGBAMatch[3],
-                RGBAMatch[5] ?
-                    RGBAMatch[4] / 100 :
-                    RGBAMatch[4],
-            );
+        /**
+         * Creates a color from OKLCH channels.
+         * @param {number} [lightness=0] The lightness channel value.
+         * @param {number} [chroma=0] The chroma channel value.
+         * @param {number} [hue=0] The hue channel value in degrees.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromOkLch(lightness = 0, chroma = 0, hue = 0, alpha = 1) {
+            return new this.OkLch(lightness, chroma, hue, alpha).to(this.COLOR_SPACE);
         }
 
-        throw new Error('Invalid RGB string');
-    }
-    /**
-     * Create a new Color from a HTML color string.
-     * @param {string} string The HTML color string.
-     * @return {Color} A new Color object.
-     */
-    function fromString(string) {
-        string = string.toLowerCase().trim();
-
-        if (string === 'transparent') {
-            return new Color(0, 0, 0, 0);
+        /**
+         * Creates a color from ProPhoto RGB channels.
+         * @param {number} [red=0] The red channel value.
+         * @param {number} [green=0] The green channel value.
+         * @param {number} [blue=0] The blue channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromProPhotoRgb(red = 0, green = 0, blue = 0, alpha = 1) {
+            return new this.ProPhotoRgb(red, green, blue, alpha).to(this.COLOR_SPACE);
         }
 
-        if (string in colors) {
-            string = colors[string];
+        /**
+         * Creates a color from Rec. 2020 channels.
+         * @param {number} [red=0] The red channel value.
+         * @param {number} [green=0] The green channel value.
+         * @param {number} [blue=0] The blue channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromRec2020(red = 0, green = 0, blue = 0, alpha = 1) {
+            return new this.Rec2020(red, green, blue, alpha).to(this.COLOR_SPACE);
         }
 
-        if (string.substring(0, 1) === '#') {
-            return fromHexString(string);
+        /**
+         * Creates a color from RGB channels.
+         * @param {number} [red=0] The red channel value.
+         * @param {number} [green=0] The green channel value.
+         * @param {number} [blue=0] The blue channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromRgb(red = 0, green = 0, blue = 0, alpha = 1) {
+            return new this.Rgb(red, green, blue, alpha).to(this.COLOR_SPACE);
         }
 
-        if (string.substring(0, 3).toLowerCase() === 'rgb') {
-            return fromRGBString(string);
+        /**
+         * Creates a color from sRGB channels.
+         * @param {number} [red=0] The red channel value.
+         * @param {number} [green=0] The green channel value.
+         * @param {number} [blue=0] The blue channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromSrgb(red = 0, green = 0, blue = 0, alpha = 1) {
+            return new this.Srgb(red, green, blue, alpha).to(this.COLOR_SPACE);
         }
 
-        if (string.substring(0, 3).toLowerCase() === 'hsl') {
-            return fromHSLString(string);
+        /**
+         * Creates a color from linear sRGB channels.
+         * @param {number} [red=0] The red channel value.
+         * @param {number} [green=0] The green channel value.
+         * @param {number} [blue=0] The blue channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromSrgbLinear(red = 0, green = 0, blue = 0, alpha = 1) {
+            return new this.SrgbLinear(red, green, blue, alpha).to(this.COLOR_SPACE);
         }
 
-        throw new Error('Invalid color string');
-    }
+        /**
+         * Parses a CSS color string into a color instance.
+         * @param {string} string The CSS color string to parse.
+         * @return {Color} The parsed color instance.
+         * @throws {TypeError} Thrown when the string is not a supported CSS color value.
+         */
+        static fromString(string) {
+            string = String(string).replace(/\s+/g, ' ').trim().toLowerCase();
 
-    /**
-     * Color (Static) Utility
-     */
+            if (string === 'transparent') {
+                return this.fromRgb(0, 0, 0, 0);
+            }
 
-    /**
-     * Get the contrast value between two colors.
-     * @param {Color} color1 The first Color.
-     * @param {Color} color2 The second Color.
-     * @return {number} The contrast value. (1, 21)
-     */
-    const contrast = (color1, color2) => {
-        const luma1 = color1.luma();
-        const luma2 = color2.luma();
+            if (Object.hasOwn(CSS_COLORS, string)) {
+                string = CSS_COLORS[string];
+            }
 
-        return (Math.max(luma1, luma2) + .05) / (Math.min(luma1, luma2) + .05);
-    };
+            const hexMatch = string.match(/^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i);
 
-    /**
-     * Calculate the distance between two colors.
-     * @param {Color} color1 The first Color.
-     * @param {Color} color2 The second Color.
-     * @return {number} The distance between the colors.
-     */
-    const dist = (color1, color2) => {
-        return Math.hypot(color1.r - color2.r, color1.g - color2.g, color1.b - color2.b);
-    };
+            if (hexMatch) {
+                let hex = hexMatch[1];
 
-    /**
-     * Find an optimally contrasting color for another color.
-     * @param {Color} color1 The first Color.
-     * @param {Color} [color2] The second Color.
-     * @param {object} [options] The options for finding the contrasting color.
-     * @param {number} [options.minContrast=4.5] The minimum contrast.
-     * @param {number} [options.stepSize=.01] The step size.
-     * @return {Color} The new Color.
-     */
-    const findContrast = (color1, color2 = null, { minContrast = 4.5, stepSize = .01 } = {}) => {
-        if (!color2) {
-            color2 = color1;
-        }
+                if (hex.length <= 4) {
+                    hex = [...hex].map((char) => char + char).join('');
+                }
 
-        if (contrast(color1, color2) >= minContrast) {
-            return color2;
-        }
+                return new this.Hex(
+                    Number.parseInt(hex.slice(0, 2), 16),
+                    Number.parseInt(hex.slice(2, 4), 16),
+                    Number.parseInt(hex.slice(4, 6), 16),
+                    hex.length > 6 ?
+                        (Number.parseInt(hex.slice(6, 8), 16) / 255) :
+                        1,
+                ).to(this.COLOR_SPACE);
+            }
 
-        const methods = ['tint', 'shade'];
-        for (let i = stepSize; i <= 1; i += stepSize) {
-            for (const method of methods) {
-                const tempColor = color2[method](i);
-                if (contrast(color1, tempColor) >= minContrast) {
-                    return tempColor;
+            const functionalMatch = string.match(/^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)\((.+)\)$/);
+
+            if (functionalMatch) {
+                const [, space, rawParts] = functionalMatch;
+                let parts = rawParts.trim().split(/\s*[,/]\s*|\s+/);
+
+                if (parts.length > 4) {
+                    parts = [...parts.slice(0, 3), parts.slice(3).join(' ')];
+                }
+
+                if (parts.length < 4) {
+                    parts.push('1');
+                }
+
+                switch (space) {
+                    case 'hsl':
+                    case 'hsla':
+                        return this.fromHsl(
+                            parseCssAngle(parts[0]),
+                            parseCssNumber(parts[1], 100),
+                            parseCssNumber(parts[2], 100),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'hwb':
+                        return this.fromHwb(
+                            parseCssAngle(parts[0]),
+                            parseCssNumber(parts[1], 100),
+                            parseCssNumber(parts[2], 100),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'lab':
+                        return this.fromLab(
+                            parseCssNumber(parts[0], 100),
+                            parseCssNumber(parts[1], 125),
+                            parseCssNumber(parts[2], 125),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'lch':
+                        return this.fromLch(
+                            parseCssNumber(parts[0], 100),
+                            Math.max(0, parseCssNumber(parts[1], 150)),
+                            parseCssAngle(parts[2]),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'oklab':
+                        return this.fromOkLab(
+                            parseCssNumber(parts[0]),
+                            parseCssNumber(parts[1], 0.4),
+                            parseCssNumber(parts[2], 0.4),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'oklch':
+                        return this.fromOkLch(
+                            parseCssNumber(parts[0]),
+                            Math.max(0, parseCssNumber(parts[1], 0.4)),
+                            parseCssAngle(parts[2]),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'rgb':
+                    case 'rgba':
+                        return this.fromRgb(
+                            parseCssNumber(parts[0], 255),
+                            parseCssNumber(parts[1], 255),
+                            parseCssNumber(parts[2], 255),
+                            parseCssNumber(parts[3]),
+                        );
                 }
             }
+
+            const colorMatch = string.match(/^color\((a98-rgb|display-p3(?:-linear)?|prophoto-rgb|rec2020|srgb(?:-linear)?|xyz(?:-d50|-d65)?)\s+(.+)\)$/);
+
+            if (colorMatch) {
+                const [, space, rawParts] = colorMatch;
+                let parts = rawParts.trim().split(/\s*\/\s*|\s+/);
+
+                if (parts.length > 4) {
+                    parts = [...parts.slice(0, 3), parts.slice(3).join(' ')];
+                }
+
+                const values = parts.map((value) => parseCssNumber(value));
+
+                switch (space) {
+                    case 'a98-rgb':
+                        return this.fromA98Rgb(...values);
+                    case 'display-p3':
+                        return this.fromDisplayP3(...values);
+                    case 'display-p3-linear':
+                        return this.fromDisplayP3Linear(...values);
+                    case 'prophoto-rgb':
+                        return this.fromProPhotoRgb(...values);
+                    case 'rec2020':
+                        return this.fromRec2020(...values);
+                    case 'srgb':
+                        return this.fromSrgb(...values);
+                    case 'srgb-linear':
+                        return this.fromSrgbLinear(...values);
+                    case 'xyz-d50':
+                        return this.fromXyzD50(...values);
+                    case 'xyz':
+                    case 'xyz-d65':
+                        return this.fromXyzD65(...values);
+                }
+            }
+
+            throw new TypeError(`Color string \`${string}\` is not valid.`);
         }
 
-        return null;
+        /**
+         * Creates a color from XYZ D50 channels.
+         * @param {number} [x=0] The x channel value.
+         * @param {number} [y=0] The y channel value.
+         * @param {number} [z=0] The z channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromXyzD50(x = 0, y = 0, z = 0, alpha = 1) {
+            return new this.XyzD50(x, y, z, alpha).to(this.COLOR_SPACE);
+        }
+
+        /**
+         * Creates a color from XYZ D65 channels.
+         * @param {number} [x=0] The x channel value.
+         * @param {number} [y=0] The y channel value.
+         * @param {number} [z=0] The z channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @return {Color} The converted color instance.
+         */
+        static fromXyzD65(x = 0, y = 0, z = 0, alpha = 1) {
+            return new this.XyzD65(x, y, z, alpha).to(this.COLOR_SPACE);
+        }
+
+        /**
+         * Creates a color base instance with an alpha channel.
+         * @param {number} [alpha=1] The alpha channel value.
+         * @throws {TypeError} Thrown when the abstract base class is instantiated directly.
+         */
+        constructor(alpha = 1) {
+            if (new.target === Color) {
+                throw new TypeError('Color is abstract and cannot be instantiated directly.');
+            }
+
+            this.alpha = clamp(alpha);
+        }
+
+        /**
+         * Calculates the contrast between this and another color.
+         * @param {Color} other The other color.
+         * @return {number} The contrast ratio.
+         */
+        contrast(other) {
+            const l1 = this.luma();
+            const l2 = other.luma();
+
+            if (l1 < l2) {
+                return (l2 + 0.05) / (l1 + 0.05);
+            }
+
+            return (l1 + 0.05) / (l2 + 0.05);
+        }
+
+        /**
+         * Fits the color into a supported gamut by reducing OKLCH chroma.
+         * @param {string} [space='srgb'] The target gamut identifier.
+         * @return {this} A color that fits within the requested gamut.
+         * @throws {TypeError} Thrown when gamut fitting is unsupported for the target space.
+         */
+        fitGamut(space = 'srgb') {
+            if (!Object.hasOwn(FIT_GAMUT_RANGES, space)) {
+                throw new TypeError(`Color space \`${space}\` does not support gamut fitting.`);
+            }
+
+            const converted = this.to(space);
+
+            if (isInGamut(converted, space, FIT_GAMUT_RANGES)) {
+                return this;
+            }
+
+            const okLch = this.toOkLch();
+            let low = 0;
+            let high = Math.max(0, okLch.getChroma());
+            let best = new this.constructor.OkLch(
+                okLch.getLightness(),
+                0,
+                okLch.getHue(),
+                okLch.getAlpha(),
+            );
+
+            for (let index = 0; index < 24; index += 1) {
+                const mid = (low + high) / 2;
+                const candidate = new this.constructor.OkLch(
+                    okLch.getLightness(),
+                    mid,
+                    okLch.getHue(),
+                    okLch.getAlpha(),
+                );
+
+                if (isInGamut(candidate.to(space), space, FIT_GAMUT_RANGES)) {
+                    best = candidate;
+                    low = mid;
+                } else {
+                    high = mid;
+                }
+            }
+
+            return best.to(this.constructor.COLOR_SPACE);
+        }
+
+        /**
+         * Returns the alpha channel.
+         * @return {number} The alpha channel value.
+         */
+        getAlpha() {
+            return this.alpha;
+        }
+
+        /**
+         * Returns the closest CSS named color for this color.
+         * @return {string} The nearest CSS color keyword.
+         */
+        label() {
+            const source = Object.values(this.toObject());
+            let closest = '';
+            let closestDistance = Number.POSITIVE_INFINITY;
+
+            for (const [label, hex] of Object.entries(CSS_COLORS)) {
+                const target = Object.values(this.constructor.fromString(hex).toObject());
+                const distance = Math.hypot(
+                    source[0] - target[0],
+                    source[1] - target[1],
+                    source[2] - target[2],
+                );
+
+                if (distance < closestDistance) {
+                    closest = label;
+                    closestDistance = distance;
+                }
+            }
+
+            return closest;
+        }
+
+        /**
+         * Returns the relative luminance for this color.
+         * @return {number} The relative luminance.
+         */
+        luma() {
+            return this.toSrgb().luma();
+        }
+
+        /**
+         * Returns the current color-space identifier.
+         * @return {string} The color-space identifier.
+         */
+        space() {
+            return this.constructor.COLOR_SPACE;
+        }
+
+        /**
+         * Converts the color to another color space.
+         * @param {string} space The target color-space identifier.
+         * @return {Color} The converted color.
+         * @throws {TypeError} Thrown when the target space is not supported.
+         */
+        to(space) {
+            if (!space || this.constructor.COLOR_SPACE === space) {
+                return this;
+            }
+
+            const method = CONVERSION_MAP[space];
+
+            if (!method) {
+                throw new TypeError(`Color space \`${space}\` is not valid.`);
+            }
+
+            return this[method]();
+        }
+
+        /**
+         * Converts the color to A98 RGB.
+         * @return {A98Rgb} The converted color.
+         */
+        toA98Rgb() {
+            return this.toXyzD65().toA98Rgb();
+        }
+
+        /**
+         * Serializes the color using CSS `color(...)` syntax.
+         * @param {boolean|null} [alpha=null] Whether to include alpha.
+         * @param {number} [precision=2] The numeric precision.
+         * @return {string} The serialized color string.
+         */
+        toColorString(alpha = null, precision = 2) {
+            alpha ??= this.alpha < 1;
+
+            const values = Object.values(this.toObject());
+            let result = `color(${this.constructor.COLOR_SPACE} ${roundValue(values[0], precision)} ${roundValue(values[1], precision)} ${roundValue(values[2], precision)}`;
+
+            if (alpha) {
+                result += ` / ${roundValue(this.alpha, precision)}`;
+            }
+
+            result += ')';
+
+            return result;
+        }
+
+        /**
+         * Converts the color to Display P3.
+         * @return {DisplayP3} The converted color.
+         */
+        toDisplayP3() {
+            return this.toDisplayP3Linear().toDisplayP3();
+        }
+
+        /**
+         * Converts the color to linear Display P3.
+         * @return {DisplayP3Linear} The converted color.
+         */
+        toDisplayP3Linear() {
+            return this.toXyzD65().toDisplayP3Linear();
+        }
+
+        /**
+         * Converts the color to Hex/RGB keyword formatting.
+         * @return {Hex} The converted color.
+         */
+        toHex() {
+            return this.toRgb().toHex();
+        }
+
+        /**
+         * Converts the color to HSL.
+         * @return {Hsl} The converted color.
+         */
+        toHsl() {
+            return this.toSrgb().toHsl();
+        }
+
+        /**
+         * Converts the color to HWB.
+         * @return {Hwb} The converted color.
+         */
+        toHwb() {
+            return this.toSrgb().toHwb();
+        }
+
+        /**
+         * Converts the color to Lab.
+         * @return {Lab} The converted color.
+         */
+        toLab() {
+            return this.toXyzD50().toLab();
+        }
+
+        /**
+         * Converts the color to LCH.
+         * @return {Lch} The converted color.
+         */
+        toLch() {
+            return this.toLab().toLch();
+        }
+
+        /**
+         * Returns the color state as a plain object.
+         * @return {Record<string, number>} The channel object.
+         * @throws {TypeError} Thrown when a subclass does not implement serialization.
+         */
+        toObject() {
+            throw new TypeError('Color.toObject must be implemented by subclasses.');
+        }
+
+        /**
+         * Converts the color to OKLab.
+         * @return {OkLab} The converted color.
+         */
+        toOkLab() {
+            return this.toXyzD65().toOkLab();
+        }
+
+        /**
+         * Converts the color to OKLCH.
+         * @return {OkLch} The converted color.
+         */
+        toOkLch() {
+            return this.toOkLab().toOkLch();
+        }
+
+        /**
+         * Converts the color to ProPhoto RGB.
+         * @return {ProPhotoRgb} The converted color.
+         */
+        toProPhotoRgb() {
+            return this.toXyzD50().toProPhotoRgb();
+        }
+
+        /**
+         * Converts the color to Rec. 2020.
+         * @return {Rec2020} The converted color.
+         */
+        toRec2020() {
+            return this.toXyzD65().toRec2020();
+        }
+
+        /**
+         * Converts the color to RGB.
+         * @return {Rgb} The converted color.
+         */
+        toRgb() {
+            return this.toSrgb().toRgb();
+        }
+
+        /**
+         * Converts the color to sRGB.
+         * @return {Srgb} The converted color.
+         */
+        toSrgb() {
+            return this.toSrgbLinear().toSrgb();
+        }
+
+        /**
+         * Converts the color to linear sRGB.
+         * @return {SrgbLinear} The converted color.
+         */
+        toSrgbLinear() {
+            return this.toXyzD65().toSrgbLinear();
+        }
+
+        /**
+         * Serializes the color to a CSS string.
+         * @param {boolean|null} [alpha=null] Whether to include alpha when the format supports it.
+         * @param {number} [precision=2] The numeric precision when the format supports it.
+         * @return {string} The serialized color string.
+         * @throws {TypeError} Thrown when a subclass does not implement string formatting.
+         */
+        toString() {
+            throw new TypeError('Color.toString must be implemented by subclasses.');
+        }
+
+        /**
+         * Converts the color to XYZ D50.
+         * @return {XyzD50} The converted color.
+         */
+        toXyzD50() {
+            return this.toXyzD65().toXyzD50();
+        }
+
+        /**
+         * Converts the color to XYZ D65.
+         * @return {XyzD65} The converted color.
+         */
+        toXyzD65() {
+            return this.toSrgbLinear().toXyzD65();
+        }
+
+        /**
+         * Returns a copy with a different alpha channel.
+         * @param {number} alpha The replacement alpha channel.
+         * @return {this} A new color instance.
+         */
+        withAlpha(alpha) {
+            return new this.constructor(...Object.values({
+                ...this.toObject(),
+                alpha,
+            }));
+        }
+    }
+
+    /**
+     * Shared RGB-style channel storage and immutable update helpers.
+     */
+    class RgbColor extends Color {
+        /**
+         * Creates an RGB-like color with red, green, blue, and alpha channels.
+         * @param {number} [red=0] The red channel value.
+         * @param {number} [green=0] The green channel value.
+         * @param {number} [blue=0] The blue channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         */
+        constructor(red = 0, green = 0, blue = 0, alpha = 1) {
+            super(alpha);
+            ensureFinite(red);
+            ensureFinite(green);
+            ensureFinite(blue);
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
+            Object.freeze(this);
+        }
+
+        /**
+         * Returns the blue channel.
+         * @return {number} The blue channel value.
+         */
+        getBlue() {
+            return this.blue;
+        }
+
+        /**
+         * Returns the green channel.
+         * @return {number} The green channel value.
+         */
+        getGreen() {
+            return this.green;
+        }
+
+        /**
+         * Returns the red channel.
+         * @return {number} The red channel value.
+         */
+        getRed() {
+            return this.red;
+        }
+
+        /**
+         * Returns the color state as a plain object.
+         * @return {{red: number, green: number, blue: number, alpha: number}} The channel object.
+         */
+        toObject() {
+            return {
+                red: this.red,
+                green: this.green,
+                blue: this.blue,
+                alpha: this.alpha,
+            };
+        }
+
+        /**
+         * Returns a copy with a different blue channel.
+         * @param {number} blue The replacement blue channel.
+         * @return {RgbColor} A new color instance.
+         */
+        withBlue(blue) {
+            return new this.constructor(this.red, this.green, blue, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different green channel.
+         * @param {number} green The replacement green channel.
+         * @return {RgbColor} A new color instance.
+         */
+        withGreen(green) {
+            return new this.constructor(this.red, green, this.blue, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different red channel.
+         * @param {number} red The replacement red channel.
+         * @return {RgbColor} A new color instance.
+         */
+        withRed(red) {
+            return new this.constructor(red, this.green, this.blue, this.alpha);
+        }
+    }
+
+    /**
+     * Applies a sign-preserving power transform.
+     * @param {number} value The value.
+     * @param {number} exponent The exponent.
+     * @return {number} The transformed value.
+     */
+    const powSigned = (value, exponent) => {
+        return value < 0 ?
+            -(Math.pow(-value, exponent)) :
+            Math.pow(value, exponent);
     };
 
     /**
-     * Create a new Color by mixing two colors together by a specified amount.
-     * @param {Color} color1 The first Color.
-     * @param {Color} color2 The second Color.
-     * @param {number} amount The amount to mix them by. (0, 1)
-     * @return {Color} A new Color object.
+     * Calculates the R, G or B value via hue interpolation.
+     * @param {number} p The first value.
+     * @param {number} q The second value.
+     * @param {number} t The shifted hue value.
+     * @return {number} The R, G or B value.
      */
-    function mix(color1, color2, amount) {
-        const r = lerp(color1.r, color2.r, amount);
-        const g = lerp(color1.g, color2.g, amount);
-        const b = lerp(color1.b, color2.b, amount);
+    const rgbHue = (p, q, t) => {
+        t = (t + 1) % 1;
 
-        return new Color(r, g, b);
-    }
-    /**
-     * Create a new Color by multiplying two colors together by a specified amount.
-     * @param {Color} color1 The first Color.
-     * @param {Color} color2 The second Color.
-     * @param {number} amount The amount to multiply them by. (0, 1)
-     * @return {Color} A new Color object.
-     */
-    function multiply(color1, color2, amount) {
-        const r = lerp(color1.r, color1.r * color2.r / 255, amount);
-        const g = lerp(color1.g, color1.g * color2.g / 255, amount);
-        const b = lerp(color1.b, color1.b * color2.b / 255, amount);
+        if (t < (1 / 6)) {
+            return p + ((q - p) * 6 * t);
+        }
 
-        return new Color(r, g, b);
-    }
+        if (t < (1 / 2)) {
+            return q;
+        }
+
+        if (t < (2 / 3)) {
+            return p + (((q - p) * ((2 / 3) - t)) * 6);
+        }
+
+        return p;
+    };
 
     /**
-     * Color Attributes
+     * Converts A98 RGB color values to XYZ D65.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The XYZ D65 values.
      */
+    const a98RgbToXyzD65 = (r, g, b) => {
+        r = powSigned(r, 2.19921875);
+        g = powSigned(g, 2.19921875);
+        b = powSigned(b, 2.19921875);
 
+        return [
+            (0.576669042903413 * r) + (0.185558237906552 * g) + (0.188228607860995 * b),
+            (0.297344975250536 * r) + (0.627363566255474 * g) + (0.075291458837511 * b),
+            (0.027031361071147 * r) + (0.070690207263094 * g) + (0.991337536548046 * b),
+        ];
+    };
 
     /**
-     * Get the alpha value of the color.
-     * @return {number} The alpha value. (0, 1)
+     * Converts Display P3 Linear color values to Display P3.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The Display P3 values.
      */
-    function getAlpha() {
-        return this.a;
-    }
-    /**
-     * Get the brightness value of the color.
-     * @return {number} The brightness value. (0, 100)
-     */
-    function getBrightness() {
-        return rgb2hsv(this.r, this.g, this.b)[2];
-    }
-    /**
-     * Get the hue value of the color.
-     * @return {number} The hue value. (0, 360)
-     */
-    function getHue() {
-        return rgb2hsv(this.r, this.g, this.b)[0];
-    }
-    /**
-     * Get the saturation value of the color.
-     * @return {number} The saturation value. (0, 100)
-     */
-    function getSaturation() {
-        return rgb2hsv(this.r, this.g, this.b)[1];
-    }
-    /**
-     * Get the relative luminance value of the color
-     * @return {number} The relative luminance value. (0, 1)
-     */
-    function luma() {
-        return rgbLuma(this.r, this.g, this.b);
-    }
-    /**
-     * Set the alpha value of the color.
-     * @param {number} a The alpha value. (0, 1)
-     * @return {Color} The modified Color object.
-     */
-    function setAlpha(a) {
-        return new Color(this.r, this.g, this.b, a);
-    }
-    /**
-     * Set the brightness value of the color.
-     * @param {number} v The brightness value. (0, 100)
-     * @return {Color} The modified Color object.
-     */
-    function setBrightness(v) {
-        const [h, s, _] = rgb2hsv(this.r, this.g, this.b);
-        const [r, g, b] = hsv2rgb(h, s, v);
+    const displayP3LinearToDisplayP3 = (r, g, b) => {
+        const gamma = 1 / 2.4;
+        const encode = (value) => value <= 0.0031308 ?
+            (value * 12.92) :
+            ((1.055 * Math.pow(value, gamma)) - 0.055);
 
-        return new Color(r, g, b, this.a);
-    }
+        return [encode(r), encode(g), encode(b)];
+    };
+
     /**
-     * Set the hue value of the color.
+     * Converts Display P3 Linear color values to XYZ D65.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The XYZ D65 values.
+     */
+    const displayP3LinearToXyzD65 = (r, g, b) => {
+        return [
+            (0.4865709486482162 * r) + (0.2656676931690931 * g) + (0.1982172852343625 * b),
+            (0.2289745640697488 * r) + (0.6917385218365064 * g) + (0.0792869140937450 * b),
+            (0.0451133818589026 * g) + (1.043944368900976 * b),
+        ];
+    };
+
+    /**
+     * Converts Display P3 color values to Display P3 Linear.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The Display P3 Linear values.
+     */
+    const displayP3ToDisplayP3Linear = (r, g, b) => {
+        const decode = (value) => value <= 0.04045 ?
+            (value / 12.92) :
+            Math.pow((value + 0.055) / 1.055, 2.4);
+
+        return [decode(r), decode(g), decode(b)];
+    };
+
+    /**
+     * Converts HSL color values to SRGB.
      * @param {number} h The hue value. (0, 360)
-     * @return {Color} The modified Color object.
+     * @param {number} s The saturation value. (0, 1)
+     * @param {number} l The lightness value. (0, 1)
+     * @return {[number, number, number]} The SRGB values.
      */
-    function setHue(h) {
-        const [_, s, v] = rgb2hsv(this.r, this.g, this.b);
-        const [r, g, b] = hsv2rgb(h, s, v);
+    const hslToSrgb = (h, s, l) => {
+        h = (h % 360) / 360;
 
-        return new Color(r, g, b, this.a);
-    }
-    /**
-     * Set the saturation value of the color.
-     * @param {number} s The saturation value. (0, 100)
-     * @return {Color} The modified Color object.
-     */
-    function setSaturation(s) {
-        const [h, _, v] = rgb2hsv(this.r, this.g, this.b);
-        const [r, g, b] = hsv2rgb(h, s, v);
+        let r = l;
+        let g = l;
+        let b = l;
 
-        return new Color(r, g, b, this.a);
-    }
+        if (s !== 0) {
+            const q = l < 0.5 ?
+                (l * (1 + s)) :
+                (l + s - (l * s));
+            const p = (2 * l) - q;
+            r = rgbHue(p, q, h + (1 / 3));
+            g = rgbHue(p, q, h);
+            b = rgbHue(p, q, h - (1 / 3));
+        }
 
-    /**
-     * Color Manipulation
-     */
-
-    const white = new Color(100);
-    const grey = new Color(50);
-    const black = new Color(0);
+        return [r, g, b];
+    };
 
     /**
-     * Darken the color by a specified amount.
-     * @param {number} amount The amount to darken the color by. (0, 1)
-     * @return {Color} The darkened Color object.
+     * Converts HSV color values to SRGB.
+     * @param {number} h The hue value. (0, 360)
+     * @param {number} s The saturation value. (0, 1)
+     * @param {number} v The brightness value. (0, 1)
+     * @return {[number, number, number]} The SRGB values.
      */
-    function darken(amount) {
-        let [h, s, l] = rgb2hsl(this.r, this.g, this.b);
-        l -= l * amount;
-        const [r, g, b] = hsl2rgb(h, s, l);
+    const hsvToSrgb = (h, s, v) => {
+        h = (h + 360) % 360;
+        const c = v * s;
+        const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+        const m = v - c;
 
-        return new Color(r, g, b, this.a);
-    }
-    /**
-     * Invert the color.
-     * @return {Color} The inverted Color object.
-     */
-    function invert() {
-        return new Color(
-            255 - this.r,
-            255 - this.g,
-            255 - this.b,
-            this.a,
-        );
-    }
-    /**
-     * Lighten the color by a specified amount.
-     * @param {number} amount The amount to lighten the color by. (0, 1)
-     * @return {Color} The lightened Color object.
-     */
-    function lighten(amount) {
-        let [h, s, l] = rgb2hsl(this.r, this.g, this.b);
-        l += (100 - l) * amount;
-        const [r, g, b] = hsl2rgb(h, s, l);
+        let r1;
+        let g1;
+        let b1;
 
-        return new Color(r, g, b, this.a);
-    }
-    /**
-     * Shade the color by a specified amount.
-     * @param {number} amount The amount to shade the color by. (0, 1)
-     * @return {Color} The shaded Color object.
-     */
-    function shade(amount) {
-        return mix(this, black, amount);
-    }
-    /**
-     * Tint the color by a specified amount.
-     * @param {number} amount The amount to tint the color by. (0, 1)
-     * @return {Color} The tinted Color object.
-     */
-    function tint(amount) {
-        return mix(this, white, amount);
-    }
-    /**
-     * Tone the color by a specified amount.
-     * @param {number} amount The amount to tone the color by. (0, 1)
-     * @return {Color} The toned Color object.
-     */
-    function tone(amount) {
-        return mix(this, grey, amount);
-    }
+        if (h < 60) {
+            [r1, g1, b1] = [c, x, 0];
+        } else if (h < 120) {
+            [r1, g1, b1] = [x, c, 0];
+        } else if (h < 180) {
+            [r1, g1, b1] = [0, c, x];
+        } else if (h < 240) {
+            [r1, g1, b1] = [0, x, c];
+        } else if (h < 300) {
+            [r1, g1, b1] = [x, 0, c];
+        } else {
+            [r1, g1, b1] = [c, 0, x];
+        }
+
+        return [r1 + m, g1 + m, b1 + m];
+    };
 
     /**
-     * Get the closest color name for the color.
-     * @return {string} The name.
+     * Converts HWB color values to SRGB.
+     * @param {number} h The hue value. (0, 360)
+     * @param {number} w The whiteness value. (0, 1)
+     * @param {number} bl The blackness value. (0, 1)
+     * @return {[number, number, number]} The SRGB values.
      */
-    function label() {
-        let closest;
-        let closestDistance = Number.MAX_SAFE_INTEGER;
+    const hwbToSrgb = (h, w, bl) => {
+        const total = w + bl;
 
-        for (const label in colors) {
-            if (!{}.hasOwnProperty.call(colors, label)) {
-                continue;
+        if (total > 1) {
+            w /= total;
+            bl /= total;
+        }
+
+        const [r, g, b] = hsvToSrgb(h, 1, 1);
+        const factor = 1 - w - bl;
+
+        return [
+            (r * factor) + w,
+            (g * factor) + w,
+            (b * factor) + w,
+        ];
+    };
+
+    /**
+     * Converts LAB color values to LCH.
+     * @param {number} L The lightness value. (0, 100)
+     * @param {number} a The a value. (-128, 127)
+     * @param {number} b The b value. (-128, 127)
+     * @return {[number, number, number]} The LCH values.
+     */
+    const labToLch = (L, a, b) => {
+        const C = Math.hypot(a, b);
+        let H = (Math.atan2(b, a) * 180 / Math.PI) % 360;
+
+        if (H < 0) {
+            H += 360;
+        }
+
+        return [L, C, H];
+    };
+
+    /**
+     * Converts LAB color values to XYZ D50.
+     * @param {number} L The lightness value. (0, 100)
+     * @param {number} a The a value. (-128, 127)
+     * @param {number} b The b value. (-128, 127)
+     * @return {[number, number, number]} The XYZ D50 values.
+     */
+    const labToXyzD50 = (L, a, b) => {
+        const fy = (L + 16) / 116;
+        const fx = fy + (a / 500);
+        const fz = fy - (b / 200);
+
+        const fx3 = fx ** 3;
+        const fz3 = fz ** 3;
+
+        const xr = fx3 > 0.008856 ?
+            fx3 :
+            ((fx - (16 / 116)) / 7.787);
+        const yr = L > (903.3 * 0.008856) ?
+            (fy ** 3) :
+            (L / 903.3);
+        const zr = fz3 > 0.008856 ?
+            fz3 :
+            ((fz - (16 / 116)) / 7.787);
+
+        return [
+            xr * 0.96422,
+            yr,
+            zr * 0.82521,
+        ];
+    };
+
+    /**
+     * Converts LCH color values to LAB.
+     * @param {number} L The lightness value. (0, 100)
+     * @param {number} C The chroma value. (0, 230)
+     * @param {number} H The hue value. (0, 360)
+     * @return {[number, number, number]} The LAB values.
+     */
+    const lchToLab = (L, C, H) => {
+        const radians = H * Math.PI / 180;
+
+        return [
+            L,
+            C * Math.cos(radians),
+            C * Math.sin(radians),
+        ];
+    };
+
+    /**
+     * Converts OK LAB color values to OK LCH.
+     * @param {number} L The lightness value. (0, 1)
+     * @param {number} a The a value. (-0.4, 0.4)
+     * @param {number} b The b value. (-0.4, 0.4)
+     * @return {[number, number, number]} The OK LCH values.
+     */
+    const okLabToOkLch = (L, a, b) => {
+        const C = Math.hypot(a, b);
+        let H = (Math.atan2(b, a) * 180 / Math.PI) % 360;
+
+        if (H < 0) {
+            H += 360;
+        }
+
+        return [L, C, H];
+    };
+
+    /**
+     * Converts OK LAB color values to XYZ D65.
+     * @param {number} L The lightness value. (0, 1)
+     * @param {number} a The a value. (-0.4, 0.4)
+     * @param {number} b The b value. (-0.4, 0.4)
+     * @return {[number, number, number]} The XYZ D65 values.
+     */
+    const okLabToXyzD65 = (L, a, b) => {
+        const l = Math.pow(L + (0.3963377774 * a) + (0.2158037573 * b), 3);
+        const m = Math.pow(L - (0.1055613458 * a) - (0.0638541728 * b), 3);
+        const s = Math.pow(L - (0.0894841775 * a) - (1.2914855480 * b), 3);
+
+        return [
+            (1.2270138511 * l) - (0.5577999807 * m) + (0.2812561490 * s),
+            (-0.0405801784 * l) + (1.1122568696 * m) - (0.0716766787 * s),
+            (-0.0763812845 * l) - (0.4214819784 * m) + (1.5861632204 * s),
+        ];
+    };
+
+    /**
+     * Converts OK LCH color values to OK LAB.
+     * @param {number} L The lightness value. (0, 1)
+     * @param {number} C The chroma value. (0, 0.4)
+     * @param {number} H The hue value. (0, 360)
+     * @return {[number, number, number]} The OK LAB values.
+     */
+    const okLchToOkLab = (L, C, H) => {
+        const radians = H * Math.PI / 180;
+
+        return [
+            L,
+            C * Math.cos(radians),
+            C * Math.sin(radians),
+        ];
+    };
+
+    /**
+     * Converts ProPhoto RGB color values to XYZ D50.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The XYZ D50 values.
+     */
+    const prophotoRgbToXyzD50 = (r, g, b) => {
+        const decode = (value) => value <= 0.03125 ?
+            (value / 16) :
+            Math.pow(value, 1.8);
+
+        r = decode(r);
+        g = decode(g);
+        b = decode(b);
+
+        return [
+            (0.7976749 * r) + (0.1351917 * g) + (0.0313534 * b),
+            (0.2880402 * r) + (0.7118741 * g) + (0.0000857 * b),
+            0.8252100 * b,
+        ];
+    };
+
+    /**
+     * Converts Rec. 2020 color values to XYZ D65.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The XYZ D65 values.
+     */
+    const rec2020ToXyzD65 = (r, g, b) => {
+        const decode = (value) => value <= 0.08145 ?
+            (value / 4.5) :
+            Math.pow((value + 0.099) / 1.099, 2.2);
+
+        r = decode(r);
+        g = decode(g);
+        b = decode(b);
+
+        return [
+            (0.6369580483012914 * r) + (0.14461690358620832 * g) + (0.1688809751641721 * b),
+            (0.2627002120112671 * r) + (0.6779980715188708 * g) + (0.05930171646986196 * b),
+            (0.028072693049087428 * g) + (1.060985057710791 * b),
+        ];
+    };
+
+    /**
+     * Converts RGB color values to SRGB.
+     * @param {number} r The red value. (0, 255)
+     * @param {number} g The green value. (0, 255)
+     * @param {number} b The blue value. (0, 255)
+     * @return {[number, number, number]} The SRGB values.
+     */
+    const rgbToSrgb = (r, g, b) => {
+        return [r / 255, g / 255, b / 255];
+    };
+
+    /**
+     * Converts SRGB Linear color values to SRGB.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The SRGB values.
+     */
+    const srgbLinearToSrgb = (r, g, b) => {
+        const gamma = 1 / 2.4;
+        const encode = (value) => value <= 0.0031308 ?
+            (value * 12.92) :
+            ((1.055 * Math.pow(value, gamma)) - 0.055);
+
+        return [encode(r), encode(g), encode(b)];
+    };
+
+    /**
+     * Converts SRGB Linear color values to XYZ D65.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The XYZ D65 values.
+     */
+    const srgbLinearToXyzD65 = (r, g, b) => {
+        return [
+            (0.4124564 * r) + (0.3575761 * g) + (0.1804375 * b),
+            (0.2126729 * r) + (0.7151522 * g) + (0.0721750 * b),
+            (0.0193339 * r) + (0.1191920 * g) + (0.9503041 * b),
+        ];
+    };
+
+    /**
+     * Converts SRGB color values to HSL.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The HSL values.
+     */
+    const srgbToHsl = (r, g, b) => {
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const l = (max + min) / 2;
+        const d = max - min;
+
+        let h;
+        let s;
+
+        if (d < 1e-12) {
+            h = 0;
+            s = 0;
+        } else {
+            s = l > 0.5 ?
+                (d / (2 - max - min)) :
+                (d / (max + min));
+
+            switch (max) {
+                case r:
+                    h = ((g - b) / d) + (g < b ? 6 : 0);
+                    break;
+                case g:
+                    h = ((b - r) / d) + 2;
+                    break;
+                case b:
+                    h = ((r - g) / d) + 4;
+                    break;
+                default:
+                    h = 0;
+                    break;
             }
 
-            const color = fromHexString(colors[label]);
-            const distance = dist(this, color);
+            h = (h * 60) % 360;
 
-            if (distance < closestDistance) {
-                closest = label;
-                closestDistance = distance;
+            if (h < 0) {
+                h += 360;
             }
         }
 
-        return closest;
-    }
+        return [h, s, l];
+    };
+
     /**
-     * Return a hexadecimal string representation of the color.
-     * @return {string} The hexadecimal string.
+     * Converts SRGB color values to HSV.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The HSV values.
      */
-    function toHexString() {
-        const hex = rgba2hex(this.r, this.g, this.b, this.a);
+    const srgbToHsv = (r, g, b) => {
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const v = max;
+        const d = max - min;
+        const s = max < 1e-12 ?
+            0 :
+            (d / max);
 
-        return toHex(hex);
-    }
-    /**
-     * Return a HSL/HSLA string representation of the color.
-     * @return {string} The HSL/HSLA string.
-     */
-    function toHSLString() {
-        let [h, s, l] = rgb2hsl(this.r, this.g, this.b);
+        let h;
 
-        h = Math.round(h);
-        s = Math.round(s);
-        l = Math.round(l);
-        const a = Math.round(this.a * 100);
-
-        if (a < 100) {
-            return `hsl(${h}deg ${s}% ${l}% / ${a}%)`;
+        if (d < 1e-12) {
+            h = 0;
+        } else if (max === r) {
+            h = 60 * (((g - b) / d) % 6);
+        } else if (max === g) {
+            h = 60 * (((b - r) / d) + 2);
+        } else {
+            h = 60 * (((r - g) / d) + 4);
         }
 
-        return `hsl(${h}deg ${s}% ${l}%)`;
-    }
-    /**
-     * Return a RGB/RGBA string representation of the color.
-     * @return {string} The RGB/RGBA string.
-     */
-    function toRGBString() {
-        const r = Math.round(this.r);
-        const g = Math.round(this.g);
-        const b = Math.round(this.b);
-        const a = Math.round(this.a * 100);
+        h %= 360;
 
-        if (a < 100) {
-            return `rgb(${r} ${g} ${b} / ${a}%)`;
+        if (h < 0) {
+            h += 360;
         }
 
-        return `rgb(${r} ${g} ${b})`;
-    }
-    /**
-     * Return a HTML string representation of the color.
-     * @return {string} The HTML color string.
-     */
-    function toString() {
-        if (!this.a) {
-            return 'transparent';
-        }
-
-        if (this.a < 1) {
-            return this.toRGBString();
-        }
-
-        const hex = rgba2hex(this.r, this.g, this.b, this.a);
-
-        if (hex in hexLookup) {
-            return hexLookup[hex];
-        }
-
-        return toHex(hex);
-    }
+        return [h, s, v];
+    };
 
     /**
-     * Color Palette
+     * Converts SRGB color values to HWB.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The HWB values.
      */
-
-    /**
-     * Create a palette object with a specified number of shades, tints and tone variations.
-     * @param {object} [options] The options for generating a palette.
-     * @param {number} [options.shades=10] The number of shades to generate.
-     * @param {number} [options.tints=10] The number of tints to generate.
-     * @param {number} [options.tones=10] The number of tones to generate.
-     * @return {object} A palette object.
-     */
-    function palette({ shades = 10, tints = 10, tones = 10 } = {}) {
-        return {
-            shades: this.shades(shades),
-            tints: this.tints(tints),
-            tones: this.tones(tones),
-        };
-    }
-    /**
-     * Create an array with a specified number of shade variations.
-     * @param {number} [shades=10] The number of shades to generate.
-     * @return {Color[]} An array containing shade variations.
-     */
-    function shades(shades = 10) {
-        return new Array(shades)
-            .fill()
-            .map(
-                (_, index) => this.shade(index / (shades + 1)),
-            );
-    }
-    /**
-     * Create an array with a specified number of tint variations.
-     * @param {number} [tints=10] The number of tints to generate.
-     * @return {Color[]} An array containing tint variations.
-     */
-    function tints(tints = 10) {
-        return new Array(tints)
-            .fill()
-            .map(
-                (_, index) => this.tint(index / (tints + 1)),
-            );
-    }
-    /**
-     * Create an array with a specified number of tone variations.
-     * @param {number} [tones=10] The number of tones to generate.
-     * @return {Color[]} An array containing tone variations.
-     */
-    function tones(tones = 10) {
-        return new Array(tones)
-            .fill()
-            .map(
-                (_, index) => this.tone(index / (tones + 1)),
-            );
-    }
-
-    /**
-     * Color Schemes
-     */
-
-    /**
-     * Create an array with 2 analogous color variations.
-     * @return {Color[]} An array containing 2 analogous color variations.
-     */
-    function analogous() {
-        const [h, s, v] = rgb2hsv(this.r, this.g, this.b);
-        const [r1, g1, b1] = hsv2rgb(h + 30, s, v);
-        const [r2, g2, b2] = hsv2rgb(h - 30, s, v);
+    const srgbToHwb = (r, g, b) => {
+        const [h] = srgbToHsv(r, g, b);
 
         return [
-            new Color(r1, g1, b1, this.a),
-            new Color(r2, g2, b2, this.a),
+            h,
+            Math.min(r, g, b),
+            1 - Math.max(r, g, b),
         ];
-    }
-    /**
-     * Create a complementary color variation.
-     * @return {Color} A complementary color variation.
-     */
-    function complementary() {
-        const [h, s, v] = rgb2hsv(this.r, this.g, this.b);
-        const [r, g, b] = hsv2rgb(h + 180, s, v);
+    };
 
-        return new Color(r, g, b, this.a);
-    }
     /**
-     * Create an array with 2 split color variations.
-     * @return {Color[]} An array containing 2 split color variations.
+     * Converts SRGB color values to luma.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {number} The luma value.
      */
-    function split() {
-        const [h, s, v] = rgb2hsv(this.r, this.g, this.b);
-        const [r1, g1, b1] = hsv2rgb(h + 150, s, v);
-        const [r2, g2, b2] = hsv2rgb(h - 150, s, v);
+    const srgbToLuma = (r, g, b) => {
+        const decode = (value) => value <= 0.03928 ?
+            (value / 12.92) :
+            Math.pow((value + 0.055) / 1.055, 2.4);
+
+        r = decode(r);
+        g = decode(g);
+        b = decode(b);
+
+        return (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
+    };
+
+    /**
+     * Converts SRGB color values to RGB.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The RGB values.
+     */
+    const srgbToRgb = (r, g, b) => {
+        return [r * 255, g * 255, b * 255];
+    };
+
+    /**
+     * Converts SRGB color values to SRGB Linear.
+     * @param {number} r The red value. (0, 1)
+     * @param {number} g The green value. (0, 1)
+     * @param {number} b The blue value. (0, 1)
+     * @return {[number, number, number]} The SRGB Linear values.
+     */
+    const srgbToSrgbLinear = (r, g, b) => {
+        const decode = (value) => value <= 0.04045 ?
+            (value / 12.92) :
+            Math.pow((value + 0.055) / 1.055, 2.4);
+
+        return [decode(r), decode(g), decode(b)];
+    };
+
+    /**
+     * Converts XYZ D50 color values to LAB.
+     * @param {number} x The x value. (0, 1)
+     * @param {number} y The y value. (0, 1)
+     * @param {number} z The z value. (0, 1)
+     * @return {[number, number, number]} The LAB values.
+     */
+    const xyzD50ToLab = (x, y, z) => {
+        const encode = (value) => value > 0.008856 ?
+            Math.pow(value, 1 / 3) :
+            (((903.3 * value) + 16) / 116);
+
+        const xr = x / 0.96422;
+        const yr = y;
+        const zr = z / 0.82521;
+
+        const fx = encode(xr);
+        const fy = encode(yr);
+        const fz = encode(zr);
 
         return [
-            new Color(r1, g1, b1, this.a),
-            new Color(r2, g2, b2, this.a),
+            (116 * fy) - 16,
+            500 * (fx - fy),
+            200 * (fy - fz),
         ];
-    }
+    };
+
     /**
-     * Create an array with 3 tetradic color variations.
-     * @return {Color[]} An array containing 3 tetradic color variations.
+     * Converts XYZ D50 color values to ProPhoto RGB.
+     * @param {number} x The x value. (0, 1)
+     * @param {number} y The y value. (0, 1)
+     * @param {number} z The z value. (0, 1)
+     * @return {[number, number, number]} The ProPhoto RGB values.
      */
-    function tetradic() {
-        const [h, s, v] = rgb2hsv(this.r, this.g, this.b);
-        const [r1, g1, b1] = hsv2rgb(h + 60, s, v);
-        const [r2, g2, b2] = hsv2rgb(h + 180, s, v);
-        const [r3, g3, b3] = hsv2rgb(h - 120, s, v);
+    const xyzD50ToProPhotoRgb = (x, y, z) => {
+        const encode = (value) => value <= 0.001953125 ?
+            (value * 16) :
+            Math.pow(value, 1 / 1.8);
+
+        let r = (1.3459433 * x) - (0.2556075 * y) - (0.0511118 * z);
+        let g = (-0.5445989 * x) + (1.5081673 * y) + (0.0205351 * z);
+        let b = 1.2118128 * z;
+
+        r = encode(r);
+        g = encode(g);
+        b = encode(b);
+
+        return [r, g, b];
+    };
+
+    /**
+     * Converts XYZ D50 color values to XYZ D65.
+     * @param {number} x The x value. (0, 1)
+     * @param {number} y The y value. (0, 1)
+     * @param {number} z The z value. (0, 1)
+     * @return {[number, number, number]} The XYZ D65 values.
+     */
+    const xyzD50ToXyzD65 = (x, y, z) => {
+        return [
+            (0.955576618511 * x) + (-0.023039344223 * y) + (0.063163638894 * z),
+            (-0.028289504216 * x) + (1.009941414544 * y) + (0.021007796040 * z),
+            (0.012298185122 * x) + (-0.020483208309 * y) + (1.329909796254 * z),
+        ];
+    };
+
+    /**
+     * Converts XYZ D65 color values to A98 RGB.
+     * @param {number} x The x value. (0, 1)
+     * @param {number} y The y value. (0, 1)
+     * @param {number} z The z value. (0, 1)
+     * @return {[number, number, number]} The A98 RGB values.
+     */
+    const xyzD65ToA98Rgb = (x, y, z) => {
+        const r = (2.0413690 * x) - (0.5649464 * y) - (0.3446944 * z);
+        const g = (-0.969266 * x) + (1.8760108 * y) + (0.0415560 * z);
+        const b = (0.0134474 * x) - (0.1183897 * y) + (1.0154096 * z);
+        const gamma = 1 / 2.19921875;
 
         return [
-            new Color(r1, g1, b1, this.a),
-            new Color(r2, g2, b2, this.a),
-            new Color(r3, g3, b3, this.a),
+            powSigned(r, gamma),
+            powSigned(g, gamma),
+            powSigned(b, gamma),
         ];
-    }
+    };
+
     /**
-     * Create an array with 2 triadic color variations.
-     * @return {Color[]} An array containing 2 triadic color variations.
+     * Converts XYZ D65 color values to Display P3 Linear.
+     * @param {number} x The x value. (0, 1)
+     * @param {number} y The y value. (0, 1)
+     * @param {number} z The z value. (0, 1)
+     * @return {[number, number, number]} The Display P3 Linear values.
      */
-    function triadic() {
-        const [h, s, v] = rgb2hsv(this.r, this.g, this.b);
-        const [r1, g1, b1] = hsv2rgb(h + 120, s, v);
-        const [r2, g2, b2] = hsv2rgb(h - 120, s, v);
+    const xyzD65ToDisplayP3Linear = (x, y, z) => {
+        return [
+            (2.493496911941425 * x) - (0.9313836179191239 * y) - (0.40271078445071684 * z),
+            (-0.8294889695615747 * x) + (1.7626640603183463 * y) + (0.023624685841943577 * z),
+            (0.03584583024378447 * x) - (0.07617238926804182 * y) + (0.9568845240076872 * z),
+        ];
+    };
+
+    /**
+     * Converts XYZ D65 color values to OK LAB.
+     * @param {number} x The x value. (0, 1)
+     * @param {number} y The y value. (0, 1)
+     * @param {number} z The z value. (0, 1)
+     * @return {[number, number, number]} The OK LAB values.
+     */
+    const xyzD65ToOkLab = (x, y, z) => {
+        const cbrt = (value) => value < 0 ?
+            -Math.pow(-value, 1 / 3) :
+            Math.pow(value, 1 / 3);
+
+        let l = (0.8189330101 * x) + (0.3618667424 * y) - (0.1288597137 * z);
+        let m = (0.0329845436 * x) + (0.9293118715 * y) + (0.0361456387 * z);
+        let s = (0.0482003018 * x) + (0.2643662691 * y) + (0.6338517070 * z);
+
+        l = cbrt(l);
+        m = cbrt(m);
+        s = cbrt(s);
 
         return [
-            new Color(r1, g1, b1, this.a),
-            new Color(r2, g2, b2, this.a),
+            (0.2104542553 * l) + (0.7936177850 * m) - (0.0040720468 * s),
+            (1.9779984951 * l) - (2.4285922050 * m) + (0.4505937099 * s),
+            (0.0259040371 * l) + (0.7827717662 * m) - (0.8086757660 * s),
         ];
+    };
+
+    /**
+     * Converts XYZ D65 color values to Rec. 2020.
+     * @param {number} x The x value. (0, 1)
+     * @param {number} y The y value. (0, 1)
+     * @param {number} z The z value. (0, 1)
+     * @return {[number, number, number]} The Rec. 2020 values.
+     */
+    const xyzD65ToRec2020 = (x, y, z) => {
+        const encode = (value) => value <= 0.0181 ?
+            (value * 4.5) :
+            ((1.099 * Math.pow(value, 1 / 2.2)) - 0.099);
+
+        let r = (1.716651187971268 * x) - (0.355670783776392 * y) - (0.253366281373660 * z);
+        let g = (-0.666684351832489 * x) + (1.616481236634939 * y) + (0.015768545813911 * z);
+        let b = (0.017639857445310 * x) - (0.042770613257808 * y) + (0.942103121235474 * z);
+
+        r = encode(r);
+        g = encode(g);
+        b = encode(b);
+
+        return [r, g, b];
+    };
+
+    /**
+     * Converts XYZ D65 color values to SRGB Linear.
+     * @param {number} x The x value. (0, 1)
+     * @param {number} y The y value. (0, 1)
+     * @param {number} z The z value. (0, 1)
+     * @return {[number, number, number]} The SRGB Linear values.
+     */
+    const xyzD65ToSrgbLinear = (x, y, z) => {
+        return [
+            (3.2404542 * x) - (1.5371385 * y) - (0.4985314 * z),
+            (-0.969266 * x) + (1.8760108 * y) + (0.0415560 * z),
+            (0.0556434 * x) - (0.2040259 * y) + (1.0572252 * z),
+        ];
+    };
+
+    /**
+     * Converts XYZ D65 color values to XYZ D50.
+     * @param {number} x The x value. (0, 1)
+     * @param {number} y The y value. (0, 1)
+     * @param {number} z The z value. (0, 1)
+     * @return {[number, number, number]} The XYZ D50 values.
+     */
+    const xyzD65ToXyzD50 = (x, y, z) => {
+        return [
+            (1.047811216997 * x) + (0.022886603691 * y) + (-0.050127010796 * z),
+            (0.029542454198 * x) + (0.990484427399 * y) + (-0.017049093754 * z),
+            (-0.0092344585052 * x) + (0.015043613370 * y) + (0.752131651235 * z),
+        ];
+    };
+
+    /**
+     * Represents an A98 RGB color.
+     */
+    class A98Rgb extends RgbColor {
+        static COLOR_SPACE = 'a98-rgb';
+
+        /** @inheritdoc */
+        toA98Rgb() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toString(alpha = null, precision = 2) {
+            return this.toColorString(alpha, precision);
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            const [x, y, z] = a98RgbToXyzD65(this.red, this.green, this.blue);
+
+            return new this.constructor.XyzD65(x, y, z, this.alpha);
+        }
     }
 
-    Color.contrast = contrast;
-    Color.dist = dist;
-    Color.findContrast = findContrast;
-    Color.fromCMY = fromCMY;
-    Color.fromCMYK = fromCMYK;
-    Color.fromHexString = fromHexString;
-    Color.fromHSL = fromHSL;
-    Color.fromHSLString = fromHSLString;
-    Color.fromHSV = fromHSV;
-    Color.fromRGB = fromRGB;
-    Color.fromRGBString = fromRGBString;
-    Color.fromString = fromString;
-    Color.mix = mix;
-    Color.multiply = multiply;
+    /**
+     * Represents a linear Display P3 color.
+     */
+    class DisplayP3Linear extends RgbColor {
+        static COLOR_SPACE = 'display-p3-linear';
 
-    const proto = Color.prototype;
+        /** @inheritdoc */
+        toDisplayP3() {
+            const [red, green, blue] = displayP3LinearToDisplayP3(this.red, this.green, this.blue);
 
-    proto.analogous = analogous;
-    proto.complementary = complementary;
-    proto.darken = darken;
-    proto.getAlpha = getAlpha;
-    proto.getBrightness = getBrightness;
-    proto.getHue = getHue;
-    proto.getSaturation = getSaturation;
-    proto.invert = invert;
-    proto.label = label;
-    proto.lighten = lighten;
-    proto.luma = luma;
-    proto.palette = palette;
-    proto.setAlpha = setAlpha;
-    proto.setBrightness = setBrightness;
-    proto.setHue = setHue;
-    proto.setSaturation = setSaturation;
-    proto.shade = shade;
-    proto.shades = shades;
-    proto.split = split;
-    proto.tetradic = tetradic;
-    proto.tint = tint;
-    proto.tints = tints;
-    proto.toHexString = toHexString;
-    proto.toHSLString = toHSLString;
-    proto.toRGBString = toRGBString;
-    proto.toString = toString;
-    proto.tone = tone;
-    proto.tones = tones;
-    proto.triadic = triadic;
+            return new this.constructor.DisplayP3(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toDisplayP3Linear() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toString(alpha = null, precision = 2) {
+            return this.toColorString(alpha, precision);
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            const [x, y, z] = displayP3LinearToXyzD65(this.red, this.green, this.blue);
+
+            return new this.constructor.XyzD65(x, y, z, this.alpha);
+        }
+    }
+
+    /**
+     * Represents a Display P3 color.
+     */
+    class DisplayP3 extends RgbColor {
+        static COLOR_SPACE = 'display-p3';
+
+        /** @inheritdoc */
+        toDisplayP3() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toDisplayP3Linear() {
+            const [red, green, blue] = displayP3ToDisplayP3Linear(this.red, this.green, this.blue);
+
+            return new this.constructor.DisplayP3Linear(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toString(alpha = null, precision = 2) {
+            return this.toColorString(alpha, precision);
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            return this.toDisplayP3Linear().toXyzD65();
+        }
+    }
+
+    /**
+     * Represents an RGB color using 0-255 channel values.
+     */
+    class Rgb extends RgbColor {
+        static COLOR_SPACE = 'rgb';
+
+        /**
+         * Returns the color as a hex string without the leading `#`.
+         * @param {boolean} [alpha=false] Whether to include alpha.
+         * @param {boolean} [shortenHex=true] Whether to shorten the hex form when possible.
+         * @return {string} The hex string.
+         */
+        getHex(alpha = false, shortenHex = true) {
+            const red = Math.trunc(clamp(Math.round(this.red), 0, 255));
+            const green = Math.trunc(clamp(Math.round(this.green), 0, 255));
+            const blue = Math.trunc(clamp(Math.round(this.blue), 0, 255));
+            const alphaValue = Math.trunc(clamp(Math.round(this.alpha * 255), 0, 255));
+
+            let result = alpha ?
+                `${red.toString(16).padStart(2, '0')}${green.toString(16).padStart(2, '0')}${blue.toString(16).padStart(2, '0')}${alphaValue.toString(16).padStart(2, '0')}` :
+                `${red.toString(16).padStart(2, '0')}${green.toString(16).padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`;
+
+            if (shortenHex) {
+                const match = result.match(/^([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3([0-9a-f])?\4?$/i);
+
+                if (match) {
+                    result = `${match[1]}${match[2]}${match[3]}${match[4] ?? ''}`;
+                }
+            }
+
+            return result;
+        }
+
+        /** @inheritdoc */
+        toHex() {
+            return new this.constructor.Hex(this.red, this.green, this.blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toRgb() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toSrgb() {
+            const [red, green, blue] = rgbToSrgb(this.red, this.green, this.blue);
+
+            return new this.constructor.Srgb(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toSrgbLinear() {
+            return this.toSrgb().toSrgbLinear();
+        }
+
+        /**
+         * Serializes the color using CSS `rgb(...)` syntax or a CSS named color.
+         * @param {boolean|null} [alpha=null] Whether to include alpha.
+         * @param {number} [precision=2] The numeric precision.
+         * @param {boolean} [name=false] Whether to prefer CSS named colors.
+         * @return {string} The serialized color string.
+         */
+        toString(alpha = null, precision = 2, name = false) {
+            alpha ??= this.alpha < 1;
+
+            if (name && this.alpha <= 0) {
+                return 'transparent';
+            }
+
+            if (name && this.alpha >= 1) {
+                const colorName = findCssColorName(this.getHex(false, false));
+
+                if (colorName) {
+                    return colorName;
+                }
+            }
+
+            let result = `rgb(${roundValue(this.red, precision)} ${roundValue(this.green, precision)} ${roundValue(this.blue, precision)}`;
+
+            if (alpha) {
+                result += ` / ${roundValue(this.alpha * 100, Math.max(0, precision - 2))}%`;
+            }
+
+            result += ')';
+
+            return result;
+        }
+    }
+
+    /**
+     * Represents an RGB color formatted as hexadecimal.
+     */
+    class Hex extends Rgb {
+        static COLOR_SPACE = 'hex';
+
+        /** @inheritdoc */
+        toHex() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toRgb() {
+            return new Rgb(this.red, this.green, this.blue, this.alpha);
+        }
+
+        /**
+         * Serializes the color as a hex string or CSS named color.
+         * @param {boolean|null} [alpha=null] Whether to include alpha.
+         * @param {number} [precision=2] The unused numeric precision.
+         * @param {boolean} [shortenHex=true] Whether to shorten the hex form when possible.
+         * @param {boolean} [name=false] Whether to prefer CSS named colors.
+         * @return {string} The serialized color string.
+         */
+        toString(alpha = null, precision = 2, shortenHex = true, name = false) {
+            alpha ??= this.alpha < 1;
+
+            if (name && this.alpha <= 0) {
+                return 'transparent';
+            }
+
+            if (name && this.alpha >= 1) {
+                const colorName = findCssColorName(this.getHex(false, false));
+
+                if (colorName) {
+                    return colorName;
+                }
+            }
+
+            return `#${this.getHex(alpha, shortenHex)}`;
+        }
+    }
+
+    /**
+     * Represents an HSL color.
+     */
+    class Hsl extends Color {
+        static COLOR_SPACE = 'hsl';
+
+        /**
+         * Creates an HSL color.
+         * @param {number} [hue=0] The hue channel value in degrees.
+         * @param {number} [saturation=0] The saturation channel value.
+         * @param {number} [lightness=0] The lightness channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         */
+        constructor(hue = 0, saturation = 0, lightness = 0, alpha = 1) {
+            super(alpha);
+            this.hue = clampHue(hue);
+            ensureFinite(saturation);
+            ensureFinite(lightness);
+            this.saturation = saturation;
+            this.lightness = lightness;
+            Object.freeze(this);
+        }
+
+        /**
+         * Returns the hue channel.
+         * @return {number} The hue channel value in degrees.
+         */
+        getHue() {
+            return this.hue;
+        }
+
+        /**
+         * Returns the lightness channel.
+         * @return {number} The lightness channel value.
+         */
+        getLightness() {
+            return this.lightness;
+        }
+
+        /**
+         * Returns the saturation channel.
+         * @return {number} The saturation channel value.
+         */
+        getSaturation() {
+            return this.saturation;
+        }
+
+        /** @inheritdoc */
+        toHsl() {
+            return this;
+        }
+
+        /**
+         * Returns the color state as a plain object.
+         * @return {{hue: number, saturation: number, lightness: number, alpha: number}} The channel object.
+         */
+        toObject() {
+            return {
+                hue: this.hue,
+                saturation: this.saturation,
+                lightness: this.lightness,
+                alpha: this.alpha,
+            };
+        }
+
+        /** @inheritdoc */
+        toSrgb() {
+            const [red, green, blue] = hslToSrgb(this.hue, this.saturation / 100, this.lightness / 100);
+
+            return new this.constructor.Srgb(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toSrgbLinear() {
+            return this.toSrgb().toSrgbLinear();
+        }
+
+        /**
+         * Serializes the color using CSS `hsl(...)` syntax.
+         * @param {boolean|null} [alpha=null] Whether to include alpha.
+         * @param {number} [precision=2] The numeric precision.
+         * @return {string} The serialized color string.
+         */
+        toString(alpha = null, precision = 2) {
+            alpha ??= this.alpha < 1;
+
+            let result = `hsl(${roundValue(this.hue, precision)}deg ${roundValue(this.saturation, precision)}% ${roundValue(this.lightness, precision)}%`;
+
+            if (alpha) {
+                result += ` / ${roundValue(this.alpha * 100, Math.max(0, precision - 2))}%`;
+            }
+
+            result += ')';
+
+            return result;
+        }
+
+        /**
+         * Returns a copy with a different hue channel.
+         * @param {number} hue The replacement hue channel.
+         * @return {Hsl} A new color instance.
+         */
+        withHue(hue) {
+            return new this.constructor(hue, this.saturation, this.lightness, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different lightness channel.
+         * @param {number} lightness The replacement lightness channel.
+         * @return {Hsl} A new color instance.
+         */
+        withLightness(lightness) {
+            return new this.constructor(this.hue, this.saturation, lightness, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different saturation channel.
+         * @param {number} saturation The replacement saturation channel.
+         * @return {Hsl} A new color instance.
+         */
+        withSaturation(saturation) {
+            return new this.constructor(this.hue, saturation, this.lightness, this.alpha);
+        }
+    }
+
+    /**
+     * Represents an HWB color.
+     */
+    class Hwb extends Color {
+        static COLOR_SPACE = 'hwb';
+
+        /**
+         * Creates an HWB color.
+         * @param {number} [hue=0] The hue channel value in degrees.
+         * @param {number} [whiteness=0] The whiteness channel value.
+         * @param {number} [blackness=0] The blackness channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         */
+        constructor(hue = 0, whiteness = 0, blackness = 0, alpha = 1) {
+            super(alpha);
+            this.hue = clampHue(hue);
+            ensureFinite(whiteness);
+            ensureFinite(blackness);
+            this.whiteness = whiteness;
+            this.blackness = blackness;
+            Object.freeze(this);
+        }
+
+        /**
+         * Returns the blackness channel.
+         * @return {number} The blackness channel value.
+         */
+        getBlackness() {
+            return this.blackness;
+        }
+
+        /**
+         * Returns the hue channel.
+         * @return {number} The hue channel value in degrees.
+         */
+        getHue() {
+            return this.hue;
+        }
+
+        /**
+         * Returns the whiteness channel.
+         * @return {number} The whiteness channel value.
+         */
+        getWhiteness() {
+            return this.whiteness;
+        }
+
+        /** @inheritdoc */
+        toHwb() {
+            return this;
+        }
+
+        /**
+         * Returns the color state as a plain object.
+         * @return {{hue: number, whiteness: number, blackness: number, alpha: number}} The channel object.
+         */
+        toObject() {
+            return {
+                hue: this.hue,
+                whiteness: this.whiteness,
+                blackness: this.blackness,
+                alpha: this.alpha,
+            };
+        }
+
+        /** @inheritdoc */
+        toSrgb() {
+            const [red, green, blue] = hwbToSrgb(this.hue, this.whiteness / 100, this.blackness / 100);
+
+            return new this.constructor.Srgb(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toSrgbLinear() {
+            return this.toSrgb().toSrgbLinear();
+        }
+
+        /**
+         * Serializes the color using CSS `hwb(...)` syntax.
+         * @param {boolean|null} [alpha=null] Whether to include alpha.
+         * @param {number} [precision=2] The numeric precision.
+         * @return {string} The serialized color string.
+         */
+        toString(alpha = null, precision = 2) {
+            alpha ??= this.alpha < 1;
+
+            let result = `hwb(${roundValue(this.hue, precision)}deg ${roundValue(this.whiteness, precision)}% ${roundValue(this.blackness, precision)}%`;
+
+            if (alpha) {
+                result += ` / ${roundValue(this.alpha * 100, Math.max(0, precision - 2))}%`;
+            }
+
+            result += ')';
+
+            return result;
+        }
+
+        /**
+         * Returns a copy with a different blackness channel.
+         * @param {number} blackness The replacement blackness channel.
+         * @return {Hwb} A new color instance.
+         */
+        withBlackness(blackness) {
+            return new this.constructor(this.hue, this.whiteness, blackness, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different hue channel.
+         * @param {number} hue The replacement hue channel.
+         * @return {Hwb} A new color instance.
+         */
+        withHue(hue) {
+            return new this.constructor(hue, this.whiteness, this.blackness, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different whiteness channel.
+         * @param {number} whiteness The replacement whiteness channel.
+         * @return {Hwb} A new color instance.
+         */
+        withWhiteness(whiteness) {
+            return new this.constructor(this.hue, whiteness, this.blackness, this.alpha);
+        }
+    }
+
+    /**
+     * Shared Lab-style channel storage and immutable update helpers.
+     */
+    class LabColor extends Color {
+        /**
+         * Creates a Lab-like color with lightness, a, b, and alpha channels.
+         * @param {number} [lightness=0] The lightness channel value.
+         * @param {number} [a=0] The a channel value.
+         * @param {number} [b=0] The b channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         */
+        constructor(lightness = 0, a = 0, b = 0, alpha = 1) {
+            super(alpha);
+            ensureFinite(lightness);
+            ensureFinite(a);
+            ensureFinite(b);
+            this.lightness = lightness;
+            this.a = a;
+            this.b = b;
+            Object.freeze(this);
+        }
+
+        /**
+         * Returns the a channel.
+         * @return {number} The a channel value.
+         */
+        getA() {
+            return this.a;
+        }
+
+        /**
+         * Returns the b channel.
+         * @return {number} The b channel value.
+         */
+        getB() {
+            return this.b;
+        }
+
+        /**
+         * Returns the lightness channel.
+         * @return {number} The lightness channel value.
+         */
+        getLightness() {
+            return this.lightness;
+        }
+
+        /**
+         * Returns the color state as a plain object.
+         * @return {{lightness: number, a: number, b: number, alpha: number}} The channel object.
+         */
+        toObject() {
+            return {
+                lightness: this.lightness,
+                a: this.a,
+                b: this.b,
+                alpha: this.alpha,
+            };
+        }
+
+        /**
+         * Returns a copy with a different a channel.
+         * @param {number} a The replacement a channel.
+         * @return {LabColor} A new color instance.
+         */
+        withA(a) {
+            return new this.constructor(this.lightness, a, this.b, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different b channel.
+         * @param {number} b The replacement b channel.
+         * @return {LabColor} A new color instance.
+         */
+        withB(b) {
+            return new this.constructor(this.lightness, this.a, b, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different lightness channel.
+         * @param {number} lightness The replacement lightness channel.
+         * @return {LabColor} A new color instance.
+         */
+        withLightness(lightness) {
+            return new this.constructor(lightness, this.a, this.b, this.alpha);
+        }
+    }
+
+    /**
+     * Represents a Lab color.
+     */
+    class Lab extends LabColor {
+        static COLOR_SPACE = 'lab';
+
+        /** @inheritdoc */
+        toLab() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toLch() {
+            const [lightness, chroma, hue] = labToLch(this.lightness, this.a, this.b);
+
+            return new this.constructor.Lch(lightness, chroma, hue, this.alpha);
+        }
+
+        /**
+         * Serializes the color using CSS `lab(...)` syntax.
+         * @param {boolean|null} [alpha=null] Whether to include alpha.
+         * @param {number} [precision=2] The numeric precision.
+         * @return {string} The serialized color string.
+         */
+        toString(alpha = null, precision = 2) {
+            alpha ??= this.alpha < 1;
+
+            let result = `lab(${roundValue(this.lightness, precision)}% ${roundValue(this.a, precision)} ${roundValue(this.b, precision)}`;
+
+            if (alpha) {
+                result += ` / ${roundValue(this.alpha, precision)}`;
+            }
+
+            result += ')';
+
+            return result;
+        }
+
+        /** @inheritdoc */
+        toXyzD50() {
+            const [x, y, z] = labToXyzD50(this.lightness, this.a, this.b);
+
+            return new this.constructor.XyzD50(x, y, z, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            return this.toXyzD50().toXyzD65();
+        }
+    }
+
+    /**
+     * Shared LCH-style channel storage and immutable update helpers.
+     */
+    class LchColor extends Color {
+        /**
+         * Creates an LCH-like color with lightness, chroma, hue, and alpha channels.
+         * @param {number} [lightness=0] The lightness channel value.
+         * @param {number} [chroma=0] The chroma channel value.
+         * @param {number} [hue=0] The hue channel value in degrees.
+         * @param {number} [alpha=1] The alpha channel value.
+         */
+        constructor(lightness = 0, chroma = 0, hue = 0, alpha = 1) {
+            super(alpha);
+            ensureFinite(lightness);
+            ensureFinite(chroma);
+            this.lightness = lightness;
+            this.chroma = chroma;
+            this.hue = clampHue(hue);
+            Object.freeze(this);
+        }
+
+        /**
+         * Returns the chroma channel.
+         * @return {number} The chroma channel value.
+         */
+        getChroma() {
+            return this.chroma;
+        }
+
+        /**
+         * Returns the hue channel.
+         * @return {number} The hue channel value in degrees.
+         */
+        getHue() {
+            return this.hue;
+        }
+
+        /**
+         * Returns the lightness channel.
+         * @return {number} The lightness channel value.
+         */
+        getLightness() {
+            return this.lightness;
+        }
+
+        /**
+         * Returns the color state as a plain object.
+         * @return {{lightness: number, chroma: number, hue: number, alpha: number}} The channel object.
+         */
+        toObject() {
+            return {
+                lightness: this.lightness,
+                chroma: this.chroma,
+                hue: this.hue,
+                alpha: this.alpha,
+            };
+        }
+
+        /**
+         * Returns a copy with a different chroma channel.
+         * @param {number} chroma The replacement chroma channel.
+         * @return {LchColor} A new color instance.
+         */
+        withChroma(chroma) {
+            return new this.constructor(this.lightness, chroma, this.hue, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different hue channel.
+         * @param {number} hue The replacement hue channel in degrees.
+         * @return {LchColor} A new color instance.
+         */
+        withHue(hue) {
+            return new this.constructor(this.lightness, this.chroma, hue, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different lightness channel.
+         * @param {number} lightness The replacement lightness channel.
+         * @return {LchColor} A new color instance.
+         */
+        withLightness(lightness) {
+            return new this.constructor(lightness, this.chroma, this.hue, this.alpha);
+        }
+    }
+
+    /**
+     * Represents an LCH color.
+     */
+    class Lch extends LchColor {
+        static COLOR_SPACE = 'lch';
+
+        /** @inheritdoc */
+        toLab() {
+            const [lightness, a, b] = lchToLab(this.lightness, this.chroma, this.hue);
+
+            return new this.constructor.Lab(lightness, a, b, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toLch() {
+            return this;
+        }
+
+        /**
+         * Serializes the color using CSS `lch(...)` syntax.
+         * @param {boolean|null} [alpha=null] Whether to include alpha.
+         * @param {number} [precision=2] The numeric precision.
+         * @return {string} The serialized color string.
+         */
+        toString(alpha = null, precision = 2) {
+            alpha ??= this.alpha < 1;
+
+            let result = `lch(${roundValue(this.lightness, precision)}% ${roundValue(this.chroma, precision)} ${roundValue(this.hue, precision)}deg`;
+
+            if (alpha) {
+                result += ` / ${roundValue(this.alpha, precision)}`;
+            }
+
+            result += ')';
+
+            return result;
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            return this.toLab().toXyzD65();
+        }
+    }
+
+    /**
+     * Represents an OKLab color.
+     */
+    class OkLab extends LabColor {
+        static COLOR_SPACE = 'oklab';
+
+        /** @inheritdoc */
+        toOkLab() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toOkLch() {
+            const [lightness, chroma, hue] = okLabToOkLch(this.lightness, this.a, this.b);
+
+            return new this.constructor.OkLch(lightness, chroma, hue, this.alpha);
+        }
+
+        /**
+         * Serializes the color using CSS `oklab(...)` syntax.
+         * @param {boolean|null} [alpha=null] Whether to include alpha.
+         * @param {number} [precision=2] The numeric precision.
+         * @return {string} The serialized color string.
+         */
+        toString(alpha = null, precision = 2) {
+            alpha ??= this.alpha < 1;
+
+            let result = `oklab(${roundValue(this.lightness, precision)} ${roundValue(this.a, precision)} ${roundValue(this.b, precision)}`;
+
+            if (alpha) {
+                result += ` / ${roundValue(this.alpha, precision)}`;
+            }
+
+            result += ')';
+
+            return result;
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            const [x, y, z] = okLabToXyzD65(this.lightness, this.a, this.b);
+
+            return new this.constructor.XyzD65(x, y, z, this.alpha);
+        }
+    }
+
+    /**
+     * Represents an OKLCH color.
+     */
+    class OkLch extends LchColor {
+        static COLOR_SPACE = 'oklch';
+
+        /** @inheritdoc */
+        toOkLab() {
+            const [lightness, a, b] = okLchToOkLab(this.lightness, this.chroma, this.hue);
+
+            return new this.constructor.OkLab(lightness, a, b, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toOkLch() {
+            return this;
+        }
+
+        /**
+         * Serializes the color using CSS `oklch(...)` syntax.
+         * @param {boolean|null} [alpha=null] Whether to include alpha.
+         * @param {number} [precision=2] The numeric precision.
+         * @return {string} The serialized color string.
+         */
+        toString(alpha = null, precision = 2) {
+            alpha ??= this.alpha < 1;
+
+            let result = `oklch(${roundValue(this.lightness, precision)} ${roundValue(this.chroma, precision)} ${roundValue(this.hue, precision)}deg`;
+
+            if (alpha) {
+                result += ` / ${roundValue(this.alpha, precision)}`;
+            }
+
+            result += ')';
+
+            return result;
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            return this.toOkLab().toXyzD65();
+        }
+    }
+
+    /**
+     * Represents a ProPhoto RGB color.
+     */
+    class ProPhotoRgb extends RgbColor {
+        static COLOR_SPACE = 'prophoto-rgb';
+
+        /** @inheritdoc */
+        toProPhotoRgb() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toString(alpha = null, precision = 2) {
+            return this.toColorString(alpha, precision);
+        }
+
+        /** @inheritdoc */
+        toXyzD50() {
+            const [x, y, z] = prophotoRgbToXyzD50(this.red, this.green, this.blue);
+
+            return new this.constructor.XyzD50(x, y, z, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            return this.toXyzD50().toXyzD65();
+        }
+    }
+
+    /**
+     * Represents a Rec. 2020 color.
+     */
+    class Rec2020 extends RgbColor {
+        static COLOR_SPACE = 'rec2020';
+
+        /** @inheritdoc */
+        toRec2020() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toString(alpha = null, precision = 2) {
+            return this.toColorString(alpha, precision);
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            const [x, y, z] = rec2020ToXyzD65(this.red, this.green, this.blue);
+
+            return new this.constructor.XyzD65(x, y, z, this.alpha);
+        }
+    }
+
+    /**
+     * Represents a linear sRGB color.
+     */
+    class SrgbLinear extends RgbColor {
+        static COLOR_SPACE = 'srgb-linear';
+
+        /** @inheritdoc */
+        toSrgb() {
+            const [red, green, blue] = srgbLinearToSrgb(this.red, this.green, this.blue);
+
+            return new this.constructor.Srgb(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toSrgbLinear() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toString(alpha = null, precision = 2) {
+            return this.toColorString(alpha, precision);
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            const [x, y, z] = srgbLinearToXyzD65(this.red, this.green, this.blue);
+
+            return new this.constructor.XyzD65(x, y, z, this.alpha);
+        }
+    }
+
+    /**
+     * Represents an sRGB color.
+     */
+    class Srgb extends RgbColor {
+        static COLOR_SPACE = 'srgb';
+
+        /** @inheritdoc */
+        luma() {
+            return srgbToLuma(this.red, this.green, this.blue);
+        }
+
+        /** @inheritdoc */
+        toHsl() {
+            const [hue, saturation, lightness] = srgbToHsl(this.red, this.green, this.blue);
+
+            return new this.constructor.Hsl(hue, saturation * 100, lightness * 100, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toHwb() {
+            const [hue, whiteness, blackness] = srgbToHwb(this.red, this.green, this.blue);
+
+            return new this.constructor.Hwb(hue, whiteness * 100, blackness * 100, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toRgb() {
+            const [red, green, blue] = srgbToRgb(this.red, this.green, this.blue);
+
+            return new this.constructor.Rgb(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toSrgb() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toSrgbLinear() {
+            const [red, green, blue] = srgbToSrgbLinear(this.red, this.green, this.blue);
+
+            return new this.constructor.SrgbLinear(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toString(alpha = null, precision = 2) {
+            return this.toColorString(alpha, precision);
+        }
+    }
+
+    /**
+     * Shared XYZ-style channel storage and immutable update helpers.
+     */
+    class XyzColor extends Color {
+        /**
+         * Creates an XYZ-like color with x, y, z, and alpha channels.
+         * @param {number} [x=0] The x channel value.
+         * @param {number} [y=0] The y channel value.
+         * @param {number} [z=0] The z channel value.
+         * @param {number} [alpha=1] The alpha channel value.
+         */
+        constructor(x = 0, y = 0, z = 0, alpha = 1) {
+            super(alpha);
+            ensureFinite(x);
+            ensureFinite(y);
+            ensureFinite(z);
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            Object.freeze(this);
+        }
+
+        /**
+         * Returns the x channel.
+         * @return {number} The x channel value.
+         */
+        getX() {
+            return this.x;
+        }
+
+        /**
+         * Returns the y channel.
+         * @return {number} The y channel value.
+         */
+        getY() {
+            return this.y;
+        }
+
+        /**
+         * Returns the z channel.
+         * @return {number} The z channel value.
+         */
+        getZ() {
+            return this.z;
+        }
+
+        /**
+         * Returns the color state as a plain object.
+         * @return {{x: number, y: number, z: number, alpha: number}} The channel object.
+         */
+        toObject() {
+            return {
+                x: this.x,
+                y: this.y,
+                z: this.z,
+                alpha: this.alpha,
+            };
+        }
+
+        /**
+         * Returns a copy with a different x channel.
+         * @param {number} x The replacement x channel.
+         * @return {XyzColor} A new color instance.
+         */
+        withX(x) {
+            return new this.constructor(x, this.y, this.z, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different y channel.
+         * @param {number} y The replacement y channel.
+         * @return {XyzColor} A new color instance.
+         */
+        withY(y) {
+            return new this.constructor(this.x, y, this.z, this.alpha);
+        }
+
+        /**
+         * Returns a copy with a different z channel.
+         * @param {number} z The replacement z channel.
+         * @return {XyzColor} A new color instance.
+         */
+        withZ(z) {
+            return new this.constructor(this.x, this.y, z, this.alpha);
+        }
+    }
+
+    /**
+     * Represents an XYZ D50 color.
+     */
+    class XyzD50 extends XyzColor {
+        static COLOR_SPACE = 'xyz-d50';
+
+        /** @inheritdoc */
+        toLab() {
+            const [lightness, a, b] = xyzD50ToLab(this.x, this.y, this.z);
+
+            return new this.constructor.Lab(lightness, a, b, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toProPhotoRgb() {
+            const [red, green, blue] = xyzD50ToProPhotoRgb(this.x, this.y, this.z);
+
+            return new this.constructor.ProPhotoRgb(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toString(alpha = null, precision = 2) {
+            return this.toColorString(alpha, precision);
+        }
+
+        /** @inheritdoc */
+        toXyzD50() {
+            return this;
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            const [x, y, z] = xyzD50ToXyzD65(this.x, this.y, this.z);
+
+            return new this.constructor.XyzD65(x, y, z, this.alpha);
+        }
+    }
+
+    /**
+     * Represents an XYZ D65 color.
+     */
+    class XyzD65 extends XyzColor {
+        static COLOR_SPACE = 'xyz-d65';
+
+        /** @inheritdoc */
+        toA98Rgb() {
+            const [red, green, blue] = xyzD65ToA98Rgb(this.x, this.y, this.z);
+
+            return new this.constructor.A98Rgb(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toDisplayP3Linear() {
+            const [red, green, blue] = xyzD65ToDisplayP3Linear(this.x, this.y, this.z);
+
+            return new this.constructor.DisplayP3Linear(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toOkLab() {
+            const [lightness, a, b] = xyzD65ToOkLab(this.x, this.y, this.z);
+
+            return new this.constructor.OkLab(lightness, a, b, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toRec2020() {
+            const [red, green, blue] = xyzD65ToRec2020(this.x, this.y, this.z);
+
+            return new this.constructor.Rec2020(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toSrgbLinear() {
+            const [red, green, blue] = xyzD65ToSrgbLinear(this.x, this.y, this.z);
+
+            return new this.constructor.SrgbLinear(red, green, blue, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toString(alpha = null, precision = 2) {
+            return this.toColorString(alpha, precision);
+        }
+
+        /** @inheritdoc */
+        toXyzD50() {
+            const [x, y, z] = xyzD65ToXyzD50(this.x, this.y, this.z);
+
+            return new this.constructor.XyzD50(x, y, z, this.alpha);
+        }
+
+        /** @inheritdoc */
+        toXyzD65() {
+            return this;
+        }
+    }
+
+    const colorClasses = {
+        A98Rgb,
+        DisplayP3,
+        DisplayP3Linear,
+        Hex,
+        Hsl,
+        Hwb,
+        Lab,
+        Lch,
+        OkLab,
+        OkLch,
+        ProPhotoRgb,
+        Rec2020,
+        Rgb,
+        Srgb,
+        SrgbLinear,
+        XyzD50,
+        XyzD65,
+    };
+
+    Object.assign(Color, colorClasses);
 
     return Color;
 

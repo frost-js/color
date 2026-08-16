@@ -1,24 +1,42 @@
 {
     "name": "@fr0st/color",
-    "version": "4.1.7",
-    "description": "FrostColor is a free, open-source color manipulation library for JavaScript.",
+    "version": "5.0.0",
+    "private": false,
+    "description": "A modern JavaScript library for parsing, converting, and formatting colors.",
     "keywords": [
         "color",
         "rgb",
-        "rgba",
         "hex",
         "hsl",
-        "hsv",
-        "cmy",
-        "cmyk"
+        "hwb",
+        "lab",
+        "lch",
+        "oklab",
+        "oklch",
+        "display-p3",
+        "color-conversion",
+        "color-space",
+        "css-color"
     ],
     "homepage": "https://github.com/elusivecodes/FrostColor",
     "bugs": {
         "url": "https://github.com/elusivecodes/FrostColor/issues",
         "email": "elusivecodes@gmail.com"
     },
-    "main": "src/index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/elusivecodes/FrostColor.git"
+    },
+    "license": "MIT",
+    "author": "Elusive <elusivecodes@gmail.com>",
+    "sideEffects": false,
     "type": "module",
+    "exports": {
+        ".": "./src/index.js"
+    },
+    "main": "src/index.js",
+    "jsdelivr": "dist/frost-color.min.js",
+    "unpkg": "dist/frost-color.min.js",
     "files": [
         "dist",
         "LICENSE",
@@ -29,21 +47,20 @@
         "build": "npm run js-compile && npm run js-minify",
         "js-compile": "rollup --config",
         "js-lint": "eslint",
-        "js-minify": "terser --compress passes=2 --mangle --source-map \"content=dist/frost-color.js.map\" --output dist/frost-color.min.js dist/frost-color.js",
-        "test": "mocha --recursive"
+        "js-minify": "terser --compress passes=2 --mangle --source-map \"content=dist/frost-color.js.map,url=frost-color.min.js.map\" --output dist/frost-color.min.js dist/frost-color.js",
+        "test": "mocha --forbid-only \"test/unit/**/*.test.js\""
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/elusivecodes/FrostColor.git"
-    },
-    "author": "Elusive <elusivecodes@gmail.com>",
-    "license": "MIT",
-    "private": false,
     "devDependencies": {
-        "@fr0st/eslint-config": "^1.0.3",
-        "eslint": "^9.26.0",
-        "mocha": "^11.2.2",
-        "rollup": "^4.40.2",
-        "terser": "^5.39.0"
+        "@fr0st/eslint-config": "^4.0.0",
+        "eslint": "^10.8.1",
+        "mocha": "^11.8.0",
+        "rollup": "^4.62.4",
+        "terser": "^5.50.0"
+    },
+    "engines": {
+        "node": "^20.19.0 || ^22.13.0 || >=24"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

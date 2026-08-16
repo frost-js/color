@@ -1,57 +1,42 @@
 import Color from './color.js';
-import { fromCMY, fromCMYK, fromHexString, fromHSL, fromHSLString, fromHSV, fromRGB, fromRGBString, fromString } from './static/create.js';
-import { contrast, dist, findContrast, mix, multiply } from './static/utility.js';
-import { getAlpha, getBrightness, getHue, getSaturation, luma, setAlpha, setBrightness, setHue, setSaturation } from './prototype/attributes.js';
-import { darken, invert, lighten, shade, tint, tone } from './prototype/manipulation.js';
-import { label, toHexString, toHSLString, toRGBString, toString } from './prototype/output.js';
-import { palette, shades, tints, tones } from './prototype/palette.js';
-import { analogous, complementary, split, tetradic, triadic } from './prototype/schemes.js';
+import A98Rgb from './spaces/a98-rgb.js';
+import DisplayP3Linear from './spaces/display-p3-linear.js';
+import DisplayP3 from './spaces/display-p3.js';
+import Hex from './spaces/hex.js';
+import Hsl from './spaces/hsl.js';
+import Hwb from './spaces/hwb.js';
+import Lab from './spaces/lab.js';
+import Lch from './spaces/lch.js';
+import OkLab from './spaces/ok-lab.js';
+import OkLch from './spaces/ok-lch.js';
+import ProPhotoRgb from './spaces/pro-photo-rgb.js';
+import Rec2020 from './spaces/rec-2020.js';
+import Rgb from './spaces/rgb.js';
+import SrgbLinear from './spaces/srgb-linear.js';
+import Srgb from './spaces/srgb.js';
+import XyzD50 from './spaces/xyz-d50.js';
+import XyzD65 from './spaces/xyz-d65.js';
 
-Color.contrast = contrast;
-Color.dist = dist;
-Color.findContrast = findContrast;
-Color.fromCMY = fromCMY;
-Color.fromCMYK = fromCMYK;
-Color.fromHexString = fromHexString;
-Color.fromHSL = fromHSL;
-Color.fromHSLString = fromHSLString;
-Color.fromHSV = fromHSV;
-Color.fromRGB = fromRGB;
-Color.fromRGBString = fromRGBString;
-Color.fromString = fromString;
-Color.mix = mix;
-Color.multiply = multiply;
+const colorClasses = {
+    A98Rgb,
+    DisplayP3,
+    DisplayP3Linear,
+    Hex,
+    Hsl,
+    Hwb,
+    Lab,
+    Lch,
+    OkLab,
+    OkLch,
+    ProPhotoRgb,
+    Rec2020,
+    Rgb,
+    Srgb,
+    SrgbLinear,
+    XyzD50,
+    XyzD65,
+};
 
-const proto = Color.prototype;
-
-proto.analogous = analogous;
-proto.complementary = complementary;
-proto.darken = darken;
-proto.getAlpha = getAlpha;
-proto.getBrightness = getBrightness;
-proto.getHue = getHue;
-proto.getSaturation = getSaturation;
-proto.invert = invert;
-proto.label = label;
-proto.lighten = lighten;
-proto.luma = luma;
-proto.palette = palette;
-proto.setAlpha = setAlpha;
-proto.setBrightness = setBrightness;
-proto.setHue = setHue;
-proto.setSaturation = setSaturation;
-proto.shade = shade;
-proto.shades = shades;
-proto.split = split;
-proto.tetradic = tetradic;
-proto.tint = tint;
-proto.tints = tints;
-proto.toHexString = toHexString;
-proto.toHSLString = toHSLString;
-proto.toRGBString = toRGBString;
-proto.toString = toString;
-proto.tone = tone;
-proto.tones = tones;
-proto.triadic = triadic;
+Object.assign(Color, colorClasses);
 
 export default Color;

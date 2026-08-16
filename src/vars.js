@@ -1,9 +1,47 @@
 /**
- * Color Names
+ * Maps CSS color-space identifiers to instance conversion method names.
+ * @type {Readonly<Record<string, string>>}
  */
+export const CONVERSION_MAP = Object.freeze({
+    'a98-rgb': 'toA98Rgb',
+    'display-p3': 'toDisplayP3',
+    'display-p3-linear': 'toDisplayP3Linear',
+    'hex': 'toHex',
+    'hsl': 'toHsl',
+    'hwb': 'toHwb',
+    'lab': 'toLab',
+    'lch': 'toLch',
+    'oklab': 'toOkLab',
+    'oklch': 'toOkLch',
+    'prophoto-rgb': 'toProPhotoRgb',
+    'rec2020': 'toRec2020',
+    'rgb': 'toRgb',
+    'srgb': 'toSrgb',
+    'srgb-linear': 'toSrgbLinear',
+    'xyz-d50': 'toXyzD50',
+    'xyz-d65': 'toXyzD65',
+});
 
-// HTML color names
-export const colors = {
+/**
+ * Declares the channel bounds used when fitting colors into supported gamuts.
+ * @type {Readonly<Record<string, [number, number]>>}
+ */
+export const FIT_GAMUT_RANGES = Object.freeze({
+    'a98-rgb': [0, 1],
+    'display-p3': [0, 1],
+    'display-p3-linear': [0, 1],
+    'prophoto-rgb': [0, 1],
+    'rec2020': [0, 1],
+    'rgb': [0, 255],
+    'srgb': [0, 1],
+    'srgb-linear': [0, 1],
+});
+
+/**
+ * Maps CSS named color keywords to canonical hex values.
+ * @type {Readonly<Record<string, string>>}
+ */
+export const CSS_COLORS = Object.freeze({
     aliceblue: '#f0f8ff',
     antiquewhite: '#faebd7',
     aqua: '#00ffff',
@@ -29,8 +67,8 @@ export const colors = {
     darkcyan: '#008b8b',
     darkgoldenrod: '#b8860b',
     darkgray: '#a9a9a9',
-    darkgrey: '#a9a9a9',
     darkgreen: '#006400',
+    darkgrey: '#a9a9a9',
     darkkhaki: '#bdb76b',
     darkmagenta: '#8b008b',
     darkolivegreen: '#556b2f',
@@ -58,9 +96,9 @@ export const colors = {
     gold: '#ffd700',
     goldenrod: '#daa520',
     gray: '#808080',
-    grey: '#808080',
     green: '#008000',
     greenyellow: '#adff2f',
+    grey: '#808080',
     honeydew: '#f0fff0',
     hotpink: '#ff69b4',
     indianred: '#cd5c5c',
@@ -76,8 +114,8 @@ export const colors = {
     lightcyan: '#e0ffff',
     lightgoldenrodyellow: '#fafad2',
     lightgray: '#d3d3d3',
-    lightgrey: '#d3d3d3',
     lightgreen: '#90ee90',
+    lightgrey: '#d3d3d3',
     lightpink: '#ffb6c1',
     lightsalmon: '#ffa07a',
     lightseagreen: '#20b2aa',
@@ -152,9 +190,4 @@ export const colors = {
     whitesmoke: '#f5f5f5',
     yellow: '#ffff00',
     yellowgreen: '#9acd32',
-};
-
-export const hexLookup = Object.fromEntries(
-    Object.entries(colors)
-        .map(([key, value]) => [value, key]),
-);
+});
