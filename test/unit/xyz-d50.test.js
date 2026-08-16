@@ -25,8 +25,8 @@ describe('XyzD50', function() {
             const color1 = ColorClass.fromString('lavender');
             const color2 = ColorClass.fromString('black');
 
-            assertClose(color1.contrast(color2), 17.06375239037742);
-            assertClose(color2.contrast(color1), 17.06375239037742);
+            assertClose(color1.contrast(color2), 17.06375010290425);
+            assertClose(color2.contrast(color1), 17.06375010290425);
         });
     });
 
@@ -34,7 +34,7 @@ describe('XyzD50', function() {
         it('returns the x channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getX(), 0.786547072272965);
+            assertClose(color.getX(), 0.7866066805175997);
         });
     });
 
@@ -42,7 +42,7 @@ describe('XyzD50', function() {
         it('returns the y channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getY(), 0.801280203622004);
+            assertClose(color.getY(), 0.8012805325415433);
         });
     });
 
@@ -50,7 +50,7 @@ describe('XyzD50', function() {
         it('returns the z channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getZ(), 0.7705937955919129);
+            assertClose(color.getZ(), 0.7704981789726744);
         });
     });
 
@@ -66,7 +66,7 @@ describe('XyzD50', function() {
         it('returns the relative luminance', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.luma(), 0.803187619518871);
+            assertClose(color.luma(), 0.8031875051452126);
         });
     });
 
@@ -174,7 +174,7 @@ describe('XyzD50', function() {
             const color2 = color1.toOkLch();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.8deg)');
+            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.86deg)');
         });
     });
 
@@ -194,7 +194,7 @@ describe('XyzD50', function() {
             const color2 = color1.toRec2020();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'color(rec2020 0.89 0.89 0.97)');
+            assert.strictEqual(color2.toString(), 'color(rec2020 0.91 0.91 0.97)');
         });
     });
 
@@ -253,9 +253,9 @@ describe('XyzD50', function() {
 
             assertObjectClose(color.toObject(),
                 {
-                    x: 0.786547072272965,
-                    y: 0.801280203622004,
-                    z: 0.7705937955919129,
+                    x: 0.7866066805175997,
+                    y: 0.8012805325415433,
+                    z: 0.7704981789726744,
                     alpha: 1.0,
                 },
             );

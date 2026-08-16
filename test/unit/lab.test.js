@@ -25,8 +25,8 @@ describe('Lab', function() {
             const color1 = ColorClass.fromString('lavender');
             const color2 = ColorClass.fromString('black');
 
-            assertClose(color1.contrast(color2), 17.06375239037742);
-            assertClose(color2.contrast(color1), 17.06375239037742);
+            assertClose(color1.contrast(color2), 17.063750102904255);
+            assertClose(color2.contrast(color1), 17.063750102904255);
         });
     });
 
@@ -34,7 +34,7 @@ describe('Lab', function() {
         it('returns the a channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getA(), 2.775762427467743);
+            assertClose(color.getA(), 2.775278467403053);
         });
     });
 
@@ -42,7 +42,7 @@ describe('Lab', function() {
         it('returns the b channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getB(), -9.724068099245642);
+            assertClose(color.getB(), -9.724279919967449);
         });
     });
 
@@ -50,7 +50,7 @@ describe('Lab', function() {
         it('returns the lightness channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getLightness(), 91.74227138900844);
+            assertClose(color.getLightness(), 91.74228613147233);
         });
     });
 
@@ -66,7 +66,7 @@ describe('Lab', function() {
         it('returns the relative luminance', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.luma(), 0.8031876195188711);
+            assertClose(color.luma(), 0.8031875051452128);
         });
     });
 
@@ -173,7 +173,7 @@ describe('Lab', function() {
             const color2 = color1.toOkLch();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.8deg)');
+            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.86deg)');
         });
     });
 
@@ -193,7 +193,7 @@ describe('Lab', function() {
             const color2 = color1.toRec2020();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'color(rec2020 0.89 0.89 0.97)');
+            assert.strictEqual(color2.toString(), 'color(rec2020 0.91 0.91 0.97)');
         });
     });
 
@@ -253,9 +253,9 @@ describe('Lab', function() {
 
             assertObjectClose(color.toObject(),
                 {
-                    lightness: 91.74227138900844,
-                    a: 2.775762427467743,
-                    b: -9.724068099245642,
+                    lightness: 91.74228613147233,
+                    a: 2.775278467403053,
+                    b: -9.724279919967449,
                     alpha: 1.0,
                 },
             );

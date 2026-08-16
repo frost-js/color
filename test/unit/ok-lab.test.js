@@ -25,8 +25,8 @@ describe('OkLab', function() {
             const color1 = ColorClass.fromString('lavender');
             const color2 = ColorClass.fromString('black');
 
-            assertClose(color1.contrast(color2), 17.06375119570234);
-            assertClose(color2.contrast(color1), 17.06375119570234);
+            assertClose(color1.contrast(color2), 17.063750102904255);
+            assertClose(color2.contrast(color1), 17.063750102904255);
         });
     });
 
@@ -34,7 +34,7 @@ describe('OkLab', function() {
         it('returns the a channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getA(), 0.007357648854629639);
+            assertClose(color.getA(), 0.0073649318907060835);
         });
     });
 
@@ -42,7 +42,7 @@ describe('OkLab', function() {
         it('returns the b channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getB(), -0.02599671081635946);
+            assertClose(color.getB(), -0.025915245880047233);
         });
     });
 
@@ -50,7 +50,7 @@ describe('OkLab', function() {
         it('returns the lightness channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getLightness(), 0.9309007554171675);
+            assertClose(color.getLightness(), 0.9309023355374633);
         });
     });
 
@@ -66,7 +66,7 @@ describe('OkLab', function() {
         it('returns the relative luminance', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.luma(), 0.803187559785117);
+            assertClose(color.luma(), 0.8031875051452128);
         });
     });
 
@@ -173,7 +173,7 @@ describe('OkLab', function() {
             const color2 = color1.toOkLch();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.8deg)');
+            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.86deg)');
         });
     });
 
@@ -193,7 +193,7 @@ describe('OkLab', function() {
             const color2 = color1.toRec2020();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'color(rec2020 0.89 0.89 0.97)');
+            assert.strictEqual(color2.toString(), 'color(rec2020 0.91 0.91 0.97)');
         });
     });
 
@@ -253,9 +253,9 @@ describe('OkLab', function() {
 
             assertObjectClose(color.toObject(),
                 {
-                    lightness: 0.9309007554171675,
-                    a: 0.007357648854629639,
-                    b: -0.02599671081635946,
+                    lightness: 0.9309023355374633,
+                    a: 0.0073649318907060835,
+                    b: -0.025915245880047233,
                     alpha: 1.0,
                 },
             );

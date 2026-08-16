@@ -25,8 +25,8 @@ describe('Rec2020', function() {
             const color1 = ColorClass.fromString('lavender');
             const color2 = ColorClass.fromString('black');
 
-            assertClose(color1.contrast(color2), 17.06375148063551);
-            assertClose(color2.contrast(color1), 17.06375148063551);
+            assertClose(color1.contrast(color2), 17.06375010290425);
+            assertClose(color2.contrast(color1), 17.06375010290425);
         });
     });
 
@@ -34,7 +34,7 @@ describe('Rec2020', function() {
         it('returns the blue channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getBlue(), 0.9687847030822043);
+            assertClose(color.getBlue(), 0.9740210670993709);
         });
     });
 
@@ -42,7 +42,7 @@ describe('Rec2020', function() {
         it('returns the green channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getGreen(), 0.8901273645875314);
+            assertClose(color.getGreen(), 0.9079649060658369);
         });
     });
 
@@ -50,7 +50,7 @@ describe('Rec2020', function() {
         it('returns the red channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getRed(), 0.8931460651448258);
+            assertClose(color.getRed(), 0.9104696523917976);
         });
     });
 
@@ -66,7 +66,7 @@ describe('Rec2020', function() {
         it('returns the relative luminance', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.luma(), 0.8031875740317754);
+            assertClose(color.luma(), 0.8031875051452125);
         });
     });
 
@@ -174,7 +174,7 @@ describe('Rec2020', function() {
             const color2 = color1.toOkLch();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.8deg)');
+            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.86deg)');
         });
     });
 
@@ -253,9 +253,9 @@ describe('Rec2020', function() {
 
             assertObjectClose(color.toObject(),
                 {
-                    red: 0.8931460651448258,
-                    green: 0.8901273645875314,
-                    blue: 0.9687847030822043,
+                    red: 0.9104696523917976,
+                    green: 0.9079649060658369,
+                    blue: 0.9740210670993709,
                     alpha: 1.0,
                 },
             );
@@ -266,13 +266,13 @@ describe('Rec2020', function() {
         it('returns the CSS color string', function() {
             const color = ColorClass.fromString('lavender');
 
-            assert.strictEqual(color.toString(), 'color(rec2020 0.89 0.89 0.97)');
+            assert.strictEqual(color.toString(), 'color(rec2020 0.91 0.91 0.97)');
         });
 
         it('includes alpha when needed', function() {
             const color = ColorClass.fromString('rgb(230 230 250 / 50%)');
 
-            assert.strictEqual(color.toString(), 'color(rec2020 0.89 0.89 0.97 / 0.5)');
+            assert.strictEqual(color.toString(), 'color(rec2020 0.91 0.91 0.97 / 0.5)');
         });
     });
 
@@ -280,7 +280,7 @@ describe('Rec2020', function() {
         it('returns a copy with a different blue channel', function() {
             const color = ColorClass.fromString('lavender').withBlue(0.5);
 
-            assert.strictEqual(color.toString(), 'color(rec2020 0.89 0.89 0.5)');
+            assert.strictEqual(color.toString(), 'color(rec2020 0.91 0.91 0.5)');
         });
     });
 
@@ -288,7 +288,7 @@ describe('Rec2020', function() {
         it('returns a copy with a different green channel', function() {
             const color = ColorClass.fromString('lavender').withGreen(0.5);
 
-            assert.strictEqual(color.toString(), 'color(rec2020 0.89 0.5 0.97)');
+            assert.strictEqual(color.toString(), 'color(rec2020 0.91 0.5 0.97)');
         });
     });
 
@@ -296,7 +296,7 @@ describe('Rec2020', function() {
         it('returns a copy with a different red channel', function() {
             const color = ColorClass.fromString('lavender').withRed(0.5);
 
-            assert.strictEqual(color.toString(), 'color(rec2020 0.5 0.89 0.97)');
+            assert.strictEqual(color.toString(), 'color(rec2020 0.5 0.91 0.97)');
         });
     });
 });

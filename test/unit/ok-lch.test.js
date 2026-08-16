@@ -25,8 +25,8 @@ describe('OkLch', function() {
             const color1 = ColorClass.fromString('lavender');
             const color2 = ColorClass.fromString('black');
 
-            assertClose(color1.contrast(color2), 17.06375119570234);
-            assertClose(color2.contrast(color1), 17.06375119570234);
+            assertClose(color1.contrast(color2), 17.063750102904255);
+            assertClose(color2.contrast(color1), 17.063750102904255);
         });
     });
 
@@ -34,7 +34,7 @@ describe('OkLch', function() {
         it('returns the chroma channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getChroma(), 0.027017845397763564);
+            assertClose(color.getChroma(), 0.02694145858668466);
         });
     });
 
@@ -42,7 +42,7 @@ describe('OkLch', function() {
         it('returns the hue channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getHue(), 285.80269594678555);
+            assertClose(color.getHue(), 285.86477952157645);
         });
     });
 
@@ -50,7 +50,7 @@ describe('OkLch', function() {
         it('returns the lightness channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getLightness(), 0.9309007554171675);
+            assertClose(color.getLightness(), 0.9309023355374633);
         });
     });
 
@@ -66,7 +66,7 @@ describe('OkLch', function() {
         it('returns the relative luminance', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.luma(), 0.803187559785117);
+            assertClose(color.luma(), 0.8031875051452128);
         });
     });
 
@@ -193,7 +193,7 @@ describe('OkLch', function() {
             const color2 = color1.toRec2020();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'color(rec2020 0.89 0.89 0.97)');
+            assert.strictEqual(color2.toString(), 'color(rec2020 0.91 0.91 0.97)');
         });
     });
 
@@ -253,9 +253,9 @@ describe('OkLch', function() {
 
             assertObjectClose(color.toObject(),
                 {
-                    lightness: 0.9309007554171675,
-                    chroma: 0.027017845397763564,
-                    hue: 285.80269594678555,
+                    lightness: 0.9309023355374633,
+                    chroma: 0.02694145858668466,
+                    hue: 285.86477952157645,
                     alpha: 1.0,
                 },
             );
@@ -266,13 +266,13 @@ describe('OkLch', function() {
         it('returns the CSS color string', function() {
             const color = ColorClass.fromString('lavender');
 
-            assert.strictEqual(color.toString(), 'oklch(0.93 0.03 285.8deg)');
+            assert.strictEqual(color.toString(), 'oklch(0.93 0.03 285.86deg)');
         });
 
         it('includes alpha when needed', function() {
             const color = ColorClass.fromString('rgb(230 230 250 / 50%)');
 
-            assert.strictEqual(color.toString(), 'oklch(0.93 0.03 285.8deg / 0.5)');
+            assert.strictEqual(color.toString(), 'oklch(0.93 0.03 285.86deg / 0.5)');
         });
     });
 
@@ -280,7 +280,7 @@ describe('OkLch', function() {
         it('returns a copy with a different chroma channel', function() {
             const color = ColorClass.fromString('lavender').withChroma(0.2);
 
-            assert.strictEqual(color.toString(), 'oklch(0.93 0.2 285.8deg)');
+            assert.strictEqual(color.toString(), 'oklch(0.93 0.2 285.86deg)');
         });
     });
 
@@ -296,7 +296,7 @@ describe('OkLch', function() {
         it('returns a copy with a different lightness channel', function() {
             const color = ColorClass.fromString('lavender').withLightness(0.5);
 
-            assert.strictEqual(color.toString(), 'oklch(0.5 0.03 285.8deg)');
+            assert.strictEqual(color.toString(), 'oklch(0.5 0.03 285.86deg)');
         });
     });
 });

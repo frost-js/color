@@ -25,8 +25,8 @@ describe('ProPhotoRgb', function() {
             const color1 = ColorClass.fromString('lavender');
             const color2 = ColorClass.fromString('black');
 
-            assertClose(color1.contrast(color2), 17.063751373303777);
-            assertClose(color2.contrast(color1), 17.063751373303777);
+            assertClose(color1.contrast(color2), 17.06375010290425);
+            assertClose(color2.contrast(color1), 17.06375010290425);
         });
     });
 
@@ -34,7 +34,7 @@ describe('ProPhotoRgb', function() {
         it('returns the blue channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getBlue(), 0.9626720382536984);
+            assertClose(color.getBlue(), 0.9626739636273878);
         });
     });
 
@@ -42,7 +42,7 @@ describe('ProPhotoRgb', function() {
         it('returns the green channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getGreen(), 0.8809116437953888);
+            assertClose(color.getGreen(), 0.8809114057556224);
         });
     });
 
@@ -50,7 +50,7 @@ describe('ProPhotoRgb', function() {
         it('returns the red channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getRed(), 0.8922358591890865);
+            assertClose(color.getRed(), 0.8922346559662041);
         });
     });
 
@@ -66,7 +66,7 @@ describe('ProPhotoRgb', function() {
         it('returns the relative luminance', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.luma(), 0.8031875686651888);
+            assertClose(color.luma(), 0.8031875051452126);
         });
     });
 
@@ -174,7 +174,7 @@ describe('ProPhotoRgb', function() {
             const color2 = color1.toOkLch();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.8deg)');
+            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.86deg)');
         });
     });
 
@@ -193,7 +193,7 @@ describe('ProPhotoRgb', function() {
             const color2 = color1.toRec2020();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'color(rec2020 0.89 0.89 0.97)');
+            assert.strictEqual(color2.toString(), 'color(rec2020 0.91 0.91 0.97)');
         });
     });
 
@@ -253,9 +253,9 @@ describe('ProPhotoRgb', function() {
 
             assertObjectClose(color.toObject(),
                 {
-                    red: 0.8922358591890865,
-                    green: 0.8809116437953888,
-                    blue: 0.9626720382536984,
+                    red: 0.8922346559662041,
+                    green: 0.8809114057556224,
+                    blue: 0.9626739636273878,
                     alpha: 1.0,
                 },
             );

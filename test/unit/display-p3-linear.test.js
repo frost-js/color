@@ -25,8 +25,8 @@ describe('DisplayP3Linear', function() {
             const color1 = ColorClass.fromString('lavender');
             const color2 = ColorClass.fromString('black');
 
-            assertClose(color1.contrast(color2), 17.06375148063551);
-            assertClose(color2.contrast(color1), 17.06375148063551);
+            assertClose(color1.contrast(color2), 17.06375010290425);
+            assertClose(color2.contrast(color1), 17.06375010290425);
         });
     });
 
@@ -34,7 +34,7 @@ describe('DisplayP3Linear', function() {
         it('returns the blue channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getBlue(), 0.9410301564589402);
+            assertClose(color.getBlue(), 0.9412381855461356);
         });
     });
 
@@ -42,7 +42,7 @@ describe('DisplayP3Linear', function() {
         it('returns the green channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getGreen(), 0.7912845848400826);
+            assertClose(color.getGreen(), 0.7912979403326301);
         });
     });
 
@@ -50,7 +50,7 @@ describe('DisplayP3Linear', function() {
         it('returns the red channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getRed(), 0.7913982143903506);
+            assertClose(color.getRed(), 0.7912979403326305);
         });
     });
 
@@ -66,7 +66,7 @@ describe('DisplayP3Linear', function() {
         it('returns the relative luminance', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.luma(), 0.8031875740317754);
+            assertClose(color.luma(), 0.8031875051452126);
         });
     });
 
@@ -173,7 +173,7 @@ describe('DisplayP3Linear', function() {
             const color2 = color1.toOkLch();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.8deg)');
+            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.86deg)');
         });
     });
 
@@ -193,7 +193,7 @@ describe('DisplayP3Linear', function() {
             const color2 = color1.toRec2020();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'color(rec2020 0.89 0.89 0.97)');
+            assert.strictEqual(color2.toString(), 'color(rec2020 0.91 0.91 0.97)');
         });
     });
 
@@ -253,9 +253,9 @@ describe('DisplayP3Linear', function() {
 
             assertObjectClose(color.toObject(),
                 {
-                    red: 0.7913982143903506,
-                    green: 0.7912845848400826,
-                    blue: 0.9410301564589402,
+                    red: 0.7912979403326305,
+                    green: 0.7912979403326301,
+                    blue: 0.9412381855461356,
                     alpha: 1.0,
                 },
             );

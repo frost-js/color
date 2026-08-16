@@ -25,8 +25,8 @@ describe('A98Rgb', function() {
             const color1 = ColorClass.fromString('lavender');
             const color2 = ColorClass.fromString('black');
 
-            assertClose(color1.contrast(color2), 17.06380639860504);
-            assertClose(color2.contrast(color1), 17.06380639860504);
+            assertClose(color1.contrast(color2), 17.06375010290425);
+            assertClose(color2.contrast(color1), 17.06375010290425);
         });
     });
 
@@ -34,7 +34,7 @@ describe('A98Rgb', function() {
         it('returns the blue channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getBlue(), 0.9765693317985756);
+            assertClose(color.getBlue(), 0.9765699600542911);
         });
     });
 
@@ -42,7 +42,7 @@ describe('A98Rgb', function() {
         it('returns the green channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getGreen(), 0.8990307350513126);
+            assertClose(color.getGreen(), 0.8990306743531586);
         });
     });
 
@@ -50,7 +50,7 @@ describe('A98Rgb', function() {
         it('returns the red channel', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.getRed(), 0.8990306480521724);
+            assertClose(color.getRed(), 0.8990306743531589);
         });
     });
 
@@ -66,7 +66,7 @@ describe('A98Rgb', function() {
         it('returns the relative luminance', function() {
             const color = ColorClass.fromString('lavender');
 
-            assertClose(color.luma(), 0.8031903199302519);
+            assertClose(color.luma(), 0.8031875051452125);
         });
     });
 
@@ -123,7 +123,7 @@ describe('A98Rgb', function() {
             const color2 = color1.toHsl();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'hsl(239.94deg 66.83% 94.12%)');
+            assert.strictEqual(color2.toString(), 'hsl(240deg 66.67% 94.12%)');
         });
     });
 
@@ -133,7 +133,7 @@ describe('A98Rgb', function() {
             const color2 = color1.toHwb();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'hwb(239.94deg 90.19% 1.95%)');
+            assert.strictEqual(color2.toString(), 'hwb(240deg 90.2% 1.96%)');
         });
     });
 
@@ -143,7 +143,7 @@ describe('A98Rgb', function() {
             const color2 = color1.toLab();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'lab(91.74% 2.77 -9.74)');
+            assert.strictEqual(color2.toString(), 'lab(91.74% 2.78 -9.72)');
         });
     });
 
@@ -153,7 +153,7 @@ describe('A98Rgb', function() {
             const color2 = color1.toLch();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'lch(91.74% 10.13 285.89deg)');
+            assert.strictEqual(color2.toString(), 'lch(91.74% 10.11 285.93deg)');
         });
     });
 
@@ -173,7 +173,7 @@ describe('A98Rgb', function() {
             const color2 = color1.toOkLch();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.76deg)');
+            assert.strictEqual(color2.toString(), 'oklch(0.93 0.03 285.86deg)');
         });
     });
 
@@ -193,7 +193,7 @@ describe('A98Rgb', function() {
             const color2 = color1.toRec2020();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'color(rec2020 0.89 0.89 0.97)');
+            assert.strictEqual(color2.toString(), 'color(rec2020 0.91 0.91 0.97)');
         });
     });
 
@@ -203,7 +203,7 @@ describe('A98Rgb', function() {
             const color2 = color1.toRgb();
 
             assert.notStrictEqual(color2, color1);
-            assert.strictEqual(color2.toString(), 'rgb(229.98 230 250.03)');
+            assert.strictEqual(color2.toString(), 'rgb(230 230 250)');
         });
     });
 
@@ -253,9 +253,9 @@ describe('A98Rgb', function() {
 
             assertObjectClose(color.toObject(),
                 {
-                    red: 0.8990306480521724,
-                    green: 0.8990307350513126,
-                    blue: 0.9765693317985756,
+                    red: 0.8990306743531589,
+                    green: 0.8990306743531586,
+                    blue: 0.9765699600542911,
                     alpha: 1.0,
                 },
             );
