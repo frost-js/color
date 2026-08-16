@@ -1,4 +1,4 @@
-import { clamp, isInGamut, parseCssAngle, parseCssNumber, roundValue } from './helpers.js';
+import { clamp, isInGamut, parseCssAngle, parseCssArguments, parseCssNumber, roundValue } from './helpers.js';
 import { CONVERSION_MAP, CSS_COLORS, FIT_GAMUT_RANGES } from './vars.js';
 
 /**
@@ -234,111 +234,107 @@ export default class Color {
             ).to(this.COLOR_SPACE);
         }
 
-        const functionalMatch = string.match(/^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)\((.+)\)$/);
+        try {
+            const functionalMatch = string.match(/^(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)\((.+)\)$/);
 
-        if (functionalMatch) {
-            const [, space, rawParts] = functionalMatch;
-            let parts = rawParts.trim().split(/\s*[,/]\s*|\s+/);
+            if (functionalMatch) {
+                const [, space, rawParts] = functionalMatch;
+                const parts = parseCssArguments(
+                    rawParts,
+                    ['rgb', 'rgba', 'hsl', 'hsla', 'hwb'].includes(space),
+                );
 
-            if (parts.length > 4) {
-                parts = [...parts.slice(0, 3), parts.slice(3).join(' ')];
+                switch (space) {
+                    case 'hsl':
+                    case 'hsla':
+                        return this.fromHsl(
+                            parseCssAngle(parts[0]),
+                            parseCssNumber(parts[1], 100),
+                            parseCssNumber(parts[2], 100),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'hwb':
+                        return this.fromHwb(
+                            parseCssAngle(parts[0]),
+                            parseCssNumber(parts[1], 100),
+                            parseCssNumber(parts[2], 100),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'lab':
+                        return this.fromLab(
+                            parseCssNumber(parts[0], 100),
+                            parseCssNumber(parts[1], 125),
+                            parseCssNumber(parts[2], 125),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'lch':
+                        return this.fromLch(
+                            parseCssNumber(parts[0], 100),
+                            Math.max(0, parseCssNumber(parts[1], 150)),
+                            parseCssAngle(parts[2]),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'oklab':
+                        return this.fromOkLab(
+                            parseCssNumber(parts[0]),
+                            parseCssNumber(parts[1], 0.4),
+                            parseCssNumber(parts[2], 0.4),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'oklch':
+                        return this.fromOkLch(
+                            parseCssNumber(parts[0]),
+                            Math.max(0, parseCssNumber(parts[1], 0.4)),
+                            parseCssAngle(parts[2]),
+                            parseCssNumber(parts[3]),
+                        );
+                    case 'rgb':
+                    case 'rgba':
+                        return this.fromRgb(
+                            parseCssNumber(parts[0], 255),
+                            parseCssNumber(parts[1], 255),
+                            parseCssNumber(parts[2], 255),
+                            parseCssNumber(parts[3]),
+                        );
+                    default:
+                        break;
+                }
             }
 
-            if (parts.length < 4) {
-                parts.push('1');
+            const colorMatch = string.match(/^color\((a98-rgb|display-p3(?:-linear)?|prophoto-rgb|rec2020|srgb(?:-linear)?|xyz(?:-d50|-d65)?)\s+(.+)\)$/);
+
+            if (colorMatch) {
+                const [, space, rawParts] = colorMatch;
+                const parts = parseCssArguments(rawParts);
+                const values = parts.map((value) => parseCssNumber(value));
+
+                switch (space) {
+                    case 'a98-rgb':
+                        return this.fromA98Rgb(...values);
+                    case 'display-p3':
+                        return this.fromDisplayP3(...values);
+                    case 'display-p3-linear':
+                        return this.fromDisplayP3Linear(...values);
+                    case 'prophoto-rgb':
+                        return this.fromProPhotoRgb(...values);
+                    case 'rec2020':
+                        return this.fromRec2020(...values);
+                    case 'srgb':
+                        return this.fromSrgb(...values);
+                    case 'srgb-linear':
+                        return this.fromSrgbLinear(...values);
+                    case 'xyz-d50':
+                        return this.fromXyzD50(...values);
+                    case 'xyz':
+                    case 'xyz-d65':
+                        return this.fromXyzD65(...values);
+                    default:
+                        break;
+                }
             }
-
-            switch (space) {
-                case 'hsl':
-                case 'hsla':
-                    return this.fromHsl(
-                        parseCssAngle(parts[0]),
-                        parseCssNumber(parts[1], 100),
-                        parseCssNumber(parts[2], 100),
-                        parseCssNumber(parts[3]),
-                    );
-                case 'hwb':
-                    return this.fromHwb(
-                        parseCssAngle(parts[0]),
-                        parseCssNumber(parts[1], 100),
-                        parseCssNumber(parts[2], 100),
-                        parseCssNumber(parts[3]),
-                    );
-                case 'lab':
-                    return this.fromLab(
-                        parseCssNumber(parts[0], 100),
-                        parseCssNumber(parts[1], 125),
-                        parseCssNumber(parts[2], 125),
-                        parseCssNumber(parts[3]),
-                    );
-                case 'lch':
-                    return this.fromLch(
-                        parseCssNumber(parts[0], 100),
-                        Math.max(0, parseCssNumber(parts[1], 150)),
-                        parseCssAngle(parts[2]),
-                        parseCssNumber(parts[3]),
-                    );
-                case 'oklab':
-                    return this.fromOkLab(
-                        parseCssNumber(parts[0]),
-                        parseCssNumber(parts[1], 0.4),
-                        parseCssNumber(parts[2], 0.4),
-                        parseCssNumber(parts[3]),
-                    );
-                case 'oklch':
-                    return this.fromOkLch(
-                        parseCssNumber(parts[0]),
-                        Math.max(0, parseCssNumber(parts[1], 0.4)),
-                        parseCssAngle(parts[2]),
-                        parseCssNumber(parts[3]),
-                    );
-                case 'rgb':
-                case 'rgba':
-                    return this.fromRgb(
-                        parseCssNumber(parts[0], 255),
-                        parseCssNumber(parts[1], 255),
-                        parseCssNumber(parts[2], 255),
-                        parseCssNumber(parts[3]),
-                    );
-                default:
-                    break;
-            }
-        }
-
-        const colorMatch = string.match(/^color\((a98-rgb|display-p3(?:-linear)?|prophoto-rgb|rec2020|srgb(?:-linear)?|xyz(?:-d50|-d65)?)\s+(.+)\)$/);
-
-        if (colorMatch) {
-            const [, space, rawParts] = colorMatch;
-            let parts = rawParts.trim().split(/\s*\/\s*|\s+/);
-
-            if (parts.length > 4) {
-                parts = [...parts.slice(0, 3), parts.slice(3).join(' ')];
-            }
-
-            const values = parts.map((value) => parseCssNumber(value));
-
-            switch (space) {
-                case 'a98-rgb':
-                    return this.fromA98Rgb(...values);
-                case 'display-p3':
-                    return this.fromDisplayP3(...values);
-                case 'display-p3-linear':
-                    return this.fromDisplayP3Linear(...values);
-                case 'prophoto-rgb':
-                    return this.fromProPhotoRgb(...values);
-                case 'rec2020':
-                    return this.fromRec2020(...values);
-                case 'srgb':
-                    return this.fromSrgb(...values);
-                case 'srgb-linear':
-                    return this.fromSrgbLinear(...values);
-                case 'xyz-d50':
-                    return this.fromXyzD50(...values);
-                case 'xyz':
-                case 'xyz-d65':
-                    return this.fromXyzD65(...values);
-                default:
-                    break;
+        } catch (error) {
+            if (!(error instanceof SyntaxError)) {
+                throw error;
             }
         }
 

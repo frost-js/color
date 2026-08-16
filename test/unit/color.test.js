@@ -63,6 +63,78 @@ describe('Color', function() {
         });
     }
 
+    describe('Factory validation', function() {
+        it('rejects a non-finite alpha channel', function() {
+            assert.throws(
+                () => Color.fromSrgb(0, 0, 0, NaN),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
+        });
+
+        it('rejects a non-finite HSL hue channel', function() {
+            assert.throws(
+                () => Color.fromHsl(Infinity),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
+        });
+
+        it('rejects a non-finite HWB whiteness channel', function() {
+            assert.throws(
+                () => Color.fromHwb(0, -Infinity),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
+        });
+
+        it('rejects a non-finite Lab a channel', function() {
+            assert.throws(
+                () => Color.fromLab(0, NaN),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
+        });
+
+        it('rejects a non-finite LCH hue channel', function() {
+            assert.throws(
+                () => Color.fromLch(0, 0, Infinity),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
+        });
+
+        it('rejects a non-finite OKLab b channel', function() {
+            assert.throws(
+                () => Color.fromOkLab(0, 0, -Infinity),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
+        });
+
+        it('rejects a non-finite OKLCH chroma channel', function() {
+            assert.throws(
+                () => Color.fromOkLch(0, NaN),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
+        });
+
+        it('rejects a non-finite RGB channel', function() {
+            assert.throws(
+                () => Color.fromRgb(Infinity),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
+        });
+
+        it('rejects a non-finite RGB-style channel', function() {
+            assert.throws(
+                () => Color.fromA98Rgb(NaN),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
+        });
+
+        it('rejects a non-finite XYZ-style channel', function() {
+            assert.throws(
+                () => Color.fromXyzD65(-Infinity),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
+        });
+    });
+
     const stringCases = [
         ['color(a98-rgb 0.9 0.9 0.98)', A98Rgb, 'color(a98-rgb 0.9 0.9 0.98)'],
         ['color(a98-rgb 90% 90% 98%)', A98Rgb, 'color(a98-rgb 0.9 0.9 0.98)'],
@@ -108,10 +180,12 @@ describe('Color', function() {
         ['color(rec2020 0.89 0.89 0.97)', Rec2020, 'color(rec2020 0.89 0.89 0.97)'],
         ['color(rec2020 89% 89% 97%)', Rec2020, 'color(rec2020 0.89 0.89 0.97)'],
         ['rgb(230 230 250)', Rgb, 'rgb(230 230 250)'],
+        ['rgb(+1 .5 1e2 / 5e-1)', Rgb, 'rgb(1 0.5 100 / 50%)'],
         ['rgba(230, 230, 250, 0.5)', Rgb, 'rgb(230 230 250 / 50%)'],
         ['rgb(230, 230, 250)', Rgb, 'rgb(230 230 250)'],
         ['rgb(230 230 250 / 50%)', Rgb, 'rgb(230 230 250 / 50%)'],
         ['color(srgb 0.9 0.9 0.98)', Srgb, 'color(srgb 0.9 0.9 0.98)'],
+        ['color(srgb +.1 1.0 1e-2 / 5e-1)', Srgb, 'color(srgb 0.1 1 0.01 / 0.5)'],
         ['color(srgb-linear 0.79 0.79 0.96)', SrgbLinear, 'color(srgb-linear 0.79 0.79 0.96)'],
         ['color(srgb-linear 79% 79% 96%)', SrgbLinear, 'color(srgb-linear 0.79 0.79 0.96)'],
         ['color(srgb 90% 90% 98%)', Srgb, 'color(srgb 0.9 0.9 0.98)'],
@@ -121,6 +195,7 @@ describe('Color', function() {
         ['color(xyz-d65 0.78 0.8 1.02)', XyzD65, 'color(xyz-d65 0.78 0.8 1.02)'],
         ['color(xyz-d65 78% 80% 102%)', XyzD65, 'color(xyz-d65 0.78 0.8 1.02)'],
         ['color(xyz 78% 80% 102%)', XyzD65, 'color(xyz-d65 0.78 0.8 1.02)'],
+        [' RGB( 230   230  250 / 50% ) ', Rgb, 'rgb(230 230 250 / 50%)'],
     ];
 
     describe('#fromString', function() {
@@ -141,7 +216,28 @@ describe('Color', function() {
         });
 
         it('throws an error for an invalid color string', function() {
-            const invalidColors = ['invalid', '#12345', '#1234567'];
+            const invalidColors = [
+                'rgb(1 2 3 / nope)',
+                'hsl(240wat 50% 50%)',
+                'color(srgb 1 2 3 0.5)',
+                'color(srgb 1, 2, 3)',
+                'color(srgb 1 2 3 / 0.5 1)',
+                'color(srgb 1 2 nope)',
+                'color(srgb 1 2)',
+                'rgb(1,,3)',
+                'rgb(1 2 3 / 0.5 1)',
+                'rgb(1 2 3 0.5)',
+                'invalid',
+                'rgb(foo 0 0)',
+                'rgb(50%% 0 0)',
+                '#12345',
+                '#1234567',
+                'rgb(1, 2 3)',
+                'rgb(1, 2, 3 / 0.5)',
+                'rgb(1 2)',
+                'rgb(1. 2 3)',
+                'rgb(1foo 2 3)',
+            ];
 
             for (const color of invalidColors) {
                 assert.throws(
@@ -149,6 +245,13 @@ describe('Color', function() {
                     (error) => error instanceof TypeError && error.message === `Color string \`${color}\` is not valid.`,
                 );
             }
+        });
+
+        it('throws a finite-number error for an overflowing channel', function() {
+            assert.throws(
+                () => Color.fromString('rgb(1e309 0 0)'),
+                (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
+            );
         });
     });
 

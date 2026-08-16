@@ -23,6 +23,24 @@ export const CONVERSION_MAP = Object.freeze({
 });
 
 /**
+ * Matches the numeric portion of a CSS number token.
+ * @type {string}
+ */
+const CSS_NUMBER_PATTERN = '[+-]?(?:\\d+|\\d*\\.\\d+)(?:e[+-]?\\d+)?';
+
+/**
+ * Matches a complete CSS angle token.
+ * @type {RegExp}
+ */
+export const CSS_ANGLE_REGEX = new RegExp(`^(${CSS_NUMBER_PATTERN})(deg|grad|rad|turn|%)?$`);
+
+/**
+ * Matches a complete CSS number or percentage token.
+ * @type {RegExp}
+ */
+export const CSS_NUMBER_REGEX = new RegExp(`^(${CSS_NUMBER_PATTERN})(%)?$`);
+
+/**
  * Declares the channel bounds used when fitting colors into supported gamuts.
  * @type {Readonly<Record<string, [number, number]>>}
  */

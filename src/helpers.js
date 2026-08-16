@@ -1,4 +1,4 @@
-import { CSS_COLORS } from './vars.js';
+import { CSS_ANGLE_REGEX, CSS_COLORS, CSS_NUMBER_REGEX } from './vars.js';
 
 /**
  * Rounds a number to a fixed precision while normalizing negative zero.
@@ -85,26 +85,63 @@ export const parseCssAngle = (value) => {
         throw new TypeError('CSS angle values must be strings.');
     }
 
-    value = String(value);
-    const number = Number.parseFloat(value) || 0;
+    const match = value.match(CSS_ANGLE_REGEX);
 
-    if (value.endsWith('%')) {
-        return (number / 100) * 360;
+    if (!match) {
+        throw new SyntaxError('CSS angle value is not valid.');
     }
 
-    if (value.endsWith('grad')) {
-        return number * 0.9;
+    const number = Number(match[1]);
+
+    switch (match[2]) {
+        case '%':
+            return number * 3.6;
+        case 'grad':
+            return number * 0.9;
+        case 'rad':
+            return number * 180 / Math.PI;
+        case 'turn':
+            return number * 360;
+        default:
+            return number;
+    }
+};
+
+/**
+ * Parses CSS function arguments.
+ * @param {string} value The raw CSS argument string.
+ * @param {boolean} [allowCommas=false] Whether legacy comma separators are allowed.
+ * @return {[string, string, string, string]} The parsed arguments.
+ */
+export const parseCssArguments = (value, allowCommas = false) => {
+    if (typeof value !== 'string') {
+        throw new TypeError('CSS argument values must be strings.');
     }
 
-    if (value.endsWith('rad')) {
-        return number * 180 / Math.PI;
+    let parts = [];
+
+    if (value.includes(',')) {
+        if (allowCommas && !value.includes('/')) {
+            parts = value.split(',').map((part) => part.trim());
+
+            if (parts.length === 3) {
+                parts.push('1');
+            }
+        }
+    } else {
+        const groups = value.split('/').map((group) => group.trim());
+
+        if (groups.length <= 2) {
+            parts = groups[0].split(' ');
+            parts.push(groups[1] ?? '1');
+        }
     }
 
-    if (value.endsWith('turn')) {
-        return number * 360;
+    if (parts.length !== 4 || parts.includes('')) {
+        throw new SyntaxError('CSS arguments are not valid.');
     }
 
-    return number;
+    return parts;
 };
 
 /**
@@ -118,10 +155,15 @@ export const parseCssNumber = (value, percentMultiplier = 1) => {
         throw new TypeError('CSS number values must be strings.');
     }
 
-    value = String(value);
-    const number = Number.parseFloat(value) || 0;
+    const match = value.match(CSS_NUMBER_REGEX);
 
-    return value.endsWith('%') ?
+    if (!match) {
+        throw new SyntaxError('CSS number value is not valid.');
+    }
+
+    const number = Number(match[1]);
+
+    return match[2] ?
         (number / 100) * percentMultiplier :
         number;
 };

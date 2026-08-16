@@ -88,7 +88,7 @@ Color instances are immutable and frozen. Conversion and `with...` methods do no
 - `hwb()`, `lab()`, `lch()`, `oklab()`, and `oklch()`
 - `color()` using `a98-rgb`, `display-p3`, `display-p3-linear`, `prophoto-rgb`, `rec2020`, `srgb`, `srgb-linear`, `xyz`, `xyz-d50`, or `xyz-d65`
 
-Space-separated syntax, commas and slashes, percentage channels, percentage alpha, and CSS angle units are normalized while parsing. The parser is intentionally permissive rather than enforcing the complete CSS grammar:
+Whitespace is normalized and parsing is case-insensitive. Functional notation requires exactly three channels and accepts one optional alpha value. Space-separated alpha uses `/`; legacy comma syntax is supported for RGB, HSL, and HWB, but separator styles cannot be mixed. Numeric tokens support signs, decimals, percentages, and scientific notation, and must not contain trailing characters or unknown units.
 
 ```javascript
 const hex = Color.fromString('#663399cc');
