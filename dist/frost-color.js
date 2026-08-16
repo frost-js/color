@@ -47,6 +47,12 @@
     const CSS_NUMBER_REGEX = new RegExp(`^(${CSS_NUMBER_PATTERN})(%)?$`);
 
     /**
+     * Sets the chroma search precision used when fitting colors into a gamut.
+     * @type {number}
+     */
+    const FIT_GAMUT_PRECISION = 0.0001;
+
+    /**
      * Declares the channel bounds used when fitting colors into supported gamuts.
      * @type {Readonly<Record<string, [number, number]>>}
      */
@@ -280,10 +286,11 @@
      */
     const isInGamut = (color, space, gamutRanges) => {
         const [min, max] = gamutRanges[space];
+        const epsilon = (max - min) * 1e-12;
         const values = Object.values(color.toObject());
 
         for (const value of values.slice(0, 3)) {
-            if (!Number.isFinite(value) || value < min || value > max) {
+            if (!Number.isFinite(value) || value < min - epsilon || value > max + epsilon) {
                 return false;
             }
         }
@@ -805,33 +812,29 @@
             }
 
             const okLch = this.toOkLch();
+            const lightness = okLch.getLightness();
+
+            if (lightness <= 0 || lightness >= 1) {
+                const fitted = okLch.withLightness(clamp(lightness)).withChroma(0);
+
+                return fitted.to(this.constructor.COLOR_SPACE);
+            }
+
             let low = 0;
             let high = Math.max(0, okLch.getChroma());
-            let best = new this.constructor.OkLch(
-                okLch.getLightness(),
-                0,
-                okLch.getHue(),
-                okLch.getAlpha(),
-            );
 
-            for (let index = 0; index < 24; index += 1) {
+            while (high - low > FIT_GAMUT_PRECISION) {
                 const mid = (low + high) / 2;
-                const candidate = new this.constructor.OkLch(
-                    okLch.getLightness(),
-                    mid,
-                    okLch.getHue(),
-                    okLch.getAlpha(),
-                );
+                const candidate = okLch.withChroma(mid);
 
                 if (isInGamut(candidate.to(space), space, FIT_GAMUT_RANGES)) {
-                    best = candidate;
                     low = mid;
                 } else {
                     high = mid;
                 }
             }
 
-            return best.to(this.constructor.COLOR_SPACE);
+            return okLch.withChroma(low).to(this.constructor.COLOR_SPACE);
         }
 
         /**

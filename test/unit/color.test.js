@@ -256,15 +256,30 @@ describe('Color', function() {
     });
 
     describe('#fitGamut', function() {
-        it('reduces chroma to fit the target gamut', function() {
-            const color = Color.fromXyzD65(1, 0, 0);
-            const source = color.toSrgbLinear();
-            const fitted = color.fitGamut('srgb-linear').toSrgbLinear();
+        const assertFittedColor = (values, expected) => {
+            const result = Color.fromOkLch(...values).fitGamut();
+            const srgb = result.toSrgb();
 
-            assert.ok(source.getGreen() < 0);
-            assert.ok(fitted.getRed() >= 0 && fitted.getRed() <= 1);
-            assert.ok(fitted.getGreen() >= 0 && fitted.getGreen() <= 1);
-            assert.ok(fitted.getBlue() >= 0 && fitted.getBlue() <= 1);
+            assert.strictEqual(result.toString(), expected);
+            assert.ok(srgb.getRed() >= -1e-12 && srgb.getRed() <= 1 + 1e-12);
+            assert.ok(srgb.getGreen() >= -1e-12 && srgb.getGreen() <= 1 + 1e-12);
+            assert.ok(srgb.getBlue() >= -1e-12 && srgb.getBlue() <= 1 + 1e-12);
+        };
+
+        it('fits lightness below the lower boundary to black', function() {
+            assertFittedColor([-1, 0.2, 30, 0.5], 'oklch(0 0 30deg / 0.5)');
+        });
+
+        it('converges for very large chroma values', function() {
+            assertFittedColor([0.5, 1e8, 30], 'oklch(0.5 0.2 30deg)');
+        });
+
+        it('reduces chroma to fit the target gamut', function() {
+            assertFittedColor([0.5, 0.4, 30], 'oklch(0.5 0.2 30deg)');
+        });
+
+        it('fits lightness above the upper boundary to white', function() {
+            assertFittedColor([2, 0.2, 30, 0.5], 'oklch(1 0 30deg / 0.5)');
         });
     });
 

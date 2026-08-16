@@ -41,6 +41,12 @@ export const CSS_ANGLE_REGEX = new RegExp(`^(${CSS_NUMBER_PATTERN})(deg|grad|rad
 export const CSS_NUMBER_REGEX = new RegExp(`^(${CSS_NUMBER_PATTERN})(%)?$`);
 
 /**
+ * Sets the chroma search precision used when fitting colors into a gamut.
+ * @type {number}
+ */
+export const FIT_GAMUT_PRECISION = 0.0001;
+
+/**
  * Declares the channel bounds used when fitting colors into supported gamuts.
  * @type {Readonly<Record<string, [number, number]>>}
  */

@@ -64,10 +64,11 @@ export const clampHue = (value) => {
  */
 export const isInGamut = (color, space, gamutRanges) => {
     const [min, max] = gamutRanges[space];
+    const epsilon = (max - min) * 1e-12;
     const values = Object.values(color.toObject());
 
     for (const value of values.slice(0, 3)) {
-        if (!Number.isFinite(value) || value < min || value > max) {
+        if (!Number.isFinite(value) || value < min - epsilon || value > max + epsilon) {
             return false;
         }
     }

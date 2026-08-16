@@ -178,7 +178,7 @@ const vivid = Color.fromOkLch(0.72, 0.4, 30);
 const displayable = vivid.fitGamut('srgb').toSrgb();
 ```
 
-Gamut fitting maps through OKLCH and performs 24 binary-search iterations to reduce chroma until the converted channels fall within the target range. It preserves OKLCH lightness and returns the result in the source instance's color space. Supported targets are:
+Gamut fitting maps through OKLCH and uses a precision-bounded binary search to reduce chroma until the converted channels fall within the target range. Colors at or beyond the OKLCH lightness boundaries are fitted to black or white. Otherwise, it preserves OKLCH lightness and returns the result in the source instance's color space. Supported targets are:
 
 - `a98-rgb`
 - `display-p3`

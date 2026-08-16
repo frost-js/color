@@ -1,5 +1,5 @@
 import { clamp, isInGamut, parseCssAngle, parseCssArguments, parseCssNumber, roundValue } from './helpers.js';
-import { CONVERSION_MAP, CSS_COLORS, FIT_GAMUT_RANGES } from './vars.js';
+import { CONVERSION_MAP, CSS_COLORS, FIT_GAMUT_PRECISION, FIT_GAMUT_RANGES } from './vars.js';
 
 /**
  * @typedef {import('./spaces/a98-rgb.js').default} A98Rgb
@@ -412,33 +412,29 @@ export default class Color {
         }
 
         const okLch = this.toOkLch();
+        const lightness = okLch.getLightness();
+
+        if (lightness <= 0 || lightness >= 1) {
+            const fitted = okLch.withLightness(clamp(lightness)).withChroma(0);
+
+            return fitted.to(this.constructor.COLOR_SPACE);
+        }
+
         let low = 0;
         let high = Math.max(0, okLch.getChroma());
-        let best = new this.constructor.OkLch(
-            okLch.getLightness(),
-            0,
-            okLch.getHue(),
-            okLch.getAlpha(),
-        );
 
-        for (let index = 0; index < 24; index += 1) {
+        while (high - low > FIT_GAMUT_PRECISION) {
             const mid = (low + high) / 2;
-            const candidate = new this.constructor.OkLch(
-                okLch.getLightness(),
-                mid,
-                okLch.getHue(),
-                okLch.getAlpha(),
-            );
+            const candidate = okLch.withChroma(mid);
 
             if (isInGamut(candidate.to(space), space, FIT_GAMUT_RANGES)) {
-                best = candidate;
                 low = mid;
             } else {
                 high = mid;
             }
         }
 
-        return best.to(this.constructor.COLOR_SPACE);
+        return okLch.withChroma(low).to(this.constructor.COLOR_SPACE);
     }
 
     /**
