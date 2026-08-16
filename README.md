@@ -8,8 +8,6 @@
 
 FrostColor is a dependency-free JavaScript library for parsing, converting, inspecting, and formatting colors. It supports modern CSS color spaces as well as linear-light working spaces, preserves out-of-gamut channel values during conversion, and provides explicit gamut fitting when a bounded output is required.
 
-Version 5 is a JavaScript reimplementation of FyrePHP's `Utility/Color` package. Its parsing rules, conversion constants, gamut fitting, contrast calculation, labeling behavior, and known numerical quirks intentionally follow the PHP implementation.
-
 ## Highlights
 
 - Default ESM `Color` export for Node and bundlers
@@ -90,7 +88,7 @@ Color instances are immutable and frozen. Conversion and `with...` methods do no
 - `hwb()`, `lab()`, `lch()`, `oklab()`, and `oklch()`
 - `color()` using `a98-rgb`, `display-p3`, `display-p3-linear`, `prophoto-rgb`, `rec2020`, `srgb`, `srgb-linear`, `xyz`, `xyz-d50`, or `xyz-d65`
 
-Space-separated syntax, commas and slashes, percentage channels, percentage alpha, and CSS angle units are normalized while parsing. The parser intentionally follows the permissive parsing behavior of FyrePHP's `Color` utility rather than enforcing the complete CSS grammar:
+Space-separated syntax, commas and slashes, percentage channels, percentage alpha, and CSS angle units are normalized while parsing. The parser is intentionally permissive rather than enforcing the complete CSS grammar:
 
 ```javascript
 const hex = Color.fromString('#663399cc');
@@ -204,7 +202,7 @@ Every concrete color supports these methods:
 | `contrast(other)` | Ratio calculated directly from the two colors' relative luminance values |
 | `label()` | The nearest CSS named color by Euclidean channel distance in the current color space |
 
-Like the PHP implementation, `contrast()` and `luma()` ignore alpha. Extended out-of-range channels are not clamped before either calculation.
+`contrast()` and `luma()` ignore alpha. Extended out-of-range channels are not clamped before either calculation.
 
 ## Reading and replacing channels
 
