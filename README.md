@@ -49,15 +49,6 @@ For a classic browser script, load either published UMD bundle from your own cop
 
 The package exposes only `@fr0st/color` to Node and bundlers. The `dist/` files remain published for direct browser and CDN URLs, but package subpaths, internal `src/` paths, and package metadata are not part of the JavaScript API.
 
-## Version 5 migration
-
-Version 5 reflects a breaking redesign of the library:
-
-- `Color` is now an abstract base class and API namespace. Use a factory such as `Color.fromRgb(...)`, parse a string, or construct a concrete class such as `new Color.Rgb(...)`.
-- Factory and conversion names use camel case, for example `fromHsl`, `toOkLch`, and `toXyzD65`.
-- HSV, CMY, CMYK, manipulation, palette, and color-scheme APIs from version 4 are no longer present.
-- Formatting now uses modern CSS color syntax and each instance retains its concrete color-space type.
-
 ## Quick Start
 
 ```javascript
