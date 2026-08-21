@@ -226,7 +226,7 @@
      * Rounds a number to a fixed precision while normalizing negative zero.
      * @param {number} value The input value.
      * @param {number} [precision=0] The decimal precision.
-     * @return {number} The rounded value.
+     * @returns {number} The rounded value.
      */
     const roundValue = (value, precision = 0) => {
         const factor = 10 ** precision;
@@ -239,8 +239,7 @@
     /**
      * Ensures a numeric value is finite.
      * @param {number} value The value to validate.
-     * @return {void}
-     * @throws {TypeError} Thrown when the value is not finite.
+     * @throws {TypeError} If the value is not finite.
      */
     const ensureFinite = (value) => {
         if (!Number.isFinite(value)) {
@@ -253,7 +252,7 @@
      * @param {number} value The value to clamp.
      * @param {number} [min=0] The minimum value.
      * @param {number} [max=1] The maximum value.
-     * @return {number} The clamped value.
+     * @returns {number} The clamped value.
      */
     const clamp = (value, min = 0, max = 1) => {
         ensureFinite(value);
@@ -264,7 +263,7 @@
     /**
      * Wraps a hue value into the 0-360 range.
      * @param {number} value The hue value.
-     * @return {number} The wrapped hue.
+     * @returns {number} The wrapped hue.
      */
     const clampHue = (value) => {
         ensureFinite(value);
@@ -282,7 +281,7 @@
      * @param {{toObject(): Record<string, number>}} color The color to inspect.
      * @param {string} space The target color space key.
      * @param {Record<string, [number, number]>} gamutRanges The gamut map.
-     * @return {boolean} True when all primary channels fall within range.
+     * @returns {boolean} True when all primary channels fall within range.
      */
     const isInGamut = (color, space, gamutRanges) => {
         const [min, max] = gamutRanges[space];
@@ -301,7 +300,7 @@
     /**
      * Parses a CSS angle token into degrees.
      * @param {string} value The raw CSS angle token.
-     * @return {number} The angle in degrees.
+     * @returns {number} The angle in degrees.
      */
     const parseCssAngle = (value) => {
         if (typeof value !== 'string') {
@@ -334,7 +333,7 @@
      * Parses CSS function arguments.
      * @param {string} value The raw CSS argument string.
      * @param {boolean} [allowCommas=false] Whether legacy comma separators are allowed.
-     * @return {[string, string, string, string]} The parsed arguments.
+     * @returns {[string, string, string, string]} The parsed arguments.
      */
     const parseCssArguments = (value, allowCommas = false) => {
         if (typeof value !== 'string') {
@@ -371,7 +370,7 @@
      * Parses a CSS numeric token, optionally mapping percentages into a range.
      * @param {string} value The raw CSS numeric token.
      * @param {number} [percentMultiplier=1] The range used for percentages.
-     * @return {number} The parsed numeric value.
+     * @returns {number} The parsed numeric value.
      */
     const parseCssNumber = (value, percentMultiplier = 1) => {
         if (typeof value !== 'string') {
@@ -394,7 +393,7 @@
     /**
      * Finds an exact CSS color keyword for a hex triplet.
      * @param {string} hex The lowercase or uppercase hex string without `#`.
-     * @return {string|null} The matching CSS color keyword, if any.
+     * @returns {string|null} The matching CSS color keyword, if any.
      */
     const findCssColorName = (hex) => {
         return Object.entries(CSS_COLORS)
@@ -436,7 +435,7 @@
          * @param {number} [green=0] The green channel value.
          * @param {number} [blue=0] The blue channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromA98Rgb(red = 0, green = 0, blue = 0, alpha = 1) {
             return new this.A98Rgb(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -448,7 +447,7 @@
          * @param {number} [green=0] The green channel value.
          * @param {number} [blue=0] The blue channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromDisplayP3(red = 0, green = 0, blue = 0, alpha = 1) {
             return new this.DisplayP3(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -460,7 +459,7 @@
          * @param {number} [green=0] The green channel value.
          * @param {number} [blue=0] The blue channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromDisplayP3Linear(red = 0, green = 0, blue = 0, alpha = 1) {
             return new this.DisplayP3Linear(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -472,7 +471,7 @@
          * @param {number} [saturation=0] The saturation channel value.
          * @param {number} [lightness=0] The lightness channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromHsl(hue = 0, saturation = 0, lightness = 0, alpha = 1) {
             return new this.Hsl(hue, saturation, lightness, alpha).to(this.COLOR_SPACE);
@@ -484,7 +483,7 @@
          * @param {number} [whiteness=0] The whiteness channel value.
          * @param {number} [blackness=0] The blackness channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromHwb(hue = 0, whiteness = 0, blackness = 0, alpha = 1) {
             return new this.Hwb(hue, whiteness, blackness, alpha).to(this.COLOR_SPACE);
@@ -496,7 +495,7 @@
          * @param {number} [a=0] The a channel value.
          * @param {number} [b=0] The b channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromLab(lightness = 0, a = 0, b = 0, alpha = 1) {
             return new this.Lab(lightness, a, b, alpha).to(this.COLOR_SPACE);
@@ -508,7 +507,7 @@
          * @param {number} [chroma=0] The chroma channel value.
          * @param {number} [hue=0] The hue channel value in degrees.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromLch(lightness = 0, chroma = 0, hue = 0, alpha = 1) {
             return new this.Lch(lightness, chroma, hue, alpha).to(this.COLOR_SPACE);
@@ -520,7 +519,7 @@
          * @param {number} [a=0] The a channel value.
          * @param {number} [b=0] The b channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromOkLab(lightness = 0, a = 0, b = 0, alpha = 1) {
             return new this.OkLab(lightness, a, b, alpha).to(this.COLOR_SPACE);
@@ -532,7 +531,7 @@
          * @param {number} [chroma=0] The chroma channel value.
          * @param {number} [hue=0] The hue channel value in degrees.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromOkLch(lightness = 0, chroma = 0, hue = 0, alpha = 1) {
             return new this.OkLch(lightness, chroma, hue, alpha).to(this.COLOR_SPACE);
@@ -544,7 +543,7 @@
          * @param {number} [green=0] The green channel value.
          * @param {number} [blue=0] The blue channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromProPhotoRgb(red = 0, green = 0, blue = 0, alpha = 1) {
             return new this.ProPhotoRgb(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -556,7 +555,7 @@
          * @param {number} [green=0] The green channel value.
          * @param {number} [blue=0] The blue channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromRec2020(red = 0, green = 0, blue = 0, alpha = 1) {
             return new this.Rec2020(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -568,7 +567,7 @@
          * @param {number} [green=0] The green channel value.
          * @param {number} [blue=0] The blue channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromRgb(red = 0, green = 0, blue = 0, alpha = 1) {
             return new this.Rgb(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -580,7 +579,7 @@
          * @param {number} [green=0] The green channel value.
          * @param {number} [blue=0] The blue channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromSrgb(red = 0, green = 0, blue = 0, alpha = 1) {
             return new this.Srgb(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -592,7 +591,7 @@
          * @param {number} [green=0] The green channel value.
          * @param {number} [blue=0] The blue channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromSrgbLinear(red = 0, green = 0, blue = 0, alpha = 1) {
             return new this.SrgbLinear(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -601,8 +600,8 @@
         /**
          * Parses a CSS color string into a color instance.
          * @param {string} string The CSS color string to parse.
-         * @return {Color} The parsed color instance.
-         * @throws {TypeError} Thrown when the string is not a supported CSS color value.
+         * @returns {Color} The parsed color instance.
+         * @throws {TypeError} If the string is not a supported CSS color value.
          */
         static fromString(string) {
             string = String(string).replace(/\s+/g, ' ').trim().toLowerCase();
@@ -747,7 +746,7 @@
          * @param {number} [y=0] The y channel value.
          * @param {number} [z=0] The z channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromXyzD50(x = 0, y = 0, z = 0, alpha = 1) {
             return new this.XyzD50(x, y, z, alpha).to(this.COLOR_SPACE);
@@ -759,7 +758,7 @@
          * @param {number} [y=0] The y channel value.
          * @param {number} [z=0] The z channel value.
          * @param {number} [alpha=1] The alpha channel value.
-         * @return {Color} The converted color instance.
+         * @returns {Color} The converted color instance.
          */
         static fromXyzD65(x = 0, y = 0, z = 0, alpha = 1) {
             return new this.XyzD65(x, y, z, alpha).to(this.COLOR_SPACE);
@@ -768,7 +767,7 @@
         /**
          * Creates a color base instance with an alpha channel.
          * @param {number} [alpha=1] The alpha channel value.
-         * @throws {TypeError} Thrown when the abstract base class is instantiated directly.
+         * @throws {TypeError} If the abstract base class is instantiated directly.
          */
         constructor(alpha = 1) {
             if (new.target === Color) {
@@ -781,7 +780,7 @@
         /**
          * Composites this color over a background color using source-over alpha compositing in sRGB.
          * @param {Color} background The background color.
-         * @return {this} The composited color in the foreground's concrete class.
+         * @returns {this} The composited color in the foreground's concrete class.
          */
         composite(background) {
             const foreground = this.toSrgb();
@@ -810,8 +809,8 @@
         /**
          * Calculates the contrast between this and another color.
          * @param {Color} other The other color.
-         * @return {number} The contrast ratio.
-         * @throws {TypeError} Thrown when either color is not fully opaque.
+         * @returns {number} The contrast ratio.
+         * @throws {TypeError} If either color is not fully opaque.
          */
         contrast(other) {
             if (this.alpha < 1 || other.alpha < 1) {
@@ -831,8 +830,8 @@
         /**
          * Fits the color into a supported gamut by reducing OKLCH chroma.
          * @param {string} [space='srgb'] The target gamut identifier.
-         * @return {this} A color that fits within the requested gamut.
-         * @throws {TypeError} Thrown when gamut fitting is unsupported for the target space.
+         * @returns {this} A color that fits within the requested gamut.
+         * @throws {TypeError} If gamut fitting is unsupported for the target space.
          */
         fitGamut(space = 'srgb') {
             if (!Object.hasOwn(FIT_GAMUT_RANGES, space)) {
@@ -873,7 +872,7 @@
 
         /**
          * Returns the alpha channel.
-         * @return {number} The alpha channel value.
+         * @returns {number} The alpha channel value.
          */
         getAlpha() {
             return this.alpha;
@@ -881,7 +880,7 @@
 
         /**
          * Returns the closest CSS named color for this color.
-         * @return {string} The nearest CSS color keyword.
+         * @returns {string} The nearest CSS color keyword.
          */
         label() {
             const source = Object.values(this.toObject());
@@ -907,7 +906,7 @@
 
         /**
          * Returns the relative luminance for this color.
-         * @return {number} The relative luminance.
+         * @returns {number} The relative luminance.
          */
         luma() {
             return this.toSrgb().luma();
@@ -915,7 +914,7 @@
 
         /**
          * Returns the current color-space identifier.
-         * @return {string} The color-space identifier.
+         * @returns {string} The color-space identifier.
          */
         space() {
             return this.constructor.COLOR_SPACE;
@@ -924,8 +923,8 @@
         /**
          * Converts the color to another color space.
          * @param {string} space The target color-space identifier.
-         * @return {Color} The converted color.
-         * @throws {TypeError} Thrown when the target space is not supported.
+         * @returns {Color} The converted color.
+         * @throws {TypeError} If the target space is not supported.
          */
         to(space) {
             if (!space || this.constructor.COLOR_SPACE === space) {
@@ -943,7 +942,7 @@
 
         /**
          * Converts the color to A98 RGB.
-         * @return {A98Rgb} The converted color.
+         * @returns {A98Rgb} The converted color.
          */
         toA98Rgb() {
             return this.toXyzD65().toA98Rgb();
@@ -953,7 +952,7 @@
          * Serializes the color using CSS `color(...)` syntax.
          * @param {boolean|null} [alpha=null] Whether to include alpha.
          * @param {number} [precision=2] The numeric precision.
-         * @return {string} The serialized color string.
+         * @returns {string} The serialized color string.
          */
         toColorString(alpha = null, precision = 2) {
             alpha ??= this.alpha < 1;
@@ -972,7 +971,7 @@
 
         /**
          * Converts the color to Display P3.
-         * @return {DisplayP3} The converted color.
+         * @returns {DisplayP3} The converted color.
          */
         toDisplayP3() {
             return this.toDisplayP3Linear().toDisplayP3();
@@ -980,7 +979,7 @@
 
         /**
          * Converts the color to linear Display P3.
-         * @return {DisplayP3Linear} The converted color.
+         * @returns {DisplayP3Linear} The converted color.
          */
         toDisplayP3Linear() {
             return this.toXyzD65().toDisplayP3Linear();
@@ -988,7 +987,7 @@
 
         /**
          * Converts the color to Hex/RGB keyword formatting.
-         * @return {Hex} The converted color.
+         * @returns {Hex} The converted color.
          */
         toHex() {
             return this.toRgb().toHex();
@@ -996,7 +995,7 @@
 
         /**
          * Converts the color to HSL.
-         * @return {Hsl} The converted color.
+         * @returns {Hsl} The converted color.
          */
         toHsl() {
             return this.toSrgb().toHsl();
@@ -1004,7 +1003,7 @@
 
         /**
          * Converts the color to HWB.
-         * @return {Hwb} The converted color.
+         * @returns {Hwb} The converted color.
          */
         toHwb() {
             return this.toSrgb().toHwb();
@@ -1012,7 +1011,7 @@
 
         /**
          * Converts the color to Lab.
-         * @return {Lab} The converted color.
+         * @returns {Lab} The converted color.
          */
         toLab() {
             return this.toXyzD50().toLab();
@@ -1020,7 +1019,7 @@
 
         /**
          * Converts the color to LCH.
-         * @return {Lch} The converted color.
+         * @returns {Lch} The converted color.
          */
         toLch() {
             return this.toLab().toLch();
@@ -1028,8 +1027,8 @@
 
         /**
          * Returns the color state as a plain object.
-         * @return {Record<string, number>} The channel object.
-         * @throws {TypeError} Thrown when a subclass does not implement serialization.
+         * @returns {Record<string, number>} The channel object.
+         * @throws {TypeError} If a subclass does not implement serialization.
          */
         toObject() {
             throw new TypeError('Color.toObject must be implemented by subclasses.');
@@ -1037,7 +1036,7 @@
 
         /**
          * Converts the color to OKLab.
-         * @return {OkLab} The converted color.
+         * @returns {OkLab} The converted color.
          */
         toOkLab() {
             return this.toXyzD65().toOkLab();
@@ -1045,7 +1044,7 @@
 
         /**
          * Converts the color to OKLCH.
-         * @return {OkLch} The converted color.
+         * @returns {OkLch} The converted color.
          */
         toOkLch() {
             return this.toOkLab().toOkLch();
@@ -1053,7 +1052,7 @@
 
         /**
          * Converts the color to ProPhoto RGB.
-         * @return {ProPhotoRgb} The converted color.
+         * @returns {ProPhotoRgb} The converted color.
          */
         toProPhotoRgb() {
             return this.toXyzD50().toProPhotoRgb();
@@ -1061,7 +1060,7 @@
 
         /**
          * Converts the color to Rec. 2020.
-         * @return {Rec2020} The converted color.
+         * @returns {Rec2020} The converted color.
          */
         toRec2020() {
             return this.toXyzD65().toRec2020();
@@ -1069,7 +1068,7 @@
 
         /**
          * Converts the color to RGB.
-         * @return {Rgb} The converted color.
+         * @returns {Rgb} The converted color.
          */
         toRgb() {
             return this.toSrgb().toRgb();
@@ -1077,7 +1076,7 @@
 
         /**
          * Converts the color to sRGB.
-         * @return {Srgb} The converted color.
+         * @returns {Srgb} The converted color.
          */
         toSrgb() {
             return this.toSrgbLinear().toSrgb();
@@ -1085,7 +1084,7 @@
 
         /**
          * Converts the color to linear sRGB.
-         * @return {SrgbLinear} The converted color.
+         * @returns {SrgbLinear} The converted color.
          */
         toSrgbLinear() {
             return this.toXyzD65().toSrgbLinear();
@@ -1095,8 +1094,8 @@
          * Serializes the color to a CSS string.
          * @param {boolean|null} [alpha=null] Whether to include alpha when the format supports it.
          * @param {number} [precision=2] The numeric precision when the format supports it.
-         * @return {string} The serialized color string.
-         * @throws {TypeError} Thrown when a subclass does not implement string formatting.
+         * @returns {string} The serialized color string.
+         * @throws {TypeError} If a subclass does not implement string formatting.
          */
         toString() {
             throw new TypeError('Color.toString must be implemented by subclasses.');
@@ -1104,7 +1103,7 @@
 
         /**
          * Converts the color to XYZ D50.
-         * @return {XyzD50} The converted color.
+         * @returns {XyzD50} The converted color.
          */
         toXyzD50() {
             return this.toXyzD65().toXyzD50();
@@ -1112,7 +1111,7 @@
 
         /**
          * Converts the color to XYZ D65.
-         * @return {XyzD65} The converted color.
+         * @returns {XyzD65} The converted color.
          */
         toXyzD65() {
             return this.toSrgbLinear().toXyzD65();
@@ -1121,7 +1120,7 @@
         /**
          * Returns a copy with a different alpha channel.
          * @param {number} alpha The replacement alpha channel.
-         * @return {this} A new color instance.
+         * @returns {this} A new color instance.
          */
         withAlpha(alpha) {
             return new this.constructor(...Object.values({
@@ -1155,7 +1154,7 @@
 
         /**
          * Returns the blue channel.
-         * @return {number} The blue channel value.
+         * @returns {number} The blue channel value.
          */
         getBlue() {
             return this.blue;
@@ -1163,7 +1162,7 @@
 
         /**
          * Returns the green channel.
-         * @return {number} The green channel value.
+         * @returns {number} The green channel value.
          */
         getGreen() {
             return this.green;
@@ -1171,7 +1170,7 @@
 
         /**
          * Returns the red channel.
-         * @return {number} The red channel value.
+         * @returns {number} The red channel value.
          */
         getRed() {
             return this.red;
@@ -1179,7 +1178,7 @@
 
         /**
          * Returns the color state as a plain object.
-         * @return {{red: number, green: number, blue: number, alpha: number}} The channel object.
+         * @returns {{red: number, green: number, blue: number, alpha: number}} The channel object.
          */
         toObject() {
             return {
@@ -1193,7 +1192,7 @@
         /**
          * Returns a copy with a different blue channel.
          * @param {number} blue The replacement blue channel.
-         * @return {RgbColor} A new color instance.
+         * @returns {RgbColor} A new color instance.
          */
         withBlue(blue) {
             return new this.constructor(this.red, this.green, blue, this.alpha);
@@ -1202,7 +1201,7 @@
         /**
          * Returns a copy with a different green channel.
          * @param {number} green The replacement green channel.
-         * @return {RgbColor} A new color instance.
+         * @returns {RgbColor} A new color instance.
          */
         withGreen(green) {
             return new this.constructor(this.red, green, this.blue, this.alpha);
@@ -1211,7 +1210,7 @@
         /**
          * Returns a copy with a different red channel.
          * @param {number} red The replacement red channel.
-         * @return {RgbColor} A new color instance.
+         * @returns {RgbColor} A new color instance.
          */
         withRed(red) {
             return new this.constructor(red, this.green, this.blue, this.alpha);
@@ -1222,7 +1221,7 @@
      * Applies a sign-preserving power transform.
      * @param {number} value The value.
      * @param {number} exponent The exponent.
-     * @return {number} The transformed value.
+     * @returns {number} The transformed value.
      */
     const powSigned = (value, exponent) => {
         return value < 0 ?
@@ -1233,7 +1232,7 @@
     /**
      * Converts a linear SRGB channel to gamma-corrected form.
      * @param {number} value The channel value.
-     * @return {number} The gamma-corrected channel value.
+     * @returns {number} The gamma-corrected channel value.
      */
     const linearSrgbChannelToSrgb = (value) => {
         const absolute = Math.abs(value);
@@ -1249,7 +1248,7 @@
      * @param {number} p The first value.
      * @param {number} q The second value.
      * @param {number} t The shifted hue value.
-     * @return {number} The R, G or B value.
+     * @returns {number} The R, G or B value.
      */
     const rgbHue = (p, q, t) => {
         t = (t + 1) % 1;
@@ -1272,7 +1271,7 @@
     /**
      * Converts a gamma-corrected SRGB channel to linear form.
      * @param {number} value The channel value.
-     * @return {number} The linear channel value.
+     * @returns {number} The linear channel value.
      */
     const srgbChannelToLinear = (value) => {
         const absolute = Math.abs(value);
@@ -1288,7 +1287,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The XYZ D65 values.
+     * @returns {[number, number, number]} The XYZ D65 values.
      */
     const a98RgbToXyzD65 = (r, g, b) => {
         r = powSigned(r, 2.19921875);
@@ -1307,7 +1306,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The Display P3 values.
+     * @returns {[number, number, number]} The Display P3 values.
      */
     const displayP3LinearToDisplayP3 = (r, g, b) => {
         return [
@@ -1322,7 +1321,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The XYZ D65 values.
+     * @returns {[number, number, number]} The XYZ D65 values.
      */
     const displayP3LinearToXyzD65 = (r, g, b) => {
         return [
@@ -1337,7 +1336,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The Display P3 Linear values.
+     * @returns {[number, number, number]} The Display P3 Linear values.
      */
     const displayP3ToDisplayP3Linear = (r, g, b) => {
         return [
@@ -1352,7 +1351,7 @@
      * @param {number} h The hue value. (0, 360)
      * @param {number} s The saturation value. (0, 1)
      * @param {number} l The lightness value. (0, 1)
-     * @return {[number, number, number]} The SRGB values.
+     * @returns {[number, number, number]} The SRGB values.
      */
     const hslToSrgb = (h, s, l) => {
         h = (h % 360) / 360;
@@ -1379,7 +1378,7 @@
      * @param {number} h The hue value. (0, 360)
      * @param {number} s The saturation value. (0, 1)
      * @param {number} v The brightness value. (0, 1)
-     * @return {[number, number, number]} The SRGB values.
+     * @returns {[number, number, number]} The SRGB values.
      */
     const hsvToSrgb = (h, s, v) => {
         h = (h + 360) % 360;
@@ -1413,7 +1412,7 @@
      * @param {number} h The hue value. (0, 360)
      * @param {number} w The whiteness value. (0, 1)
      * @param {number} bl The blackness value. (0, 1)
-     * @return {[number, number, number]} The SRGB values.
+     * @returns {[number, number, number]} The SRGB values.
      */
     const hwbToSrgb = (h, w, bl) => {
         const total = w + bl;
@@ -1438,7 +1437,7 @@
      * @param {number} L The lightness value. (0, 100)
      * @param {number} a The a value. (-128, 127)
      * @param {number} b The b value. (-128, 127)
-     * @return {[number, number, number]} The LCH values.
+     * @returns {[number, number, number]} The LCH values.
      */
     const labToLch = (L, a, b) => {
         const C = Math.hypot(a, b);
@@ -1456,7 +1455,7 @@
      * @param {number} L The lightness value. (0, 100)
      * @param {number} a The a value. (-128, 127)
      * @param {number} b The b value. (-128, 127)
-     * @return {[number, number, number]} The XYZ D50 values.
+     * @returns {[number, number, number]} The XYZ D50 values.
      */
     const labToXyzD50 = (L, a, b) => {
         const epsilon = 216 / 24389;
@@ -1490,7 +1489,7 @@
      * @param {number} L The lightness value. (0, 100)
      * @param {number} C The chroma value. (0, 230)
      * @param {number} H The hue value. (0, 360)
-     * @return {[number, number, number]} The LAB values.
+     * @returns {[number, number, number]} The LAB values.
      */
     const lchToLab = (L, C, H) => {
         const radians = H * Math.PI / 180;
@@ -1507,7 +1506,7 @@
      * @param {number} L The lightness value. (0, 1)
      * @param {number} a The a value. (-0.4, 0.4)
      * @param {number} b The b value. (-0.4, 0.4)
-     * @return {[number, number, number]} The OK LCH values.
+     * @returns {[number, number, number]} The OK LCH values.
      */
     const okLabToOkLch = (L, a, b) => {
         const C = Math.hypot(a, b);
@@ -1525,7 +1524,7 @@
      * @param {number} L The lightness value. (0, 1)
      * @param {number} a The a value. (-0.4, 0.4)
      * @param {number} b The b value. (-0.4, 0.4)
-     * @return {[number, number, number]} The XYZ D65 values.
+     * @returns {[number, number, number]} The XYZ D65 values.
      */
     const okLabToXyzD65 = (L, a, b) => {
         const l = Math.pow(L + (0.3963377773761749 * a) + (0.2158037573099136 * b), 3);
@@ -1544,7 +1543,7 @@
      * @param {number} L The lightness value. (0, 1)
      * @param {number} C The chroma value. (0, 0.4)
      * @param {number} H The hue value. (0, 360)
-     * @return {[number, number, number]} The OK LAB values.
+     * @returns {[number, number, number]} The OK LAB values.
      */
     const okLchToOkLab = (L, C, H) => {
         const radians = H * Math.PI / 180;
@@ -1561,7 +1560,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The XYZ D50 values.
+     * @returns {[number, number, number]} The XYZ D50 values.
      */
     const prophotoRgbToXyzD50 = (r, g, b) => {
         const decode = (value) => Math.abs(value) <= 0.03125 ?
@@ -1584,7 +1583,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The XYZ D65 values.
+     * @returns {[number, number, number]} The XYZ D65 values.
      */
     const rec2020ToXyzD65 = (r, g, b) => {
         r = powSigned(r, 2.4);
@@ -1603,7 +1602,7 @@
      * @param {number} r The red value. (0, 255)
      * @param {number} g The green value. (0, 255)
      * @param {number} b The blue value. (0, 255)
-     * @return {[number, number, number]} The SRGB values.
+     * @returns {[number, number, number]} The SRGB values.
      */
     const rgbToSrgb = (r, g, b) => {
         return [r / 255, g / 255, b / 255];
@@ -1614,7 +1613,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The SRGB values.
+     * @returns {[number, number, number]} The SRGB values.
      */
     const srgbLinearToSrgb = (r, g, b) => {
         return [
@@ -1629,7 +1628,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The XYZ D65 values.
+     * @returns {[number, number, number]} The XYZ D65 values.
      */
     const srgbLinearToXyzD65 = (r, g, b) => {
         return [
@@ -1644,7 +1643,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The HSL values.
+     * @returns {[number, number, number]} The HSL values.
      */
     const srgbToHsl = (r, g, b) => {
         const max = Math.max(r, g, b);
@@ -1693,7 +1692,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The HSV values.
+     * @returns {[number, number, number]} The HSV values.
      */
     const srgbToHsv = (r, g, b) => {
         const max = Math.max(r, g, b);
@@ -1730,7 +1729,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The HWB values.
+     * @returns {[number, number, number]} The HWB values.
      */
     const srgbToHwb = (r, g, b) => {
         const [h] = srgbToHsv(r, g, b);
@@ -1747,7 +1746,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {number} The luma value.
+     * @returns {number} The luma value.
      */
     const srgbToLuma = (r, g, b) => {
         r = srgbChannelToLinear(r);
@@ -1762,7 +1761,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The RGB values.
+     * @returns {[number, number, number]} The RGB values.
      */
     const srgbToRgb = (r, g, b) => {
         return [r * 255, g * 255, b * 255];
@@ -1773,7 +1772,7 @@
      * @param {number} r The red value. (0, 1)
      * @param {number} g The green value. (0, 1)
      * @param {number} b The blue value. (0, 1)
-     * @return {[number, number, number]} The SRGB Linear values.
+     * @returns {[number, number, number]} The SRGB Linear values.
      */
     const srgbToSrgbLinear = (r, g, b) => {
         return [
@@ -1788,7 +1787,7 @@
      * @param {number} x The x value. (0, 1)
      * @param {number} y The y value. (0, 1)
      * @param {number} z The z value. (0, 1)
-     * @return {[number, number, number]} The LAB values.
+     * @returns {[number, number, number]} The LAB values.
      */
     const xyzD50ToLab = (x, y, z) => {
         const epsilon = 216 / 24389;
@@ -1817,7 +1816,7 @@
      * @param {number} x The x value. (0, 1)
      * @param {number} y The y value. (0, 1)
      * @param {number} z The z value. (0, 1)
-     * @return {[number, number, number]} The ProPhoto RGB values.
+     * @returns {[number, number, number]} The ProPhoto RGB values.
      */
     const xyzD50ToProPhotoRgb = (x, y, z) => {
         const encode = (value) => Math.abs(value) >= 0.001953125 ?
@@ -1840,7 +1839,7 @@
      * @param {number} x The x value. (0, 1)
      * @param {number} y The y value. (0, 1)
      * @param {number} z The z value. (0, 1)
-     * @return {[number, number, number]} The XYZ D65 values.
+     * @returns {[number, number, number]} The XYZ D65 values.
      */
     const xyzD50ToXyzD65 = (x, y, z) => {
         return [
@@ -1855,7 +1854,7 @@
      * @param {number} x The x value. (0, 1)
      * @param {number} y The y value. (0, 1)
      * @param {number} z The z value. (0, 1)
-     * @return {[number, number, number]} The A98 RGB values.
+     * @returns {[number, number, number]} The A98 RGB values.
      */
     const xyzD65ToA98Rgb = (x, y, z) => {
         const r = (2.0415879038107461 * x) - (0.5650069742788596 * y) - (0.3447313507783295 * z);
@@ -1875,7 +1874,7 @@
      * @param {number} x The x value. (0, 1)
      * @param {number} y The y value. (0, 1)
      * @param {number} z The z value. (0, 1)
-     * @return {[number, number, number]} The Display P3 Linear values.
+     * @returns {[number, number, number]} The Display P3 Linear values.
      */
     const xyzD65ToDisplayP3Linear = (x, y, z) => {
         return [
@@ -1890,7 +1889,7 @@
      * @param {number} x The x value. (0, 1)
      * @param {number} y The y value. (0, 1)
      * @param {number} z The z value. (0, 1)
-     * @return {[number, number, number]} The OK LAB values.
+     * @returns {[number, number, number]} The OK LAB values.
      */
     const xyzD65ToOkLab = (x, y, z) => {
         const cbrt = (value) => value < 0 ?
@@ -1917,7 +1916,7 @@
      * @param {number} x The x value. (0, 1)
      * @param {number} y The y value. (0, 1)
      * @param {number} z The z value. (0, 1)
-     * @return {[number, number, number]} The Rec. 2020 values.
+     * @returns {[number, number, number]} The Rec. 2020 values.
      */
     const xyzD65ToRec2020 = (x, y, z) => {
         const r = (1.7166511879712676 * x) - (0.3556707837763924 * y) - (0.2533662813736598 * z);
@@ -1936,7 +1935,7 @@
      * @param {number} x The x value. (0, 1)
      * @param {number} y The y value. (0, 1)
      * @param {number} z The z value. (0, 1)
-     * @return {[number, number, number]} The SRGB Linear values.
+     * @returns {[number, number, number]} The SRGB Linear values.
      */
     const xyzD65ToSrgbLinear = (x, y, z) => {
         return [
@@ -1951,7 +1950,7 @@
      * @param {number} x The x value. (0, 1)
      * @param {number} y The y value. (0, 1)
      * @param {number} z The z value. (0, 1)
-     * @return {[number, number, number]} The XYZ D50 values.
+     * @returns {[number, number, number]} The XYZ D50 values.
      */
     const xyzD65ToXyzD50 = (x, y, z) => {
         return [
@@ -2055,7 +2054,7 @@
          * Returns the color as a hex string without the leading `#`.
          * @param {boolean} [alpha=false] Whether to include alpha.
          * @param {boolean} [shortenHex=true] Whether to shorten the hex form when possible.
-         * @return {string} The hex string.
+         * @returns {string} The hex string.
          */
         getHex(alpha = false, shortenHex = true) {
             const red = Math.trunc(clamp(Math.round(this.red), 0, 255));
@@ -2105,7 +2104,7 @@
          * @param {boolean|null} [alpha=null] Whether to include alpha.
          * @param {number} [precision=2] The numeric precision.
          * @param {boolean} [name=false] Whether to prefer CSS named colors.
-         * @return {string} The serialized color string.
+         * @returns {string} The serialized color string.
          */
         toString(alpha = null, precision = 2, name = false) {
             alpha ??= this.alpha < 1;
@@ -2156,7 +2155,7 @@
          * @param {number} [precision=2] The unused numeric precision.
          * @param {boolean} [shortenHex=true] Whether to shorten the hex form when possible.
          * @param {boolean} [name=false] Whether to prefer CSS named colors.
-         * @return {string} The serialized color string.
+         * @returns {string} The serialized color string.
          */
         toString(alpha = null, precision = 2, shortenHex = true, name = false) {
             alpha ??= this.alpha < 1;
@@ -2202,7 +2201,7 @@
 
         /**
          * Returns the hue channel.
-         * @return {number} The hue channel value in degrees.
+         * @returns {number} The hue channel value in degrees.
          */
         getHue() {
             return this.hue;
@@ -2210,7 +2209,7 @@
 
         /**
          * Returns the lightness channel.
-         * @return {number} The lightness channel value.
+         * @returns {number} The lightness channel value.
          */
         getLightness() {
             return this.lightness;
@@ -2218,7 +2217,7 @@
 
         /**
          * Returns the saturation channel.
-         * @return {number} The saturation channel value.
+         * @returns {number} The saturation channel value.
          */
         getSaturation() {
             return this.saturation;
@@ -2231,7 +2230,7 @@
 
         /**
          * Returns the color state as a plain object.
-         * @return {{hue: number, saturation: number, lightness: number, alpha: number}} The channel object.
+         * @returns {{hue: number, saturation: number, lightness: number, alpha: number}} The channel object.
          */
         toObject() {
             return {
@@ -2258,7 +2257,7 @@
          * Serializes the color using CSS `hsl(...)` syntax.
          * @param {boolean|null} [alpha=null] Whether to include alpha.
          * @param {number} [precision=2] The numeric precision.
-         * @return {string} The serialized color string.
+         * @returns {string} The serialized color string.
          */
         toString(alpha = null, precision = 2) {
             alpha ??= this.alpha < 1;
@@ -2277,7 +2276,7 @@
         /**
          * Returns a copy with a different hue channel.
          * @param {number} hue The replacement hue channel.
-         * @return {Hsl} A new color instance.
+         * @returns {Hsl} A new color instance.
          */
         withHue(hue) {
             return new this.constructor(hue, this.saturation, this.lightness, this.alpha);
@@ -2286,7 +2285,7 @@
         /**
          * Returns a copy with a different lightness channel.
          * @param {number} lightness The replacement lightness channel.
-         * @return {Hsl} A new color instance.
+         * @returns {Hsl} A new color instance.
          */
         withLightness(lightness) {
             return new this.constructor(this.hue, this.saturation, lightness, this.alpha);
@@ -2295,7 +2294,7 @@
         /**
          * Returns a copy with a different saturation channel.
          * @param {number} saturation The replacement saturation channel.
-         * @return {Hsl} A new color instance.
+         * @returns {Hsl} A new color instance.
          */
         withSaturation(saturation) {
             return new this.constructor(this.hue, saturation, this.lightness, this.alpha);
@@ -2327,7 +2326,7 @@
 
         /**
          * Returns the blackness channel.
-         * @return {number} The blackness channel value.
+         * @returns {number} The blackness channel value.
          */
         getBlackness() {
             return this.blackness;
@@ -2335,7 +2334,7 @@
 
         /**
          * Returns the hue channel.
-         * @return {number} The hue channel value in degrees.
+         * @returns {number} The hue channel value in degrees.
          */
         getHue() {
             return this.hue;
@@ -2343,7 +2342,7 @@
 
         /**
          * Returns the whiteness channel.
-         * @return {number} The whiteness channel value.
+         * @returns {number} The whiteness channel value.
          */
         getWhiteness() {
             return this.whiteness;
@@ -2356,7 +2355,7 @@
 
         /**
          * Returns the color state as a plain object.
-         * @return {{hue: number, whiteness: number, blackness: number, alpha: number}} The channel object.
+         * @returns {{hue: number, whiteness: number, blackness: number, alpha: number}} The channel object.
          */
         toObject() {
             return {
@@ -2383,7 +2382,7 @@
          * Serializes the color using CSS `hwb(...)` syntax.
          * @param {boolean|null} [alpha=null] Whether to include alpha.
          * @param {number} [precision=2] The numeric precision.
-         * @return {string} The serialized color string.
+         * @returns {string} The serialized color string.
          */
         toString(alpha = null, precision = 2) {
             alpha ??= this.alpha < 1;
@@ -2402,7 +2401,7 @@
         /**
          * Returns a copy with a different blackness channel.
          * @param {number} blackness The replacement blackness channel.
-         * @return {Hwb} A new color instance.
+         * @returns {Hwb} A new color instance.
          */
         withBlackness(blackness) {
             return new this.constructor(this.hue, this.whiteness, blackness, this.alpha);
@@ -2411,7 +2410,7 @@
         /**
          * Returns a copy with a different hue channel.
          * @param {number} hue The replacement hue channel.
-         * @return {Hwb} A new color instance.
+         * @returns {Hwb} A new color instance.
          */
         withHue(hue) {
             return new this.constructor(hue, this.whiteness, this.blackness, this.alpha);
@@ -2420,7 +2419,7 @@
         /**
          * Returns a copy with a different whiteness channel.
          * @param {number} whiteness The replacement whiteness channel.
-         * @return {Hwb} A new color instance.
+         * @returns {Hwb} A new color instance.
          */
         withWhiteness(whiteness) {
             return new this.constructor(this.hue, whiteness, this.blackness, this.alpha);
@@ -2451,7 +2450,7 @@
 
         /**
          * Returns the a channel.
-         * @return {number} The a channel value.
+         * @returns {number} The a channel value.
          */
         getA() {
             return this.a;
@@ -2459,7 +2458,7 @@
 
         /**
          * Returns the b channel.
-         * @return {number} The b channel value.
+         * @returns {number} The b channel value.
          */
         getB() {
             return this.b;
@@ -2467,7 +2466,7 @@
 
         /**
          * Returns the lightness channel.
-         * @return {number} The lightness channel value.
+         * @returns {number} The lightness channel value.
          */
         getLightness() {
             return this.lightness;
@@ -2475,7 +2474,7 @@
 
         /**
          * Returns the color state as a plain object.
-         * @return {{lightness: number, a: number, b: number, alpha: number}} The channel object.
+         * @returns {{lightness: number, a: number, b: number, alpha: number}} The channel object.
          */
         toObject() {
             return {
@@ -2489,7 +2488,7 @@
         /**
          * Returns a copy with a different a channel.
          * @param {number} a The replacement a channel.
-         * @return {LabColor} A new color instance.
+         * @returns {LabColor} A new color instance.
          */
         withA(a) {
             return new this.constructor(this.lightness, a, this.b, this.alpha);
@@ -2498,7 +2497,7 @@
         /**
          * Returns a copy with a different b channel.
          * @param {number} b The replacement b channel.
-         * @return {LabColor} A new color instance.
+         * @returns {LabColor} A new color instance.
          */
         withB(b) {
             return new this.constructor(this.lightness, this.a, b, this.alpha);
@@ -2507,7 +2506,7 @@
         /**
          * Returns a copy with a different lightness channel.
          * @param {number} lightness The replacement lightness channel.
-         * @return {LabColor} A new color instance.
+         * @returns {LabColor} A new color instance.
          */
         withLightness(lightness) {
             return new this.constructor(lightness, this.a, this.b, this.alpha);
@@ -2536,7 +2535,7 @@
          * Serializes the color using CSS `lab(...)` syntax.
          * @param {boolean|null} [alpha=null] Whether to include alpha.
          * @param {number} [precision=2] The numeric precision.
-         * @return {string} The serialized color string.
+         * @returns {string} The serialized color string.
          */
         toString(alpha = null, precision = 2) {
             alpha ??= this.alpha < 1;
@@ -2588,7 +2587,7 @@
 
         /**
          * Returns the chroma channel.
-         * @return {number} The chroma channel value.
+         * @returns {number} The chroma channel value.
          */
         getChroma() {
             return this.chroma;
@@ -2596,7 +2595,7 @@
 
         /**
          * Returns the hue channel.
-         * @return {number} The hue channel value in degrees.
+         * @returns {number} The hue channel value in degrees.
          */
         getHue() {
             return this.hue;
@@ -2604,7 +2603,7 @@
 
         /**
          * Returns the lightness channel.
-         * @return {number} The lightness channel value.
+         * @returns {number} The lightness channel value.
          */
         getLightness() {
             return this.lightness;
@@ -2612,7 +2611,7 @@
 
         /**
          * Returns the color state as a plain object.
-         * @return {{lightness: number, chroma: number, hue: number, alpha: number}} The channel object.
+         * @returns {{lightness: number, chroma: number, hue: number, alpha: number}} The channel object.
          */
         toObject() {
             return {
@@ -2626,7 +2625,7 @@
         /**
          * Returns a copy with a different chroma channel.
          * @param {number} chroma The replacement chroma channel.
-         * @return {LchColor} A new color instance.
+         * @returns {LchColor} A new color instance.
          */
         withChroma(chroma) {
             return new this.constructor(this.lightness, chroma, this.hue, this.alpha);
@@ -2635,7 +2634,7 @@
         /**
          * Returns a copy with a different hue channel.
          * @param {number} hue The replacement hue channel in degrees.
-         * @return {LchColor} A new color instance.
+         * @returns {LchColor} A new color instance.
          */
         withHue(hue) {
             return new this.constructor(this.lightness, this.chroma, hue, this.alpha);
@@ -2644,7 +2643,7 @@
         /**
          * Returns a copy with a different lightness channel.
          * @param {number} lightness The replacement lightness channel.
-         * @return {LchColor} A new color instance.
+         * @returns {LchColor} A new color instance.
          */
         withLightness(lightness) {
             return new this.constructor(lightness, this.chroma, this.hue, this.alpha);
@@ -2673,7 +2672,7 @@
          * Serializes the color using CSS `lch(...)` syntax.
          * @param {boolean|null} [alpha=null] Whether to include alpha.
          * @param {number} [precision=2] The numeric precision.
-         * @return {string} The serialized color string.
+         * @returns {string} The serialized color string.
          */
         toString(alpha = null, precision = 2) {
             alpha ??= this.alpha < 1;
@@ -2717,7 +2716,7 @@
          * Serializes the color using CSS `oklab(...)` syntax.
          * @param {boolean|null} [alpha=null] Whether to include alpha.
          * @param {number} [precision=2] The numeric precision.
-         * @return {string} The serialized color string.
+         * @returns {string} The serialized color string.
          */
         toString(alpha = null, precision = 2) {
             alpha ??= this.alpha < 1;
@@ -2763,7 +2762,7 @@
          * Serializes the color using CSS `oklch(...)` syntax.
          * @param {boolean|null} [alpha=null] Whether to include alpha.
          * @param {number} [precision=2] The numeric precision.
-         * @return {string} The serialized color string.
+         * @returns {string} The serialized color string.
          */
         toString(alpha = null, precision = 2) {
             alpha ??= this.alpha < 1;
@@ -2943,7 +2942,7 @@
 
         /**
          * Returns the x channel.
-         * @return {number} The x channel value.
+         * @returns {number} The x channel value.
          */
         getX() {
             return this.x;
@@ -2951,7 +2950,7 @@
 
         /**
          * Returns the y channel.
-         * @return {number} The y channel value.
+         * @returns {number} The y channel value.
          */
         getY() {
             return this.y;
@@ -2959,7 +2958,7 @@
 
         /**
          * Returns the z channel.
-         * @return {number} The z channel value.
+         * @returns {number} The z channel value.
          */
         getZ() {
             return this.z;
@@ -2967,7 +2966,7 @@
 
         /**
          * Returns the color state as a plain object.
-         * @return {{x: number, y: number, z: number, alpha: number}} The channel object.
+         * @returns {{x: number, y: number, z: number, alpha: number}} The channel object.
          */
         toObject() {
             return {
@@ -2981,7 +2980,7 @@
         /**
          * Returns a copy with a different x channel.
          * @param {number} x The replacement x channel.
-         * @return {XyzColor} A new color instance.
+         * @returns {XyzColor} A new color instance.
          */
         withX(x) {
             return new this.constructor(x, this.y, this.z, this.alpha);
@@ -2990,7 +2989,7 @@
         /**
          * Returns a copy with a different y channel.
          * @param {number} y The replacement y channel.
-         * @return {XyzColor} A new color instance.
+         * @returns {XyzColor} A new color instance.
          */
         withY(y) {
             return new this.constructor(this.x, y, this.z, this.alpha);
@@ -2999,7 +2998,7 @@
         /**
          * Returns a copy with a different z channel.
          * @param {number} z The replacement z channel.
-         * @return {XyzColor} A new color instance.
+         * @returns {XyzColor} A new color instance.
          */
         withZ(z) {
             return new this.constructor(this.x, this.y, z, this.alpha);

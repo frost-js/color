@@ -27,7 +27,7 @@ export default class Hsl extends Color {
 
     /**
      * Returns the hue channel.
-     * @return {number} The hue channel value in degrees.
+     * @returns {number} The hue channel value in degrees.
      */
     getHue() {
         return this.hue;
@@ -35,7 +35,7 @@ export default class Hsl extends Color {
 
     /**
      * Returns the lightness channel.
-     * @return {number} The lightness channel value.
+     * @returns {number} The lightness channel value.
      */
     getLightness() {
         return this.lightness;
@@ -43,7 +43,7 @@ export default class Hsl extends Color {
 
     /**
      * Returns the saturation channel.
-     * @return {number} The saturation channel value.
+     * @returns {number} The saturation channel value.
      */
     getSaturation() {
         return this.saturation;
@@ -56,7 +56,7 @@ export default class Hsl extends Color {
 
     /**
      * Returns the color state as a plain object.
-     * @return {{hue: number, saturation: number, lightness: number, alpha: number}} The channel object.
+     * @returns {{hue: number, saturation: number, lightness: number, alpha: number}} The channel object.
      */
     toObject() {
         return {
@@ -83,7 +83,7 @@ export default class Hsl extends Color {
      * Serializes the color using CSS `hsl(...)` syntax.
      * @param {boolean|null} [alpha=null] Whether to include alpha.
      * @param {number} [precision=2] The numeric precision.
-     * @return {string} The serialized color string.
+     * @returns {string} The serialized color string.
      */
     toString(alpha = null, precision = 2) {
         alpha ??= this.alpha < 1;
@@ -102,7 +102,7 @@ export default class Hsl extends Color {
     /**
      * Returns a copy with a different hue channel.
      * @param {number} hue The replacement hue channel.
-     * @return {Hsl} A new color instance.
+     * @returns {Hsl} A new color instance.
      */
     withHue(hue) {
         return new this.constructor(hue, this.saturation, this.lightness, this.alpha);
@@ -111,7 +111,7 @@ export default class Hsl extends Color {
     /**
      * Returns a copy with a different lightness channel.
      * @param {number} lightness The replacement lightness channel.
-     * @return {Hsl} A new color instance.
+     * @returns {Hsl} A new color instance.
      */
     withLightness(lightness) {
         return new this.constructor(this.hue, this.saturation, lightness, this.alpha);
@@ -120,7 +120,7 @@ export default class Hsl extends Color {
     /**
      * Returns a copy with a different saturation channel.
      * @param {number} saturation The replacement saturation channel.
-     * @return {Hsl} A new color instance.
+     * @returns {Hsl} A new color instance.
      */
     withSaturation(saturation) {
         return new this.constructor(this.hue, saturation, this.lightness, this.alpha);

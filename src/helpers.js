@@ -4,7 +4,7 @@ import { CSS_ANGLE_REGEX, CSS_COLORS, CSS_NUMBER_REGEX } from './vars.js';
  * Rounds a number to a fixed precision while normalizing negative zero.
  * @param {number} value The input value.
  * @param {number} [precision=0] The decimal precision.
- * @return {number} The rounded value.
+ * @returns {number} The rounded value.
  */
 export const roundValue = (value, precision = 0) => {
     const factor = 10 ** precision;
@@ -17,8 +17,7 @@ export const roundValue = (value, precision = 0) => {
 /**
  * Ensures a numeric value is finite.
  * @param {number} value The value to validate.
- * @return {void}
- * @throws {TypeError} Thrown when the value is not finite.
+ * @throws {TypeError} If the value is not finite.
  */
 export const ensureFinite = (value) => {
     if (!Number.isFinite(value)) {
@@ -31,7 +30,7 @@ export const ensureFinite = (value) => {
  * @param {number} value The value to clamp.
  * @param {number} [min=0] The minimum value.
  * @param {number} [max=1] The maximum value.
- * @return {number} The clamped value.
+ * @returns {number} The clamped value.
  */
 export const clamp = (value, min = 0, max = 1) => {
     ensureFinite(value);
@@ -42,7 +41,7 @@ export const clamp = (value, min = 0, max = 1) => {
 /**
  * Wraps a hue value into the 0-360 range.
  * @param {number} value The hue value.
- * @return {number} The wrapped hue.
+ * @returns {number} The wrapped hue.
  */
 export const clampHue = (value) => {
     ensureFinite(value);
@@ -60,7 +59,7 @@ export const clampHue = (value) => {
  * @param {{toObject(): Record<string, number>}} color The color to inspect.
  * @param {string} space The target color space key.
  * @param {Record<string, [number, number]>} gamutRanges The gamut map.
- * @return {boolean} True when all primary channels fall within range.
+ * @returns {boolean} True when all primary channels fall within range.
  */
 export const isInGamut = (color, space, gamutRanges) => {
     const [min, max] = gamutRanges[space];
@@ -79,7 +78,7 @@ export const isInGamut = (color, space, gamutRanges) => {
 /**
  * Parses a CSS angle token into degrees.
  * @param {string} value The raw CSS angle token.
- * @return {number} The angle in degrees.
+ * @returns {number} The angle in degrees.
  */
 export const parseCssAngle = (value) => {
     if (typeof value !== 'string') {
@@ -112,7 +111,7 @@ export const parseCssAngle = (value) => {
  * Parses CSS function arguments.
  * @param {string} value The raw CSS argument string.
  * @param {boolean} [allowCommas=false] Whether legacy comma separators are allowed.
- * @return {[string, string, string, string]} The parsed arguments.
+ * @returns {[string, string, string, string]} The parsed arguments.
  */
 export const parseCssArguments = (value, allowCommas = false) => {
     if (typeof value !== 'string') {
@@ -149,7 +148,7 @@ export const parseCssArguments = (value, allowCommas = false) => {
  * Parses a CSS numeric token, optionally mapping percentages into a range.
  * @param {string} value The raw CSS numeric token.
  * @param {number} [percentMultiplier=1] The range used for percentages.
- * @return {number} The parsed numeric value.
+ * @returns {number} The parsed numeric value.
  */
 export const parseCssNumber = (value, percentMultiplier = 1) => {
     if (typeof value !== 'string') {
@@ -172,7 +171,7 @@ export const parseCssNumber = (value, percentMultiplier = 1) => {
 /**
  * Finds an exact CSS color keyword for a hex triplet.
  * @param {string} hex The lowercase or uppercase hex string without `#`.
- * @return {string|null} The matching CSS color keyword, if any.
+ * @returns {string|null} The matching CSS color keyword, if any.
  */
 export const findCssColorName = (hex) => {
     return Object.entries(CSS_COLORS)

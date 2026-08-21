@@ -2,7 +2,7 @@
  * Applies a sign-preserving power transform.
  * @param {number} value The value.
  * @param {number} exponent The exponent.
- * @return {number} The transformed value.
+ * @returns {number} The transformed value.
  */
 const powSigned = (value, exponent) => {
     return value < 0 ?
@@ -13,7 +13,7 @@ const powSigned = (value, exponent) => {
 /**
  * Converts a linear SRGB channel to gamma-corrected form.
  * @param {number} value The channel value.
- * @return {number} The gamma-corrected channel value.
+ * @returns {number} The gamma-corrected channel value.
  */
 const linearSrgbChannelToSrgb = (value) => {
     const absolute = Math.abs(value);
@@ -29,7 +29,7 @@ const linearSrgbChannelToSrgb = (value) => {
  * @param {number} p The first value.
  * @param {number} q The second value.
  * @param {number} t The shifted hue value.
- * @return {number} The R, G or B value.
+ * @returns {number} The R, G or B value.
  */
 const rgbHue = (p, q, t) => {
     t = (t + 1) % 1;
@@ -52,7 +52,7 @@ const rgbHue = (p, q, t) => {
 /**
  * Converts a gamma-corrected SRGB channel to linear form.
  * @param {number} value The channel value.
- * @return {number} The linear channel value.
+ * @returns {number} The linear channel value.
  */
 const srgbChannelToLinear = (value) => {
     const absolute = Math.abs(value);
@@ -68,7 +68,7 @@ const srgbChannelToLinear = (value) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The XYZ D65 values.
+ * @returns {[number, number, number]} The XYZ D65 values.
  */
 export const a98RgbToXyzD65 = (r, g, b) => {
     r = powSigned(r, 2.19921875);
@@ -87,7 +87,7 @@ export const a98RgbToXyzD65 = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The Display P3 values.
+ * @returns {[number, number, number]} The Display P3 values.
  */
 export const displayP3LinearToDisplayP3 = (r, g, b) => {
     return [
@@ -102,7 +102,7 @@ export const displayP3LinearToDisplayP3 = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The XYZ D65 values.
+ * @returns {[number, number, number]} The XYZ D65 values.
  */
 export const displayP3LinearToXyzD65 = (r, g, b) => {
     return [
@@ -117,7 +117,7 @@ export const displayP3LinearToXyzD65 = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The Display P3 Linear values.
+ * @returns {[number, number, number]} The Display P3 Linear values.
  */
 export const displayP3ToDisplayP3Linear = (r, g, b) => {
     return [
@@ -132,7 +132,7 @@ export const displayP3ToDisplayP3Linear = (r, g, b) => {
  * @param {number} h The hue value. (0, 360)
  * @param {number} s The saturation value. (0, 1)
  * @param {number} l The lightness value. (0, 1)
- * @return {[number, number, number]} The SRGB values.
+ * @returns {[number, number, number]} The SRGB values.
  */
 export const hslToSrgb = (h, s, l) => {
     h = (h % 360) / 360;
@@ -159,7 +159,7 @@ export const hslToSrgb = (h, s, l) => {
  * @param {number} h The hue value. (0, 360)
  * @param {number} s The saturation value. (0, 1)
  * @param {number} v The brightness value. (0, 1)
- * @return {[number, number, number]} The SRGB values.
+ * @returns {[number, number, number]} The SRGB values.
  */
 export const hsvToSrgb = (h, s, v) => {
     h = (h + 360) % 360;
@@ -193,7 +193,7 @@ export const hsvToSrgb = (h, s, v) => {
  * @param {number} h The hue value. (0, 360)
  * @param {number} w The whiteness value. (0, 1)
  * @param {number} bl The blackness value. (0, 1)
- * @return {[number, number, number]} The SRGB values.
+ * @returns {[number, number, number]} The SRGB values.
  */
 export const hwbToSrgb = (h, w, bl) => {
     const total = w + bl;
@@ -218,7 +218,7 @@ export const hwbToSrgb = (h, w, bl) => {
  * @param {number} L The lightness value. (0, 100)
  * @param {number} a The a value. (-128, 127)
  * @param {number} b The b value. (-128, 127)
- * @return {[number, number, number]} The LCH values.
+ * @returns {[number, number, number]} The LCH values.
  */
 export const labToLch = (L, a, b) => {
     const C = Math.hypot(a, b);
@@ -236,7 +236,7 @@ export const labToLch = (L, a, b) => {
  * @param {number} L The lightness value. (0, 100)
  * @param {number} a The a value. (-128, 127)
  * @param {number} b The b value. (-128, 127)
- * @return {[number, number, number]} The XYZ D50 values.
+ * @returns {[number, number, number]} The XYZ D50 values.
  */
 export const labToXyzD50 = (L, a, b) => {
     const epsilon = 216 / 24389;
@@ -270,7 +270,7 @@ export const labToXyzD50 = (L, a, b) => {
  * @param {number} L The lightness value. (0, 100)
  * @param {number} C The chroma value. (0, 230)
  * @param {number} H The hue value. (0, 360)
- * @return {[number, number, number]} The LAB values.
+ * @returns {[number, number, number]} The LAB values.
  */
 export const lchToLab = (L, C, H) => {
     const radians = H * Math.PI / 180;
@@ -287,7 +287,7 @@ export const lchToLab = (L, C, H) => {
  * @param {number} L The lightness value. (0, 1)
  * @param {number} a The a value. (-0.4, 0.4)
  * @param {number} b The b value. (-0.4, 0.4)
- * @return {[number, number, number]} The OK LCH values.
+ * @returns {[number, number, number]} The OK LCH values.
  */
 export const okLabToOkLch = (L, a, b) => {
     const C = Math.hypot(a, b);
@@ -305,7 +305,7 @@ export const okLabToOkLch = (L, a, b) => {
  * @param {number} L The lightness value. (0, 1)
  * @param {number} a The a value. (-0.4, 0.4)
  * @param {number} b The b value. (-0.4, 0.4)
- * @return {[number, number, number]} The XYZ D65 values.
+ * @returns {[number, number, number]} The XYZ D65 values.
  */
 export const okLabToXyzD65 = (L, a, b) => {
     const l = Math.pow(L + (0.3963377773761749 * a) + (0.2158037573099136 * b), 3);
@@ -324,7 +324,7 @@ export const okLabToXyzD65 = (L, a, b) => {
  * @param {number} L The lightness value. (0, 1)
  * @param {number} C The chroma value. (0, 0.4)
  * @param {number} H The hue value. (0, 360)
- * @return {[number, number, number]} The OK LAB values.
+ * @returns {[number, number, number]} The OK LAB values.
  */
 export const okLchToOkLab = (L, C, H) => {
     const radians = H * Math.PI / 180;
@@ -341,7 +341,7 @@ export const okLchToOkLab = (L, C, H) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The XYZ D50 values.
+ * @returns {[number, number, number]} The XYZ D50 values.
  */
 export const prophotoRgbToXyzD50 = (r, g, b) => {
     const decode = (value) => Math.abs(value) <= 0.03125 ?
@@ -364,7 +364,7 @@ export const prophotoRgbToXyzD50 = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The XYZ D65 values.
+ * @returns {[number, number, number]} The XYZ D65 values.
  */
 export const rec2020ToXyzD65 = (r, g, b) => {
     r = powSigned(r, 2.4);
@@ -383,7 +383,7 @@ export const rec2020ToXyzD65 = (r, g, b) => {
  * @param {number} r The red value. (0, 255)
  * @param {number} g The green value. (0, 255)
  * @param {number} b The blue value. (0, 255)
- * @return {[number, number, number]} The SRGB values.
+ * @returns {[number, number, number]} The SRGB values.
  */
 export const rgbToSrgb = (r, g, b) => {
     return [r / 255, g / 255, b / 255];
@@ -394,7 +394,7 @@ export const rgbToSrgb = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The SRGB values.
+ * @returns {[number, number, number]} The SRGB values.
  */
 export const srgbLinearToSrgb = (r, g, b) => {
     return [
@@ -409,7 +409,7 @@ export const srgbLinearToSrgb = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The XYZ D65 values.
+ * @returns {[number, number, number]} The XYZ D65 values.
  */
 export const srgbLinearToXyzD65 = (r, g, b) => {
     return [
@@ -424,7 +424,7 @@ export const srgbLinearToXyzD65 = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The HSL values.
+ * @returns {[number, number, number]} The HSL values.
  */
 export const srgbToHsl = (r, g, b) => {
     const max = Math.max(r, g, b);
@@ -473,7 +473,7 @@ export const srgbToHsl = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The HSV values.
+ * @returns {[number, number, number]} The HSV values.
  */
 export const srgbToHsv = (r, g, b) => {
     const max = Math.max(r, g, b);
@@ -510,7 +510,7 @@ export const srgbToHsv = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The HWB values.
+ * @returns {[number, number, number]} The HWB values.
  */
 export const srgbToHwb = (r, g, b) => {
     const [h] = srgbToHsv(r, g, b);
@@ -527,7 +527,7 @@ export const srgbToHwb = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {number} The luma value.
+ * @returns {number} The luma value.
  */
 export const srgbToLuma = (r, g, b) => {
     r = srgbChannelToLinear(r);
@@ -542,7 +542,7 @@ export const srgbToLuma = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The RGB values.
+ * @returns {[number, number, number]} The RGB values.
  */
 export const srgbToRgb = (r, g, b) => {
     return [r * 255, g * 255, b * 255];
@@ -553,7 +553,7 @@ export const srgbToRgb = (r, g, b) => {
  * @param {number} r The red value. (0, 1)
  * @param {number} g The green value. (0, 1)
  * @param {number} b The blue value. (0, 1)
- * @return {[number, number, number]} The SRGB Linear values.
+ * @returns {[number, number, number]} The SRGB Linear values.
  */
 export const srgbToSrgbLinear = (r, g, b) => {
     return [
@@ -568,7 +568,7 @@ export const srgbToSrgbLinear = (r, g, b) => {
  * @param {number} x The x value. (0, 1)
  * @param {number} y The y value. (0, 1)
  * @param {number} z The z value. (0, 1)
- * @return {[number, number, number]} The LAB values.
+ * @returns {[number, number, number]} The LAB values.
  */
 export const xyzD50ToLab = (x, y, z) => {
     const epsilon = 216 / 24389;
@@ -597,7 +597,7 @@ export const xyzD50ToLab = (x, y, z) => {
  * @param {number} x The x value. (0, 1)
  * @param {number} y The y value. (0, 1)
  * @param {number} z The z value. (0, 1)
- * @return {[number, number, number]} The ProPhoto RGB values.
+ * @returns {[number, number, number]} The ProPhoto RGB values.
  */
 export const xyzD50ToProPhotoRgb = (x, y, z) => {
     const encode = (value) => Math.abs(value) >= 0.001953125 ?
@@ -620,7 +620,7 @@ export const xyzD50ToProPhotoRgb = (x, y, z) => {
  * @param {number} x The x value. (0, 1)
  * @param {number} y The y value. (0, 1)
  * @param {number} z The z value. (0, 1)
- * @return {[number, number, number]} The XYZ D65 values.
+ * @returns {[number, number, number]} The XYZ D65 values.
  */
 export const xyzD50ToXyzD65 = (x, y, z) => {
     return [
@@ -635,7 +635,7 @@ export const xyzD50ToXyzD65 = (x, y, z) => {
  * @param {number} x The x value. (0, 1)
  * @param {number} y The y value. (0, 1)
  * @param {number} z The z value. (0, 1)
- * @return {[number, number, number]} The A98 RGB values.
+ * @returns {[number, number, number]} The A98 RGB values.
  */
 export const xyzD65ToA98Rgb = (x, y, z) => {
     const r = (2.0415879038107461 * x) - (0.5650069742788596 * y) - (0.3447313507783295 * z);
@@ -655,7 +655,7 @@ export const xyzD65ToA98Rgb = (x, y, z) => {
  * @param {number} x The x value. (0, 1)
  * @param {number} y The y value. (0, 1)
  * @param {number} z The z value. (0, 1)
- * @return {[number, number, number]} The Display P3 Linear values.
+ * @returns {[number, number, number]} The Display P3 Linear values.
  */
 export const xyzD65ToDisplayP3Linear = (x, y, z) => {
     return [
@@ -670,7 +670,7 @@ export const xyzD65ToDisplayP3Linear = (x, y, z) => {
  * @param {number} x The x value. (0, 1)
  * @param {number} y The y value. (0, 1)
  * @param {number} z The z value. (0, 1)
- * @return {[number, number, number]} The OK LAB values.
+ * @returns {[number, number, number]} The OK LAB values.
  */
 export const xyzD65ToOkLab = (x, y, z) => {
     const cbrt = (value) => value < 0 ?
@@ -697,7 +697,7 @@ export const xyzD65ToOkLab = (x, y, z) => {
  * @param {number} x The x value. (0, 1)
  * @param {number} y The y value. (0, 1)
  * @param {number} z The z value. (0, 1)
- * @return {[number, number, number]} The Rec. 2020 values.
+ * @returns {[number, number, number]} The Rec. 2020 values.
  */
 export const xyzD65ToRec2020 = (x, y, z) => {
     const r = (1.7166511879712676 * x) - (0.3556707837763924 * y) - (0.2533662813736598 * z);
@@ -716,7 +716,7 @@ export const xyzD65ToRec2020 = (x, y, z) => {
  * @param {number} x The x value. (0, 1)
  * @param {number} y The y value. (0, 1)
  * @param {number} z The z value. (0, 1)
- * @return {[number, number, number]} The SRGB Linear values.
+ * @returns {[number, number, number]} The SRGB Linear values.
  */
 export const xyzD65ToSrgbLinear = (x, y, z) => {
     return [
@@ -731,7 +731,7 @@ export const xyzD65ToSrgbLinear = (x, y, z) => {
  * @param {number} x The x value. (0, 1)
  * @param {number} y The y value. (0, 1)
  * @param {number} z The z value. (0, 1)
- * @return {[number, number, number]} The XYZ D50 values.
+ * @returns {[number, number, number]} The XYZ D50 values.
  */
 export const xyzD65ToXyzD50 = (x, y, z) => {
     return [

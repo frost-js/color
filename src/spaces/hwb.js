@@ -27,7 +27,7 @@ export default class Hwb extends Color {
 
     /**
      * Returns the blackness channel.
-     * @return {number} The blackness channel value.
+     * @returns {number} The blackness channel value.
      */
     getBlackness() {
         return this.blackness;
@@ -35,7 +35,7 @@ export default class Hwb extends Color {
 
     /**
      * Returns the hue channel.
-     * @return {number} The hue channel value in degrees.
+     * @returns {number} The hue channel value in degrees.
      */
     getHue() {
         return this.hue;
@@ -43,7 +43,7 @@ export default class Hwb extends Color {
 
     /**
      * Returns the whiteness channel.
-     * @return {number} The whiteness channel value.
+     * @returns {number} The whiteness channel value.
      */
     getWhiteness() {
         return this.whiteness;
@@ -56,7 +56,7 @@ export default class Hwb extends Color {
 
     /**
      * Returns the color state as a plain object.
-     * @return {{hue: number, whiteness: number, blackness: number, alpha: number}} The channel object.
+     * @returns {{hue: number, whiteness: number, blackness: number, alpha: number}} The channel object.
      */
     toObject() {
         return {
@@ -83,7 +83,7 @@ export default class Hwb extends Color {
      * Serializes the color using CSS `hwb(...)` syntax.
      * @param {boolean|null} [alpha=null] Whether to include alpha.
      * @param {number} [precision=2] The numeric precision.
-     * @return {string} The serialized color string.
+     * @returns {string} The serialized color string.
      */
     toString(alpha = null, precision = 2) {
         alpha ??= this.alpha < 1;
@@ -102,7 +102,7 @@ export default class Hwb extends Color {
     /**
      * Returns a copy with a different blackness channel.
      * @param {number} blackness The replacement blackness channel.
-     * @return {Hwb} A new color instance.
+     * @returns {Hwb} A new color instance.
      */
     withBlackness(blackness) {
         return new this.constructor(this.hue, this.whiteness, blackness, this.alpha);
@@ -111,7 +111,7 @@ export default class Hwb extends Color {
     /**
      * Returns a copy with a different hue channel.
      * @param {number} hue The replacement hue channel.
-     * @return {Hwb} A new color instance.
+     * @returns {Hwb} A new color instance.
      */
     withHue(hue) {
         return new this.constructor(hue, this.whiteness, this.blackness, this.alpha);
@@ -120,7 +120,7 @@ export default class Hwb extends Color {
     /**
      * Returns a copy with a different whiteness channel.
      * @param {number} whiteness The replacement whiteness channel.
-     * @return {Hwb} A new color instance.
+     * @returns {Hwb} A new color instance.
      */
     withWhiteness(whiteness) {
         return new this.constructor(this.hue, whiteness, this.blackness, this.alpha);

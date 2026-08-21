@@ -24,7 +24,7 @@ export default class LchColor extends Color {
 
     /**
      * Returns the chroma channel.
-     * @return {number} The chroma channel value.
+     * @returns {number} The chroma channel value.
      */
     getChroma() {
         return this.chroma;
@@ -32,7 +32,7 @@ export default class LchColor extends Color {
 
     /**
      * Returns the hue channel.
-     * @return {number} The hue channel value in degrees.
+     * @returns {number} The hue channel value in degrees.
      */
     getHue() {
         return this.hue;
@@ -40,7 +40,7 @@ export default class LchColor extends Color {
 
     /**
      * Returns the lightness channel.
-     * @return {number} The lightness channel value.
+     * @returns {number} The lightness channel value.
      */
     getLightness() {
         return this.lightness;
@@ -48,7 +48,7 @@ export default class LchColor extends Color {
 
     /**
      * Returns the color state as a plain object.
-     * @return {{lightness: number, chroma: number, hue: number, alpha: number}} The channel object.
+     * @returns {{lightness: number, chroma: number, hue: number, alpha: number}} The channel object.
      */
     toObject() {
         return {
@@ -62,7 +62,7 @@ export default class LchColor extends Color {
     /**
      * Returns a copy with a different chroma channel.
      * @param {number} chroma The replacement chroma channel.
-     * @return {LchColor} A new color instance.
+     * @returns {LchColor} A new color instance.
      */
     withChroma(chroma) {
         return new this.constructor(this.lightness, chroma, this.hue, this.alpha);
@@ -71,7 +71,7 @@ export default class LchColor extends Color {
     /**
      * Returns a copy with a different hue channel.
      * @param {number} hue The replacement hue channel in degrees.
-     * @return {LchColor} A new color instance.
+     * @returns {LchColor} A new color instance.
      */
     withHue(hue) {
         return new this.constructor(this.lightness, this.chroma, hue, this.alpha);
@@ -80,7 +80,7 @@ export default class LchColor extends Color {
     /**
      * Returns a copy with a different lightness channel.
      * @param {number} lightness The replacement lightness channel.
-     * @return {LchColor} A new color instance.
+     * @returns {LchColor} A new color instance.
      */
     withLightness(lightness) {
         return new this.constructor(lightness, this.chroma, this.hue, this.alpha);

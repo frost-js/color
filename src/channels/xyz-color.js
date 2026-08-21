@@ -25,7 +25,7 @@ export default class XyzColor extends Color {
 
     /**
      * Returns the x channel.
-     * @return {number} The x channel value.
+     * @returns {number} The x channel value.
      */
     getX() {
         return this.x;
@@ -33,7 +33,7 @@ export default class XyzColor extends Color {
 
     /**
      * Returns the y channel.
-     * @return {number} The y channel value.
+     * @returns {number} The y channel value.
      */
     getY() {
         return this.y;
@@ -41,7 +41,7 @@ export default class XyzColor extends Color {
 
     /**
      * Returns the z channel.
-     * @return {number} The z channel value.
+     * @returns {number} The z channel value.
      */
     getZ() {
         return this.z;
@@ -49,7 +49,7 @@ export default class XyzColor extends Color {
 
     /**
      * Returns the color state as a plain object.
-     * @return {{x: number, y: number, z: number, alpha: number}} The channel object.
+     * @returns {{x: number, y: number, z: number, alpha: number}} The channel object.
      */
     toObject() {
         return {
@@ -63,7 +63,7 @@ export default class XyzColor extends Color {
     /**
      * Returns a copy with a different x channel.
      * @param {number} x The replacement x channel.
-     * @return {XyzColor} A new color instance.
+     * @returns {XyzColor} A new color instance.
      */
     withX(x) {
         return new this.constructor(x, this.y, this.z, this.alpha);
@@ -72,7 +72,7 @@ export default class XyzColor extends Color {
     /**
      * Returns a copy with a different y channel.
      * @param {number} y The replacement y channel.
-     * @return {XyzColor} A new color instance.
+     * @returns {XyzColor} A new color instance.
      */
     withY(y) {
         return new this.constructor(this.x, y, this.z, this.alpha);
@@ -81,7 +81,7 @@ export default class XyzColor extends Color {
     /**
      * Returns a copy with a different z channel.
      * @param {number} z The replacement z channel.
-     * @return {XyzColor} A new color instance.
+     * @returns {XyzColor} A new color instance.
      */
     withZ(z) {
         return new this.constructor(this.x, this.y, z, this.alpha);

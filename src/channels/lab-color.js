@@ -25,7 +25,7 @@ export default class LabColor extends Color {
 
     /**
      * Returns the a channel.
-     * @return {number} The a channel value.
+     * @returns {number} The a channel value.
      */
     getA() {
         return this.a;
@@ -33,7 +33,7 @@ export default class LabColor extends Color {
 
     /**
      * Returns the b channel.
-     * @return {number} The b channel value.
+     * @returns {number} The b channel value.
      */
     getB() {
         return this.b;
@@ -41,7 +41,7 @@ export default class LabColor extends Color {
 
     /**
      * Returns the lightness channel.
-     * @return {number} The lightness channel value.
+     * @returns {number} The lightness channel value.
      */
     getLightness() {
         return this.lightness;
@@ -49,7 +49,7 @@ export default class LabColor extends Color {
 
     /**
      * Returns the color state as a plain object.
-     * @return {{lightness: number, a: number, b: number, alpha: number}} The channel object.
+     * @returns {{lightness: number, a: number, b: number, alpha: number}} The channel object.
      */
     toObject() {
         return {
@@ -63,7 +63,7 @@ export default class LabColor extends Color {
     /**
      * Returns a copy with a different a channel.
      * @param {number} a The replacement a channel.
-     * @return {LabColor} A new color instance.
+     * @returns {LabColor} A new color instance.
      */
     withA(a) {
         return new this.constructor(this.lightness, a, this.b, this.alpha);
@@ -72,7 +72,7 @@ export default class LabColor extends Color {
     /**
      * Returns a copy with a different b channel.
      * @param {number} b The replacement b channel.
-     * @return {LabColor} A new color instance.
+     * @returns {LabColor} A new color instance.
      */
     withB(b) {
         return new this.constructor(this.lightness, this.a, b, this.alpha);
@@ -81,7 +81,7 @@ export default class LabColor extends Color {
     /**
      * Returns a copy with a different lightness channel.
      * @param {number} lightness The replacement lightness channel.
-     * @return {LabColor} A new color instance.
+     * @returns {LabColor} A new color instance.
      */
     withLightness(lightness) {
         return new this.constructor(lightness, this.a, this.b, this.alpha);

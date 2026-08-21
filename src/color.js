@@ -36,7 +36,7 @@ export default class Color {
      * @param {number} [green=0] The green channel value.
      * @param {number} [blue=0] The blue channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromA98Rgb(red = 0, green = 0, blue = 0, alpha = 1) {
         return new this.A98Rgb(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -48,7 +48,7 @@ export default class Color {
      * @param {number} [green=0] The green channel value.
      * @param {number} [blue=0] The blue channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromDisplayP3(red = 0, green = 0, blue = 0, alpha = 1) {
         return new this.DisplayP3(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -60,7 +60,7 @@ export default class Color {
      * @param {number} [green=0] The green channel value.
      * @param {number} [blue=0] The blue channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromDisplayP3Linear(red = 0, green = 0, blue = 0, alpha = 1) {
         return new this.DisplayP3Linear(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -72,7 +72,7 @@ export default class Color {
      * @param {number} [saturation=0] The saturation channel value.
      * @param {number} [lightness=0] The lightness channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromHsl(hue = 0, saturation = 0, lightness = 0, alpha = 1) {
         return new this.Hsl(hue, saturation, lightness, alpha).to(this.COLOR_SPACE);
@@ -84,7 +84,7 @@ export default class Color {
      * @param {number} [whiteness=0] The whiteness channel value.
      * @param {number} [blackness=0] The blackness channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromHwb(hue = 0, whiteness = 0, blackness = 0, alpha = 1) {
         return new this.Hwb(hue, whiteness, blackness, alpha).to(this.COLOR_SPACE);
@@ -96,7 +96,7 @@ export default class Color {
      * @param {number} [a=0] The a channel value.
      * @param {number} [b=0] The b channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromLab(lightness = 0, a = 0, b = 0, alpha = 1) {
         return new this.Lab(lightness, a, b, alpha).to(this.COLOR_SPACE);
@@ -108,7 +108,7 @@ export default class Color {
      * @param {number} [chroma=0] The chroma channel value.
      * @param {number} [hue=0] The hue channel value in degrees.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromLch(lightness = 0, chroma = 0, hue = 0, alpha = 1) {
         return new this.Lch(lightness, chroma, hue, alpha).to(this.COLOR_SPACE);
@@ -120,7 +120,7 @@ export default class Color {
      * @param {number} [a=0] The a channel value.
      * @param {number} [b=0] The b channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromOkLab(lightness = 0, a = 0, b = 0, alpha = 1) {
         return new this.OkLab(lightness, a, b, alpha).to(this.COLOR_SPACE);
@@ -132,7 +132,7 @@ export default class Color {
      * @param {number} [chroma=0] The chroma channel value.
      * @param {number} [hue=0] The hue channel value in degrees.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromOkLch(lightness = 0, chroma = 0, hue = 0, alpha = 1) {
         return new this.OkLch(lightness, chroma, hue, alpha).to(this.COLOR_SPACE);
@@ -144,7 +144,7 @@ export default class Color {
      * @param {number} [green=0] The green channel value.
      * @param {number} [blue=0] The blue channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromProPhotoRgb(red = 0, green = 0, blue = 0, alpha = 1) {
         return new this.ProPhotoRgb(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -156,7 +156,7 @@ export default class Color {
      * @param {number} [green=0] The green channel value.
      * @param {number} [blue=0] The blue channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromRec2020(red = 0, green = 0, blue = 0, alpha = 1) {
         return new this.Rec2020(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -168,7 +168,7 @@ export default class Color {
      * @param {number} [green=0] The green channel value.
      * @param {number} [blue=0] The blue channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromRgb(red = 0, green = 0, blue = 0, alpha = 1) {
         return new this.Rgb(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -180,7 +180,7 @@ export default class Color {
      * @param {number} [green=0] The green channel value.
      * @param {number} [blue=0] The blue channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromSrgb(red = 0, green = 0, blue = 0, alpha = 1) {
         return new this.Srgb(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -192,7 +192,7 @@ export default class Color {
      * @param {number} [green=0] The green channel value.
      * @param {number} [blue=0] The blue channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromSrgbLinear(red = 0, green = 0, blue = 0, alpha = 1) {
         return new this.SrgbLinear(red, green, blue, alpha).to(this.COLOR_SPACE);
@@ -201,8 +201,8 @@ export default class Color {
     /**
      * Parses a CSS color string into a color instance.
      * @param {string} string The CSS color string to parse.
-     * @return {Color} The parsed color instance.
-     * @throws {TypeError} Thrown when the string is not a supported CSS color value.
+     * @returns {Color} The parsed color instance.
+     * @throws {TypeError} If the string is not a supported CSS color value.
      */
     static fromString(string) {
         string = String(string).replace(/\s+/g, ' ').trim().toLowerCase();
@@ -347,7 +347,7 @@ export default class Color {
      * @param {number} [y=0] The y channel value.
      * @param {number} [z=0] The z channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromXyzD50(x = 0, y = 0, z = 0, alpha = 1) {
         return new this.XyzD50(x, y, z, alpha).to(this.COLOR_SPACE);
@@ -359,7 +359,7 @@ export default class Color {
      * @param {number} [y=0] The y channel value.
      * @param {number} [z=0] The z channel value.
      * @param {number} [alpha=1] The alpha channel value.
-     * @return {Color} The converted color instance.
+     * @returns {Color} The converted color instance.
      */
     static fromXyzD65(x = 0, y = 0, z = 0, alpha = 1) {
         return new this.XyzD65(x, y, z, alpha).to(this.COLOR_SPACE);
@@ -368,7 +368,7 @@ export default class Color {
     /**
      * Creates a color base instance with an alpha channel.
      * @param {number} [alpha=1] The alpha channel value.
-     * @throws {TypeError} Thrown when the abstract base class is instantiated directly.
+     * @throws {TypeError} If the abstract base class is instantiated directly.
      */
     constructor(alpha = 1) {
         if (new.target === Color) {
@@ -381,7 +381,7 @@ export default class Color {
     /**
      * Composites this color over a background color using source-over alpha compositing in sRGB.
      * @param {Color} background The background color.
-     * @return {this} The composited color in the foreground's concrete class.
+     * @returns {this} The composited color in the foreground's concrete class.
      */
     composite(background) {
         const foreground = this.toSrgb();
@@ -410,8 +410,8 @@ export default class Color {
     /**
      * Calculates the contrast between this and another color.
      * @param {Color} other The other color.
-     * @return {number} The contrast ratio.
-     * @throws {TypeError} Thrown when either color is not fully opaque.
+     * @returns {number} The contrast ratio.
+     * @throws {TypeError} If either color is not fully opaque.
      */
     contrast(other) {
         if (this.alpha < 1 || other.alpha < 1) {
@@ -431,8 +431,8 @@ export default class Color {
     /**
      * Fits the color into a supported gamut by reducing OKLCH chroma.
      * @param {string} [space='srgb'] The target gamut identifier.
-     * @return {this} A color that fits within the requested gamut.
-     * @throws {TypeError} Thrown when gamut fitting is unsupported for the target space.
+     * @returns {this} A color that fits within the requested gamut.
+     * @throws {TypeError} If gamut fitting is unsupported for the target space.
      */
     fitGamut(space = 'srgb') {
         if (!Object.hasOwn(FIT_GAMUT_RANGES, space)) {
@@ -473,7 +473,7 @@ export default class Color {
 
     /**
      * Returns the alpha channel.
-     * @return {number} The alpha channel value.
+     * @returns {number} The alpha channel value.
      */
     getAlpha() {
         return this.alpha;
@@ -481,7 +481,7 @@ export default class Color {
 
     /**
      * Returns the closest CSS named color for this color.
-     * @return {string} The nearest CSS color keyword.
+     * @returns {string} The nearest CSS color keyword.
      */
     label() {
         const source = Object.values(this.toObject());
@@ -507,7 +507,7 @@ export default class Color {
 
     /**
      * Returns the relative luminance for this color.
-     * @return {number} The relative luminance.
+     * @returns {number} The relative luminance.
      */
     luma() {
         return this.toSrgb().luma();
@@ -515,7 +515,7 @@ export default class Color {
 
     /**
      * Returns the current color-space identifier.
-     * @return {string} The color-space identifier.
+     * @returns {string} The color-space identifier.
      */
     space() {
         return this.constructor.COLOR_SPACE;
@@ -524,8 +524,8 @@ export default class Color {
     /**
      * Converts the color to another color space.
      * @param {string} space The target color-space identifier.
-     * @return {Color} The converted color.
-     * @throws {TypeError} Thrown when the target space is not supported.
+     * @returns {Color} The converted color.
+     * @throws {TypeError} If the target space is not supported.
      */
     to(space) {
         if (!space || this.constructor.COLOR_SPACE === space) {
@@ -543,7 +543,7 @@ export default class Color {
 
     /**
      * Converts the color to A98 RGB.
-     * @return {A98Rgb} The converted color.
+     * @returns {A98Rgb} The converted color.
      */
     toA98Rgb() {
         return this.toXyzD65().toA98Rgb();
@@ -553,7 +553,7 @@ export default class Color {
      * Serializes the color using CSS `color(...)` syntax.
      * @param {boolean|null} [alpha=null] Whether to include alpha.
      * @param {number} [precision=2] The numeric precision.
-     * @return {string} The serialized color string.
+     * @returns {string} The serialized color string.
      */
     toColorString(alpha = null, precision = 2) {
         alpha ??= this.alpha < 1;
@@ -572,7 +572,7 @@ export default class Color {
 
     /**
      * Converts the color to Display P3.
-     * @return {DisplayP3} The converted color.
+     * @returns {DisplayP3} The converted color.
      */
     toDisplayP3() {
         return this.toDisplayP3Linear().toDisplayP3();
@@ -580,7 +580,7 @@ export default class Color {
 
     /**
      * Converts the color to linear Display P3.
-     * @return {DisplayP3Linear} The converted color.
+     * @returns {DisplayP3Linear} The converted color.
      */
     toDisplayP3Linear() {
         return this.toXyzD65().toDisplayP3Linear();
@@ -588,7 +588,7 @@ export default class Color {
 
     /**
      * Converts the color to Hex/RGB keyword formatting.
-     * @return {Hex} The converted color.
+     * @returns {Hex} The converted color.
      */
     toHex() {
         return this.toRgb().toHex();
@@ -596,7 +596,7 @@ export default class Color {
 
     /**
      * Converts the color to HSL.
-     * @return {Hsl} The converted color.
+     * @returns {Hsl} The converted color.
      */
     toHsl() {
         return this.toSrgb().toHsl();
@@ -604,7 +604,7 @@ export default class Color {
 
     /**
      * Converts the color to HWB.
-     * @return {Hwb} The converted color.
+     * @returns {Hwb} The converted color.
      */
     toHwb() {
         return this.toSrgb().toHwb();
@@ -612,7 +612,7 @@ export default class Color {
 
     /**
      * Converts the color to Lab.
-     * @return {Lab} The converted color.
+     * @returns {Lab} The converted color.
      */
     toLab() {
         return this.toXyzD50().toLab();
@@ -620,7 +620,7 @@ export default class Color {
 
     /**
      * Converts the color to LCH.
-     * @return {Lch} The converted color.
+     * @returns {Lch} The converted color.
      */
     toLch() {
         return this.toLab().toLch();
@@ -628,8 +628,8 @@ export default class Color {
 
     /**
      * Returns the color state as a plain object.
-     * @return {Record<string, number>} The channel object.
-     * @throws {TypeError} Thrown when a subclass does not implement serialization.
+     * @returns {Record<string, number>} The channel object.
+     * @throws {TypeError} If a subclass does not implement serialization.
      */
     toObject() {
         throw new TypeError('Color.toObject must be implemented by subclasses.');
@@ -637,7 +637,7 @@ export default class Color {
 
     /**
      * Converts the color to OKLab.
-     * @return {OkLab} The converted color.
+     * @returns {OkLab} The converted color.
      */
     toOkLab() {
         return this.toXyzD65().toOkLab();
@@ -645,7 +645,7 @@ export default class Color {
 
     /**
      * Converts the color to OKLCH.
-     * @return {OkLch} The converted color.
+     * @returns {OkLch} The converted color.
      */
     toOkLch() {
         return this.toOkLab().toOkLch();
@@ -653,7 +653,7 @@ export default class Color {
 
     /**
      * Converts the color to ProPhoto RGB.
-     * @return {ProPhotoRgb} The converted color.
+     * @returns {ProPhotoRgb} The converted color.
      */
     toProPhotoRgb() {
         return this.toXyzD50().toProPhotoRgb();
@@ -661,7 +661,7 @@ export default class Color {
 
     /**
      * Converts the color to Rec. 2020.
-     * @return {Rec2020} The converted color.
+     * @returns {Rec2020} The converted color.
      */
     toRec2020() {
         return this.toXyzD65().toRec2020();
@@ -669,7 +669,7 @@ export default class Color {
 
     /**
      * Converts the color to RGB.
-     * @return {Rgb} The converted color.
+     * @returns {Rgb} The converted color.
      */
     toRgb() {
         return this.toSrgb().toRgb();
@@ -677,7 +677,7 @@ export default class Color {
 
     /**
      * Converts the color to sRGB.
-     * @return {Srgb} The converted color.
+     * @returns {Srgb} The converted color.
      */
     toSrgb() {
         return this.toSrgbLinear().toSrgb();
@@ -685,7 +685,7 @@ export default class Color {
 
     /**
      * Converts the color to linear sRGB.
-     * @return {SrgbLinear} The converted color.
+     * @returns {SrgbLinear} The converted color.
      */
     toSrgbLinear() {
         return this.toXyzD65().toSrgbLinear();
@@ -695,8 +695,8 @@ export default class Color {
      * Serializes the color to a CSS string.
      * @param {boolean|null} [alpha=null] Whether to include alpha when the format supports it.
      * @param {number} [precision=2] The numeric precision when the format supports it.
-     * @return {string} The serialized color string.
-     * @throws {TypeError} Thrown when a subclass does not implement string formatting.
+     * @returns {string} The serialized color string.
+     * @throws {TypeError} If a subclass does not implement string formatting.
      */
     toString() {
         throw new TypeError('Color.toString must be implemented by subclasses.');
@@ -704,7 +704,7 @@ export default class Color {
 
     /**
      * Converts the color to XYZ D50.
-     * @return {XyzD50} The converted color.
+     * @returns {XyzD50} The converted color.
      */
     toXyzD50() {
         return this.toXyzD65().toXyzD50();
@@ -712,7 +712,7 @@ export default class Color {
 
     /**
      * Converts the color to XYZ D65.
-     * @return {XyzD65} The converted color.
+     * @returns {XyzD65} The converted color.
      */
     toXyzD65() {
         return this.toSrgbLinear().toXyzD65();
@@ -721,7 +721,7 @@ export default class Color {
     /**
      * Returns a copy with a different alpha channel.
      * @param {number} alpha The replacement alpha channel.
-     * @return {this} A new color instance.
+     * @returns {this} A new color instance.
      */
     withAlpha(alpha) {
         return new this.constructor(...Object.values({

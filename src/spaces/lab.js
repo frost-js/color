@@ -24,7 +24,7 @@ export default class Lab extends LabColor {
      * Serializes the color using CSS `lab(...)` syntax.
      * @param {boolean|null} [alpha=null] Whether to include alpha.
      * @param {number} [precision=2] The numeric precision.
-     * @return {string} The serialized color string.
+     * @returns {string} The serialized color string.
      */
     toString(alpha = null, precision = 2) {
         alpha ??= this.alpha < 1;

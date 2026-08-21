@@ -12,7 +12,7 @@ export default class Rgb extends RgbColor {
      * Returns the color as a hex string without the leading `#`.
      * @param {boolean} [alpha=false] Whether to include alpha.
      * @param {boolean} [shortenHex=true] Whether to shorten the hex form when possible.
-     * @return {string} The hex string.
+     * @returns {string} The hex string.
      */
     getHex(alpha = false, shortenHex = true) {
         const red = Math.trunc(clamp(Math.round(this.red), 0, 255));
@@ -62,7 +62,7 @@ export default class Rgb extends RgbColor {
      * @param {boolean|null} [alpha=null] Whether to include alpha.
      * @param {number} [precision=2] The numeric precision.
      * @param {boolean} [name=false] Whether to prefer CSS named colors.
-     * @return {string} The serialized color string.
+     * @returns {string} The serialized color string.
      */
     toString(alpha = null, precision = 2, name = false) {
         alpha ??= this.alpha < 1;

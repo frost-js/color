@@ -23,7 +23,7 @@ export default class Hex extends Rgb {
      * @param {number} [precision=2] The unused numeric precision.
      * @param {boolean} [shortenHex=true] Whether to shorten the hex form when possible.
      * @param {boolean} [name=false] Whether to prefer CSS named colors.
-     * @return {string} The serialized color string.
+     * @returns {string} The serialized color string.
      */
     toString(alpha = null, precision = 2, shortenHex = true, name = false) {
         void precision;
