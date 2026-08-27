@@ -21,7 +21,7 @@ import {
     xyzD65ToSrgbLinear,
     xyzD65ToXyzD50,
 } from '../../src/conversions.js';
-import { assertClose } from '../assertions.js';
+import { assertClose } from '../support/assertions.js';
 
 const assertArrayClose = (actual, expected) => {
     for (const [index, value] of expected.entries()) {

@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
 import Color from '../../src/index.js';
-import { assertClose, assertObjectClose } from '../assertions.js';
+import { assertClose, assertObjectClose } from '../support/assertions.js';
 
-const ColorClass = Color.OkLab;
+const { OkLab } = Color;
 
 describe('OkLab', function() {
     describe('#constructor', function() {
         it('preserves extended channels and clamps alpha', function() {
-            const color = new ColorClass(...[
+            const color = new OkLab(...[
                 3,
                 -1,
                 1,
@@ -22,8 +22,8 @@ describe('OkLab', function() {
 
     describe('#contrast', function() {
         it('calculates the contrast ratio', function() {
-            const color1 = ColorClass.fromString('lavender');
-            const color2 = ColorClass.fromString('black');
+            const color1 = OkLab.fromString('lavender');
+            const color2 = OkLab.fromString('black');
 
             assertClose(color1.contrast(color2), 17.063750102904255);
             assertClose(color2.contrast(color1), 17.063750102904255);
@@ -32,7 +32,7 @@ describe('OkLab', function() {
 
     describe('#getA', function() {
         it('returns the a channel', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = OkLab.fromString('lavender');
 
             assertClose(color.getA(), 0.0073649318907060835);
         });
@@ -40,7 +40,7 @@ describe('OkLab', function() {
 
     describe('#getB', function() {
         it('returns the b channel', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = OkLab.fromString('lavender');
 
             assertClose(color.getB(), -0.025915245880047233);
         });
@@ -48,7 +48,7 @@ describe('OkLab', function() {
 
     describe('#getLightness', function() {
         it('returns the lightness channel', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = OkLab.fromString('lavender');
 
             assertClose(color.getLightness(), 0.9309023355374633);
         });
@@ -56,7 +56,7 @@ describe('OkLab', function() {
 
     describe('#label', function() {
         it('returns the closest CSS color name', function() {
-            const color = ColorClass.fromString('lavender').withLightness(0.5);
+            const color = OkLab.fromString('lavender').withLightness(0.5);
 
             assert.strictEqual(color.label(), 'dimgray');
         });
@@ -64,7 +64,7 @@ describe('OkLab', function() {
 
     describe('#luma', function() {
         it('returns the relative luminance', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = OkLab.fromString('lavender');
 
             assertClose(color.luma(), 0.8031875051452128);
         });
@@ -72,7 +72,7 @@ describe('OkLab', function() {
 
     describe('#space', function() {
         it('returns the color space', function() {
-            const color = new ColorClass();
+            const color = new OkLab();
 
             assert.strictEqual(color.space(), 'oklab');
         });
@@ -80,7 +80,7 @@ describe('OkLab', function() {
 
     describe('#toA98Rgb', function() {
         it('returns the color as A98 RGB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toA98Rgb();
 
             assert.notStrictEqual(color2, color1);
@@ -90,7 +90,7 @@ describe('OkLab', function() {
 
     describe('#toDisplayP3', function() {
         it('returns the color as Display P3', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toDisplayP3();
 
             assert.notStrictEqual(color2, color1);
@@ -100,7 +100,7 @@ describe('OkLab', function() {
 
     describe('#toDisplayP3Linear', function() {
         it('returns the color as linear Display P3', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toDisplayP3Linear();
 
             assert.notStrictEqual(color2, color1);
@@ -110,7 +110,7 @@ describe('OkLab', function() {
 
     describe('#toHex', function() {
         it('returns the color as hexadecimal', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toHex();
 
             assert.notStrictEqual(color2, color1);
@@ -120,7 +120,7 @@ describe('OkLab', function() {
 
     describe('#toHsl', function() {
         it('returns the color as HSL', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toHsl();
 
             assert.notStrictEqual(color2, color1);
@@ -130,7 +130,7 @@ describe('OkLab', function() {
 
     describe('#toHwb', function() {
         it('returns the color as HWB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toHwb();
 
             assert.notStrictEqual(color2, color1);
@@ -140,7 +140,7 @@ describe('OkLab', function() {
 
     describe('#toLab', function() {
         it('returns the color as Lab', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toLab();
 
             assert.notStrictEqual(color2, color1);
@@ -150,7 +150,7 @@ describe('OkLab', function() {
 
     describe('#toLch', function() {
         it('returns the color as LCH', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toLch();
 
             assert.notStrictEqual(color2, color1);
@@ -160,7 +160,7 @@ describe('OkLab', function() {
 
     describe('#toOkLab', function() {
         it('returns the color as OKLab', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toOkLab();
 
             assert.strictEqual(color2, color1);
@@ -169,7 +169,7 @@ describe('OkLab', function() {
 
     describe('#toOkLch', function() {
         it('returns the color as OKLCH', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toOkLch();
 
             assert.notStrictEqual(color2, color1);
@@ -179,7 +179,7 @@ describe('OkLab', function() {
 
     describe('#toProPhotoRgb', function() {
         it('returns the color as ProPhoto RGB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toProPhotoRgb();
 
             assert.notStrictEqual(color2, color1);
@@ -189,7 +189,7 @@ describe('OkLab', function() {
 
     describe('#toRec2020', function() {
         it('returns the color as Rec. 2020', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toRec2020();
 
             assert.notStrictEqual(color2, color1);
@@ -199,7 +199,7 @@ describe('OkLab', function() {
 
     describe('#toRgb', function() {
         it('returns the color as RGB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toRgb();
 
             assert.notStrictEqual(color2, color1);
@@ -209,7 +209,7 @@ describe('OkLab', function() {
 
     describe('#toSrgb', function() {
         it('returns the color as sRGB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toSrgb();
 
             assert.notStrictEqual(color2, color1);
@@ -219,7 +219,7 @@ describe('OkLab', function() {
 
     describe('#toSrgbLinear', function() {
         it('returns the color as linear sRGB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toSrgbLinear();
 
             assert.notStrictEqual(color2, color1);
@@ -229,7 +229,7 @@ describe('OkLab', function() {
 
     describe('#toXyzD50', function() {
         it('returns the color as XYZ D50', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toXyzD50();
 
             assert.notStrictEqual(color2, color1);
@@ -239,7 +239,7 @@ describe('OkLab', function() {
 
     describe('#toXyzD65', function() {
         it('returns the color as XYZ D65', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = OkLab.fromString('lavender');
             const color2 = color1.toXyzD65();
 
             assert.notStrictEqual(color2, color1);
@@ -249,7 +249,7 @@ describe('OkLab', function() {
 
     describe('#toObject', function() {
         it('returns the color channels', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = OkLab.fromString('lavender');
 
             assertObjectClose(color.toObject(),
                 {
@@ -264,13 +264,13 @@ describe('OkLab', function() {
 
     describe('#toString', function() {
         it('returns the CSS color string', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = OkLab.fromString('lavender');
 
             assert.strictEqual(color.toString(), 'oklab(0.93 0.01 -0.03)');
         });
 
         it('includes alpha when needed', function() {
-            const color = ColorClass.fromString('rgb(230 230 250 / 50%)');
+            const color = OkLab.fromString('rgb(230 230 250 / 50%)');
 
             assert.strictEqual(color.toString(), 'oklab(0.93 0.01 -0.03 / 0.5)');
         });
@@ -278,7 +278,7 @@ describe('OkLab', function() {
 
     describe('#withA', function() {
         it('returns a copy with a different a channel', function() {
-            const color = ColorClass.fromString('lavender').withA(0.2);
+            const color = OkLab.fromString('lavender').withA(0.2);
 
             assert.strictEqual(color.toString(), 'oklab(0.93 0.2 -0.03)');
         });
@@ -286,7 +286,7 @@ describe('OkLab', function() {
 
     describe('#withB', function() {
         it('returns a copy with a different b channel', function() {
-            const color = ColorClass.fromString('lavender').withB(0.2);
+            const color = OkLab.fromString('lavender').withB(0.2);
 
             assert.strictEqual(color.toString(), 'oklab(0.93 0.01 0.2)');
         });
@@ -294,7 +294,7 @@ describe('OkLab', function() {
 
     describe('#withLightness', function() {
         it('returns a copy with a different lightness channel', function() {
-            const color = ColorClass.fromString('lavender').withLightness(0.5);
+            const color = OkLab.fromString('lavender').withLightness(0.5);
 
             assert.strictEqual(color.toString(), 'oklab(0.5 0.01 -0.03)');
         });

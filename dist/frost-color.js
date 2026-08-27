@@ -400,25 +400,24 @@
             .find(([, value]) => value === `#${hex}`)?.[0] ?? null;
     };
 
-    /**
-     * @typedef {import('./spaces/a98-rgb.js').default} A98Rgb
-     * @typedef {import('./spaces/display-p3.js').default} DisplayP3
-     * @typedef {import('./spaces/display-p3-linear.js').default} DisplayP3Linear
-     * @typedef {import('./spaces/hex.js').default} Hex
-     * @typedef {import('./spaces/hsl.js').default} Hsl
-     * @typedef {import('./spaces/hwb.js').default} Hwb
-     * @typedef {import('./spaces/lab.js').default} Lab
-     * @typedef {import('./spaces/lch.js').default} Lch
-     * @typedef {import('./spaces/ok-lab.js').default} OkLab
-     * @typedef {import('./spaces/ok-lch.js').default} OkLch
-     * @typedef {import('./spaces/pro-photo-rgb.js').default} ProPhotoRgb
-     * @typedef {import('./spaces/rec-2020.js').default} Rec2020
-     * @typedef {import('./spaces/rgb.js').default} Rgb
-     * @typedef {import('./spaces/srgb.js').default} Srgb
-     * @typedef {import('./spaces/srgb-linear.js').default} SrgbLinear
-     * @typedef {import('./spaces/xyz-d50.js').default} XyzD50
-     * @typedef {import('./spaces/xyz-d65.js').default} XyzD65
-     */
+    /** @import A98Rgb from './spaces/a98-rgb.js' */
+    /** @import DisplayP3 from './spaces/display-p3.js' */
+    /** @import DisplayP3Linear from './spaces/display-p3-linear.js' */
+    /** @import Hex from './spaces/hex.js' */
+    /** @import Hsl from './spaces/hsl.js' */
+    /** @import Hwb from './spaces/hwb.js' */
+    /** @import Lab from './spaces/lab.js' */
+    /** @import Lch from './spaces/lch.js' */
+    /** @import OkLab from './spaces/ok-lab.js' */
+    /** @import OkLch from './spaces/ok-lch.js' */
+    /** @import ProPhotoRgb from './spaces/pro-photo-rgb.js' */
+    /** @import Rec2020 from './spaces/rec-2020.js' */
+    /** @import Rgb from './spaces/rgb.js' */
+    /** @import Srgb from './spaces/srgb.js' */
+    /** @import SrgbLinear from './spaces/srgb-linear.js' */
+    /** @import XyzD50 from './spaces/xyz-d50.js' */
+    /** @import XyzD65 from './spaces/xyz-d65.js' */
+
 
     /**
      * Provides color parsing, formatting, and conversion utilities.
@@ -1027,6 +1026,7 @@
 
         /**
          * Returns the color state as a plain object.
+         * @abstract
          * @returns {Record<string, number>} The channel object.
          * @throws {TypeError} If a subclass does not implement serialization.
          */
@@ -1094,10 +1094,12 @@
          * Serializes the color to a CSS string.
          * @param {boolean|null} [alpha=null] Whether to include alpha when the format supports it.
          * @param {number} [precision=2] The numeric precision when the format supports it.
+         * @abstract
          * @returns {string} The serialized color string.
          * @throws {TypeError} If a subclass does not implement string formatting.
          */
-        toString() {
+        toString(alpha = null, precision = 2) {
+
             throw new TypeError('Color.toString must be implemented by subclasses.');
         }
 

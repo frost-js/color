@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
 import Color from '../../src/index.js';
-import { assertClose, assertObjectClose } from '../assertions.js';
+import { assertClose, assertObjectClose } from '../support/assertions.js';
 
-const ColorClass = Color.XyzD50;
+const { XyzD50 } = Color;
 
 describe('XyzD50', function() {
     describe('#constructor', function() {
         it('preserves extended channels and clamps alpha', function() {
-            const color = new ColorClass(...[
+            const color = new XyzD50(...[
                 2,
                 -1,
                 3,
@@ -22,8 +22,8 @@ describe('XyzD50', function() {
 
     describe('#contrast', function() {
         it('calculates the contrast ratio', function() {
-            const color1 = ColorClass.fromString('lavender');
-            const color2 = ColorClass.fromString('black');
+            const color1 = XyzD50.fromString('lavender');
+            const color2 = XyzD50.fromString('black');
 
             assertClose(color1.contrast(color2), 17.06375010290425);
             assertClose(color2.contrast(color1), 17.06375010290425);
@@ -32,7 +32,7 @@ describe('XyzD50', function() {
 
     describe('#getX', function() {
         it('returns the x channel', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = XyzD50.fromString('lavender');
 
             assertClose(color.getX(), 0.7866066805175997);
         });
@@ -40,7 +40,7 @@ describe('XyzD50', function() {
 
     describe('#getY', function() {
         it('returns the y channel', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = XyzD50.fromString('lavender');
 
             assertClose(color.getY(), 0.8012805325415433);
         });
@@ -48,7 +48,7 @@ describe('XyzD50', function() {
 
     describe('#getZ', function() {
         it('returns the z channel', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = XyzD50.fromString('lavender');
 
             assertClose(color.getZ(), 0.7704981789726744);
         });
@@ -56,7 +56,7 @@ describe('XyzD50', function() {
 
     describe('#label', function() {
         it('returns the closest CSS color name', function() {
-            const color = ColorClass.fromString('lavender').withY(0.5);
+            const color = XyzD50.fromString('lavender').withY(0.5);
 
             assert.strictEqual(color.label(), 'violet');
         });
@@ -64,7 +64,7 @@ describe('XyzD50', function() {
 
     describe('#luma', function() {
         it('returns the relative luminance', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = XyzD50.fromString('lavender');
 
             assertClose(color.luma(), 0.8031875051452126);
         });
@@ -72,7 +72,7 @@ describe('XyzD50', function() {
 
     describe('#space', function() {
         it('returns the color space', function() {
-            const color = new ColorClass();
+            const color = new XyzD50();
 
             assert.strictEqual(color.space(), 'xyz-d50');
         });
@@ -80,7 +80,7 @@ describe('XyzD50', function() {
 
     describe('#toA98Rgb', function() {
         it('returns the color as A98 RGB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toA98Rgb();
 
             assert.notStrictEqual(color2, color1);
@@ -90,7 +90,7 @@ describe('XyzD50', function() {
 
     describe('#toDisplayP3', function() {
         it('returns the color as Display P3', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toDisplayP3();
 
             assert.notStrictEqual(color2, color1);
@@ -100,7 +100,7 @@ describe('XyzD50', function() {
 
     describe('#toDisplayP3Linear', function() {
         it('returns the color as linear Display P3', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toDisplayP3Linear();
 
             assert.notStrictEqual(color2, color1);
@@ -110,7 +110,7 @@ describe('XyzD50', function() {
 
     describe('#toHex', function() {
         it('returns the color as hexadecimal', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toHex();
 
             assert.notStrictEqual(color2, color1);
@@ -120,7 +120,7 @@ describe('XyzD50', function() {
 
     describe('#toHsl', function() {
         it('returns the color as HSL', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toHsl();
 
             assert.notStrictEqual(color2, color1);
@@ -130,7 +130,7 @@ describe('XyzD50', function() {
 
     describe('#toHwb', function() {
         it('returns the color as HWB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toHwb();
 
             assert.notStrictEqual(color2, color1);
@@ -140,7 +140,7 @@ describe('XyzD50', function() {
 
     describe('#toLab', function() {
         it('returns the color as Lab', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toLab();
 
             assert.notStrictEqual(color2, color1);
@@ -150,7 +150,7 @@ describe('XyzD50', function() {
 
     describe('#toLch', function() {
         it('returns the color as LCH', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toLch();
 
             assert.notStrictEqual(color2, color1);
@@ -160,7 +160,7 @@ describe('XyzD50', function() {
 
     describe('#toOkLab', function() {
         it('returns the color as OKLab', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toOkLab();
 
             assert.notStrictEqual(color2, color1);
@@ -170,7 +170,7 @@ describe('XyzD50', function() {
 
     describe('#toOkLch', function() {
         it('returns the color as OKLCH', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toOkLch();
 
             assert.notStrictEqual(color2, color1);
@@ -180,7 +180,7 @@ describe('XyzD50', function() {
 
     describe('#toProPhotoRgb', function() {
         it('returns the color as ProPhoto RGB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toProPhotoRgb();
 
             assert.notStrictEqual(color2, color1);
@@ -190,7 +190,7 @@ describe('XyzD50', function() {
 
     describe('#toRec2020', function() {
         it('returns the color as Rec. 2020', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toRec2020();
 
             assert.notStrictEqual(color2, color1);
@@ -200,7 +200,7 @@ describe('XyzD50', function() {
 
     describe('#toRgb', function() {
         it('returns the color as RGB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toRgb();
 
             assert.notStrictEqual(color2, color1);
@@ -210,7 +210,7 @@ describe('XyzD50', function() {
 
     describe('#toSrgb', function() {
         it('returns the color as sRGB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toSrgb();
 
             assert.notStrictEqual(color2, color1);
@@ -220,7 +220,7 @@ describe('XyzD50', function() {
 
     describe('#toSrgbLinear', function() {
         it('returns the color as linear sRGB', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toSrgbLinear();
 
             assert.notStrictEqual(color2, color1);
@@ -230,7 +230,7 @@ describe('XyzD50', function() {
 
     describe('#toXyzD50', function() {
         it('returns the color as XYZ D50', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toXyzD50();
 
             assert.strictEqual(color2, color1);
@@ -239,7 +239,7 @@ describe('XyzD50', function() {
 
     describe('#toXyzD65', function() {
         it('returns the color as XYZ D65', function() {
-            const color1 = ColorClass.fromString('lavender');
+            const color1 = XyzD50.fromString('lavender');
             const color2 = color1.toXyzD65();
 
             assert.notStrictEqual(color2, color1);
@@ -249,7 +249,7 @@ describe('XyzD50', function() {
 
     describe('#toObject', function() {
         it('returns the color channels', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = XyzD50.fromString('lavender');
 
             assertObjectClose(color.toObject(),
                 {
@@ -264,13 +264,13 @@ describe('XyzD50', function() {
 
     describe('#toString', function() {
         it('returns the CSS color string', function() {
-            const color = ColorClass.fromString('lavender');
+            const color = XyzD50.fromString('lavender');
 
             assert.strictEqual(color.toString(), 'color(xyz-d50 0.79 0.8 0.77)');
         });
 
         it('includes alpha when needed', function() {
-            const color = ColorClass.fromString('rgb(230 230 250 / 50%)');
+            const color = XyzD50.fromString('rgb(230 230 250 / 50%)');
 
             assert.strictEqual(color.toString(), 'color(xyz-d50 0.79 0.8 0.77 / 0.5)');
         });
@@ -278,7 +278,7 @@ describe('XyzD50', function() {
 
     describe('#withX', function() {
         it('returns a copy with a different x channel', function() {
-            const color = ColorClass.fromString('lavender').withX(0.5);
+            const color = XyzD50.fromString('lavender').withX(0.5);
 
             assert.strictEqual(color.toString(), 'color(xyz-d50 0.5 0.8 0.77)');
         });
@@ -286,7 +286,7 @@ describe('XyzD50', function() {
 
     describe('#withY', function() {
         it('returns a copy with a different y channel', function() {
-            const color = ColorClass.fromString('lavender').withY(0.5);
+            const color = XyzD50.fromString('lavender').withY(0.5);
 
             assert.strictEqual(color.toString(), 'color(xyz-d50 0.79 0.5 0.77)');
         });
@@ -294,7 +294,7 @@ describe('XyzD50', function() {
 
     describe('#withZ', function() {
         it('returns a copy with a different z channel', function() {
-            const color = ColorClass.fromString('lavender').withZ(0.5);
+            const color = XyzD50.fromString('lavender').withZ(0.5);
 
             assert.strictEqual(color.toString(), 'color(xyz-d50 0.79 0.8 0.5)');
         });

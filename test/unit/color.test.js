@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
 import Color from '../../src/index.js';
-import { assertClose } from '../assertions.js';
+import { assertClose } from '../support/assertions.js';
 
 const {
     A98Rgb,

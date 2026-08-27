@@ -44,14 +44,14 @@
         "src"
     ],
     "scripts": {
-        "build": "npm run js-compile && npm run js-minify",
-        "js-compile": "rollup --config",
-        "js-lint": "eslint",
-        "js-minify": "terser --compress passes=2 --mangle --source-map \"content=dist/frost-color.js.map,url=frost-color.min.js.map\" --output dist/frost-color.min.js dist/frost-color.js",
+        "build": "npm run bundle && npm run minify",
+        "bundle": "rollup --config",
+        "lint": "eslint",
+        "minify": "terser --compress passes=2 --mangle --source-map \"content=dist/frost-color.js.map,url=frost-color.min.js.map\" --output dist/frost-color.min.js dist/frost-color.js",
         "test": "mocha --forbid-only \"test/unit/**/*.test.js\""
     },
     "devDependencies": {
-        "@fr0st/eslint-config": "^4.0.0",
+        "@fr0st/eslint-config": "^5.0.0",
         "eslint": "^10.8.1",
         "mocha": "^11.8.0",
         "rollup": "^4.62.4",
