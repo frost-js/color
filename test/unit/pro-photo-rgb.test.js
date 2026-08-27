@@ -1,9 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
-import Color from '../../src/index.js';
+import { ProPhotoRgb } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
-
-const { ProPhotoRgb } = Color;
 
 describe('ProPhotoRgb', function() {
     describe('#constructor', function() {

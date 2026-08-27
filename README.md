@@ -10,7 +10,7 @@ FrostColor is a dependency-free JavaScript library for parsing, converting, insp
 
 ## Highlights
 
-- Default ESM `Color` export for Node and bundlers
+- Default ESM `Color` export and named concrete-class exports for Node and bundlers
 - Browser UMD bundle in `dist/` exposed as `globalThis.Color`
 - No runtime dependencies
 - Immutable color instances and transformations
@@ -31,7 +31,10 @@ npm install @fr0st/color
 FrostColor is an ES module:
 
 ```javascript
-import Color from '@fr0st/color';
+import Color, { DisplayP3 } from '@fr0st/color';
+
+const color = Color.fromString('lavender');
+const displayP3 = DisplayP3.fromString('lavender');
 ```
 
 ### Browser (UMD)
@@ -92,7 +95,7 @@ This is a focused color-value parser, not a complete CSS value engine. CSS-wide 
 
 ### Factories and concrete classes
 
-The default export exposes every concrete class as a static property. Each `from...` factory takes three channels followed by optional `alpha = 1`.
+Concrete classes are available both as named exports and as static properties on the default export. Each `from...` factory takes three channels followed by optional `alpha = 1`.
 
 | Factory or constructor | Concrete class | `space()` identifier | Channels | Native `toString()` form |
 | --- | --- | --- | --- | --- |

@@ -1,9 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
-import Color from '../../src/index.js';
+import { Rec2020 } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
-
-const { Rec2020 } = Color;
 
 describe('Rec2020', function() {
     describe('#constructor', function() {

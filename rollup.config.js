@@ -1,5 +1,5 @@
 export default {
-    input: 'src/index.js',
+    input: 'src/browser.js',
     output: {
         file: 'dist/frost-color.js',
         format: 'umd',

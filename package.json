@@ -1,6 +1,6 @@
 {
     "name": "@fr0st/color",
-    "version": "5.0.2",
+    "version": "5.1.0",
     "private": false,
     "description": "A modern JavaScript library for parsing, converting, and formatting colors.",
     "keywords": [

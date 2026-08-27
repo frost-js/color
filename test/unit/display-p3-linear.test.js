@@ -1,9 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
-import Color from '../../src/index.js';
+import { DisplayP3Linear } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
-
-const { DisplayP3Linear } = Color;
 
 describe('DisplayP3Linear', function() {
     describe('#constructor', function() {

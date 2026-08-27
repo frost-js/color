@@ -39,4 +39,24 @@ const colorClasses = {
 
 Object.assign(Color, colorClasses);
 
+export {
+    A98Rgb,
+    DisplayP3,
+    DisplayP3Linear,
+    Hex,
+    Hsl,
+    Hwb,
+    Lab,
+    Lch,
+    OkLab,
+    OkLch,
+    ProPhotoRgb,
+    Rec2020,
+    Rgb,
+    Srgb,
+    SrgbLinear,
+    XyzD50,
+    XyzD65,
+};
+
 export default Color;

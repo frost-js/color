@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'mocha';
-import Color from '../../src/index.js';
-import { assertClose } from '../support/assertions.js';
-
-const {
+import Color, {
     A98Rgb,
     DisplayP3,
     DisplayP3Linear,
@@ -20,15 +17,36 @@ const {
     SrgbLinear,
     XyzD50,
     XyzD65,
-} = Color;
+} from '../../src/index.js';
+import { assertClose } from '../support/assertions.js';
 
 describe('Color', function() {
     describe('Exports', function() {
-        it('exports only the default Color API', async function() {
+        it('exports the default Color API and concrete classes', async function() {
             const module = await import('../../src/index.js');
 
-            assert.deepStrictEqual(Object.keys(module), ['default']);
+            assert.deepStrictEqual(Object.keys(module), [
+                'A98Rgb',
+                'DisplayP3',
+                'DisplayP3Linear',
+                'Hex',
+                'Hsl',
+                'Hwb',
+                'Lab',
+                'Lch',
+                'OkLab',
+                'OkLch',
+                'ProPhotoRgb',
+                'Rec2020',
+                'Rgb',
+                'Srgb',
+                'SrgbLinear',
+                'XyzD50',
+                'XyzD65',
+                'default',
+            ]);
             assert.strictEqual(module.default, Color);
+            assert.strictEqual(module.Rgb, Rgb);
             assert.strictEqual(module.default.Rgb, Rgb);
         });
     });
