@@ -1,6 +1,6 @@
 {
     "name": "@fr0st/color",
-    "version": "5.1.0",
+    "version": "5.2.0",
     "private": false,
     "description": "A modern JavaScript library for parsing, converting, and formatting colors.",
     "keywords": [
@@ -32,11 +32,17 @@
     "sideEffects": false,
     "type": "module",
     "exports": {
-        ".": "./src/index.js"
+        ".": {
+            "import": "./dist/frost-color.esm.js",
+            "default": "./dist/frost-color.esm.js"
+        },
+        "./dist/*": "./dist/*",
+        "./src/*": "./src/*"
     },
-    "main": "src/index.js",
-    "jsdelivr": "dist/frost-color.min.js",
-    "unpkg": "dist/frost-color.min.js",
+    "main": "./dist/frost-color.esm.js",
+    "jsdelivr": "./dist/frost-color.min.js",
+    "unpkg": "./dist/frost-color.min.js",
+    "module": "./dist/frost-color.esm.js",
     "files": [
         "dist",
         "LICENSE",
@@ -44,18 +50,17 @@
         "src"
     ],
     "scripts": {
-        "build": "npm run bundle && npm run minify",
-        "bundle": "rollup --config",
+        "build": "vite build && vite build --mode umd",
         "lint": "eslint",
-        "minify": "terser --compress passes=2 --mangle --source-map \"content=dist/frost-color.js.map,url=frost-color.min.js.map\" --output dist/frost-color.min.js dist/frost-color.js",
-        "test": "mocha --forbid-only \"test/unit/**/*.test.js\""
+        "test": "vitest run",
+        "test:coverage": "vitest run --coverage"
     },
     "devDependencies": {
-        "@fr0st/eslint-config": "^5.0.0",
-        "eslint": "^10.8.1",
-        "mocha": "^11.8.0",
-        "rollup": "^4.62.4",
-        "terser": "^5.50.0"
+        "@fr0st/eslint-config": "^5.0.1",
+        "@vitest/coverage-v8": "^4.1.11",
+        "eslint": "^10.9.1",
+        "vite": "^8.2.2",
+        "vitest": "^4.1.11"
     },
     "engines": {
         "node": "^20.19.0 || ^22.13.0 || >=24"

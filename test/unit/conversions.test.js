@@ -1,4 +1,4 @@
-import { describe, it } from 'mocha';
+import { describe, it } from 'vitest';
 import {
     a98RgbToXyzD65,
     displayP3LinearToDisplayP3,

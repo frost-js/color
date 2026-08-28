@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'mocha';
+import { describe, it } from 'vitest';
 import { OkLch } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
 

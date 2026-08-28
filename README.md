@@ -1,9 +1,10 @@
 # FrostColor
 
 [![CI](https://github.com/elusivecodes/FrostColor/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/elusivecodes/FrostColor/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/elusivecodes/FrostColor/branch/main/graph/badge.svg)](https://codecov.io/gh/elusivecodes/FrostColor)
 [![npm version](https://img.shields.io/npm/v/%40fr0st%2Fcolor?style=flat-square)](https://www.npmjs.com/package/@fr0st/color)
 [![npm downloads](https://img.shields.io/npm/dm/%40fr0st%2Fcolor?style=flat-square)](https://www.npmjs.com/package/@fr0st/color)
-[![minzipped size](https://img.shields.io/bundlejs/size/%40fr0st%2Fcolor?format=minzip&style=flat-square)](https://bundlejs.com/?q=@fr0st/color)
+[![JS gzip size](https://img.badgesize.io/elusivecodes/FrostColor/main/dist/frost-color.min.js?compression=gzip&label=JS%20gzip%20size&style=flat-square)](https://github.com/elusivecodes/FrostColor/blob/main/dist/frost-color.min.js)
 [![license](https://img.shields.io/github/license/elusivecodes/FrostColor?style=flat-square)](./LICENSE)
 
 FrostColor is a dependency-free JavaScript library for parsing, converting, inspecting, and formatting colors. It supports modern CSS color spaces as well as linear-light working spaces, preserves out-of-gamut channel values during conversion, and provides explicit gamut fitting when a bounded output is required.
@@ -11,7 +12,7 @@ FrostColor is a dependency-free JavaScript library for parsing, converting, insp
 ## Highlights
 
 - Default ESM `Color` export and named concrete-class exports for Node and bundlers
-- Browser UMD bundle in `dist/` exposed as `globalThis.Color`
+- Prebuilt ESM and UMD bundles in `dist/`, with UMD exposed as `globalThis.Color`
 - No runtime dependencies
 - Immutable color instances and transformations
 - Modern CSS color parsing, formatting, and named colors
@@ -37,6 +38,19 @@ const color = Color.fromString('lavender');
 const displayP3 = DisplayP3.fromString('lavender');
 ```
 
+### Browser (ESM)
+
+Import the minified ESM bundle directly from a CDN:
+
+```html
+<script type="module">
+    import Color, { DisplayP3 } from 'https://cdn.jsdelivr.net/npm/@fr0st/color@latest/dist/frost-color.esm.min.js';
+
+    const color = Color.fromString('lavender');
+    const displayP3 = DisplayP3.fromString('lavender');
+</script>
+```
+
 ### Browser (UMD)
 
 For a classic browser script, load either published UMD bundle from your own copy or a CDN. It creates a global `Color` class:
@@ -50,7 +64,7 @@ For a classic browser script, load either published UMD bundle from your own cop
 </script>
 ```
 
-The package exposes only `@fr0st/color` to Node and bundlers. The `dist/` files remain published for direct browser and CDN URLs, but package subpaths, internal `src/` paths, and package metadata are not part of the JavaScript API.
+The package root resolves to the prebuilt ESM bundle. Published files under `dist/` and `src/` are also available through matching package subpaths.
 
 ## Quick Start
 
@@ -264,17 +278,11 @@ FrostColor throws `TypeError` when:
 
 ## Development
 
-FrostColor supports Node.js `^20.19.0`, `^22.13.0`, or `>=24`.
-
-```shell
-npm ci
+```bash
 npm test
 npm run lint
 npm run build
-npm pack --dry-run
 ```
-
-CI tests all supported Node.js release lines, rebuilds the browser bundles, verifies that `dist/` is current, and validates the package contents. Publishing an npm release through GitHub runs the same checks and publishes with provenance.
 
 ## License
 
