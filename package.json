@@ -1,6 +1,6 @@
 {
     "name": "@fr0st/color",
-    "version": "5.2.0",
+    "version": "5.2.1",
     "private": false,
     "description": "A modern JavaScript library for parsing, converting, and formatting colors.",
     "keywords": [
@@ -56,7 +56,7 @@
         "test:coverage": "vitest run --coverage"
     },
     "devDependencies": {
-        "@fr0st/eslint-config": "^5.0.1",
+        "@fr0st/eslint-config": "^5.0.2",
         "@vitest/coverage-v8": "^4.1.11",
         "eslint": "^10.9.1",
         "vite": "^8.2.2",

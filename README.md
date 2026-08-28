@@ -23,15 +23,13 @@ FrostColor is a dependency-free JavaScript library for parsing, converting, insp
 
 ### Node / bundlers
 
-Install the package from npm:
-
-```shell
-npm install @fr0st/color
+```bash
+npm i @fr0st/color
 ```
 
-FrostColor is an ES module:
+FrostColor's package entry point is ESM-only. Import the default `Color` export and any named concrete-class exports in Node and bundlers.
 
-```javascript
+```js
 import Color, { DisplayP3 } from '@fr0st/color';
 
 const color = Color.fromString('lavender');
@@ -53,14 +51,14 @@ Import the minified ESM bundle directly from a CDN:
 
 ### Browser (UMD)
 
-For a classic browser script, load either published UMD bundle from your own copy or a CDN. It creates a global `Color` class:
+Load the bundle from your own copy or a CDN:
 
 ```html
-<script src="./node_modules/@fr0st/color/dist/frost-color.min.js"></script>
+<script src="/path/to/dist/frost-color.min.js"></script>
 <!-- or -->
 <script src="https://cdn.jsdelivr.net/npm/@fr0st/color@latest/dist/frost-color.min.js"></script>
 <script>
-    const color = Color.fromString('oklch(0.7 0.15 250)');
+    const color = globalThis.Color.fromString('oklch(0.7 0.15 250)');
 </script>
 ```
 
@@ -286,4 +284,4 @@ npm run build
 
 ## License
 
-FrostColor is available under the [MIT License](LICENSE).
+FrostColor is released under the [MIT License](./LICENSE).
