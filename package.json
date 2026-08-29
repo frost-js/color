@@ -1,6 +1,6 @@
 {
     "name": "@fr0st/color",
-    "version": "5.2.1",
+    "version": "5.2.2",
     "private": false,
     "description": "A modern JavaScript library for parsing, converting, and formatting colors.",
     "keywords": [
@@ -18,14 +18,14 @@
         "color-space",
         "css-color"
     ],
-    "homepage": "https://github.com/elusivecodes/FrostColor",
+    "homepage": "https://github.com/frost-js/color",
     "bugs": {
-        "url": "https://github.com/elusivecodes/FrostColor/issues",
+        "url": "https://github.com/frost-js/color/issues",
         "email": "elusivecodes@gmail.com"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/elusivecodes/FrostColor.git"
+        "url": "git+https://github.com/frost-js/color.git"
     },
     "license": "MIT",
     "author": "Elusive <elusivecodes@gmail.com>",
@@ -56,7 +56,7 @@
         "test:coverage": "vitest run --coverage"
     },
     "devDependencies": {
-        "@fr0st/eslint-config": "^5.0.2",
+        "@fr0st/eslint-config": "^5.0.3",
         "@vitest/coverage-v8": "^4.1.11",
         "eslint": "^10.9.1",
         "vite": "^8.2.2",

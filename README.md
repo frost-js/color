@@ -1,13 +1,13 @@
-# FrostColor
+# Frost Color
 
-[![CI](https://github.com/elusivecodes/FrostColor/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/elusivecodes/FrostColor/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/elusivecodes/FrostColor/branch/main/graph/badge.svg)](https://codecov.io/gh/elusivecodes/FrostColor)
+[![CI](https://github.com/frost-js/color/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/frost-js/color/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/frost-js/color/branch/main/graph/badge.svg)](https://codecov.io/gh/frost-js/color)
 [![npm version](https://img.shields.io/npm/v/%40fr0st%2Fcolor?style=flat-square)](https://www.npmjs.com/package/@fr0st/color)
 [![npm downloads](https://img.shields.io/npm/dm/%40fr0st%2Fcolor?style=flat-square)](https://www.npmjs.com/package/@fr0st/color)
-[![JS gzip size](https://img.badgesize.io/elusivecodes/FrostColor/main/dist/frost-color.min.js?compression=gzip&label=JS%20gzip%20size&style=flat-square)](https://github.com/elusivecodes/FrostColor/blob/main/dist/frost-color.min.js)
-[![license](https://img.shields.io/github/license/elusivecodes/FrostColor?style=flat-square)](./LICENSE)
+[![JS gzip size](https://img.badgesize.io/frost-js/color/main/dist/frost-color.min.js?compression=gzip&label=JS%20gzip%20size&style=flat-square)](https://github.com/frost-js/color/blob/main/dist/frost-color.min.js)
+[![license](https://img.shields.io/github/license/frost-js/color?style=flat-square)](./LICENSE)
 
-FrostColor is a dependency-free JavaScript library for parsing, converting, inspecting, and formatting colors. It supports modern CSS color spaces as well as linear-light working spaces, preserves out-of-gamut channel values during conversion, and provides explicit gamut fitting when a bounded output is required.
+Frost Color is a dependency-free JavaScript library for parsing, converting, inspecting, and formatting colors. It supports modern CSS color spaces as well as linear-light working spaces, preserves out-of-gamut channel values during conversion, and provides explicit gamut fitting when a bounded output is required.
 
 ## Highlights
 
@@ -27,7 +27,7 @@ FrostColor is a dependency-free JavaScript library for parsing, converting, insp
 npm i @fr0st/color
 ```
 
-FrostColor's package entry point is ESM-only. Import the default `Color` export and any named concrete-class exports in Node and bundlers.
+Frost Color's package entry point is ESM-only. Import the default `Color` export and any named concrete-class exports in Node and bundlers.
 
 ```js
 import Color, { DisplayP3 } from '@fr0st/color';
@@ -265,7 +265,7 @@ Additional formatting methods and options are:
 
 ## Errors
 
-FrostColor throws `TypeError` when:
+Frost Color throws `TypeError` when:
 
 - a color string is malformed or unsupported;
 - a channel is not a finite number;
@@ -284,4 +284,4 @@ npm run build
 
 ## License
 
-FrostColor is released under the [MIT License](./LICENSE).
+Frost Color is released under the [MIT License](./LICENSE).
