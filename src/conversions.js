@@ -674,17 +674,13 @@ export const xyzD65ToDisplayP3Linear = (x, y, z) => {
  * @returns {[number, number, number]} The OK LAB values.
  */
 export const xyzD65ToOkLab = (x, y, z) => {
-    const cbrt = (value) => value < 0 ?
-        -Math.pow(-value, 1 / 3) :
-        Math.pow(value, 1 / 3);
-
     let l = (0.8190224379967030 * x) + (0.3619062600528904 * y) - (0.1288737815209879 * z);
     let m = (0.0329836539323885 * x) + (0.9292868615863434 * y) + (0.0361446663506424 * z);
     let s = (0.0481771893596242 * x) + (0.2642395317527308 * y) + (0.6335478284694309 * z);
 
-    l = cbrt(l);
-    m = cbrt(m);
-    s = cbrt(s);
+    l = Math.cbrt(l);
+    m = Math.cbrt(m);
+    s = Math.cbrt(s);
 
     return [
         (0.2104542683093140 * l) + (0.7936177747023054 * m) - (0.0040720430116193 * s),

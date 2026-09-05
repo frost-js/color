@@ -15,24 +15,19 @@ export default class Rgb extends RgbColor {
      * @returns {string} The hex string.
      */
     getHex(alpha = false, shortenHex = true) {
-        const red = Math.trunc(clamp(Math.round(this.red), 0, 255));
-        const green = Math.trunc(clamp(Math.round(this.green), 0, 255));
-        const blue = Math.trunc(clamp(Math.round(this.blue), 0, 255));
-        const alphaValue = Math.trunc(clamp(Math.round(this.alpha * 255), 0, 255));
+        const channels = [this.red, this.green, this.blue];
 
-        let result = alpha ?
-            `${red.toString(16).padStart(2, '0')}${green.toString(16).padStart(2, '0')}${blue.toString(16).padStart(2, '0')}${alphaValue.toString(16).padStart(2, '0')}` :
-            `${red.toString(16).padStart(2, '0')}${green.toString(16).padStart(2, '0')}${blue.toString(16).padStart(2, '0')}`;
-
-        if (shortenHex) {
-            const match = result.match(/^([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3([0-9a-f])?\4?$/i);
-
-            if (match) {
-                result = `${match[1]}${match[2]}${match[3]}${match[4] ?? ''}`;
-            }
+        if (alpha) {
+            channels.push(this.alpha * 255);
         }
 
-        return result;
+        const bytes = channels.map((value) => clamp(Math.round(value), 0, 255).toString(16).padStart(2, '0'));
+
+        if (shortenHex && bytes.every((byte) => byte[0] === byte[1])) {
+            return bytes.map((byte) => byte[0]).join('');
+        }
+
+        return bytes.join('');
     }
 
     /** @inheritdoc */

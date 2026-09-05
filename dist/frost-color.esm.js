@@ -871,10 +871,8 @@ var Color = class Color {
 	* @returns {this} A new color instance.
 	*/
 	withAlpha(alpha) {
-		return new this.constructor(...Object.values({
-			...this.toObject(),
-			alpha
-		}));
+		const [channel1, channel2, channel3] = Object.values(this.toObject());
+		return new this.constructor(channel1, channel2, channel3, alpha);
 	}
 };
 
@@ -1561,13 +1559,12 @@ var xyzD65ToDisplayP3Linear = (x, y, z) => {
 * @returns {[number, number, number]} The OK LAB values.
 */
 var xyzD65ToOkLab = (x, y, z) => {
-	const cbrt = (value) => value < 0 ? -Math.pow(-value, 1 / 3) : Math.pow(value, 1 / 3);
 	let l = .819022437996703 * x + .3619062600528904 * y - .1288737815209879 * z;
 	let m = .0329836539323885 * x + .9292868615863434 * y + .0361446663506424 * z;
 	let s = .0481771893596242 * x + .2642395317527308 * y + .6335478284694309 * z;
-	l = cbrt(l);
-	m = cbrt(m);
-	s = cbrt(s);
+	l = Math.cbrt(l);
+	m = Math.cbrt(m);
+	s = Math.cbrt(s);
 	return [
 		.210454268309314 * l + .7936177747023054 * m - .0040720430116193 * s,
 		1.9779985324311684 * l - 2.42859224204858 * m + .450593709617411 * s,
@@ -1709,16 +1706,15 @@ var Rgb = class extends RgbColor {
 	* @returns {string} The hex string.
 	*/
 	getHex(alpha = false, shortenHex = true) {
-		const red = Math.trunc(clamp(Math.round(this.red), 0, 255));
-		const green = Math.trunc(clamp(Math.round(this.green), 0, 255));
-		const blue = Math.trunc(clamp(Math.round(this.blue), 0, 255));
-		const alphaValue = Math.trunc(clamp(Math.round(this.alpha * 255), 0, 255));
-		let result = alpha ? `${red.toString(16).padStart(2, "0")}${green.toString(16).padStart(2, "0")}${blue.toString(16).padStart(2, "0")}${alphaValue.toString(16).padStart(2, "0")}` : `${red.toString(16).padStart(2, "0")}${green.toString(16).padStart(2, "0")}${blue.toString(16).padStart(2, "0")}`;
-		if (shortenHex) {
-			const match = result.match(/^([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3([0-9a-f])?\4?$/i);
-			if (match) result = `${match[1]}${match[2]}${match[3]}${match[4] ?? ""}`;
-		}
-		return result;
+		const channels = [
+			this.red,
+			this.green,
+			this.blue
+		];
+		if (alpha) channels.push(this.alpha * 255);
+		const bytes = channels.map((value) => clamp(Math.round(value), 0, 255).toString(16).padStart(2, "0"));
+		if (shortenHex && bytes.every((byte) => byte[0] === byte[1])) return bytes.map((byte) => byte[0]).join("");
+		return bytes.join("");
 	}
 	/** @inheritdoc */
 	toHex() {

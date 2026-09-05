@@ -728,9 +728,8 @@ export default class Color {
      * @returns {this} A new color instance.
      */
     withAlpha(alpha) {
-        return new this.constructor(...Object.values({
-            ...this.toObject(),
-            alpha,
-        }));
+        const [channel1, channel2, channel3] = Object.values(this.toObject());
+
+        return new this.constructor(channel1, channel2, channel3, alpha);
     }
 }
