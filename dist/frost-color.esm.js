@@ -650,15 +650,16 @@ var Color = class Color {
 		const okLch = this.toOkLch();
 		const lightness = okLch.getLightness();
 		if (lightness <= 0 || lightness >= 1) return okLch.withLightness(clamp(lightness)).withChroma(0).to(this.constructor.COLOR_SPACE);
+		const chromaSign = Math.sign(okLch.getChroma());
 		let low = 0;
-		let high = Math.max(0, okLch.getChroma());
+		let high = Math.abs(okLch.getChroma());
 		while (high - low > FIT_GAMUT_PRECISION) {
 			const mid = (low + high) / 2;
-			const candidate = okLch.withChroma(mid);
+			const candidate = okLch.withChroma(mid * chromaSign);
 			if (isInGamut(candidate.to(space), space, FIT_GAMUT_RANGES)) low = mid;
 			else high = mid;
 		}
-		return okLch.withChroma(low).to(this.constructor.COLOR_SPACE);
+		return okLch.withChroma(low * chromaSign).to(this.constructor.COLOR_SPACE);
 	}
 	/**
 	* Returns the alpha channel.
@@ -1354,7 +1355,7 @@ var srgbToHsl = (r, g, b) => {
 	const d = max - min;
 	let h;
 	let s;
-	if (d < 1e-12) {
+	if (d < 1e-12 || l === 0 || l === 1) {
 		h = 0;
 		s = 0;
 	} else {
@@ -1745,8 +1746,12 @@ var Rgb = class extends RgbColor {
 	*/
 	toString(alpha = null, precision = 2, name = false) {
 		alpha ??= this.alpha < 1;
-		if (name && this.alpha <= 0) return "transparent";
-		if (name && this.alpha >= 1) {
+		if (name && alpha && this.alpha <= 0) return "transparent";
+		if (name && (!alpha || this.alpha >= 1) && [
+			this.red,
+			this.green,
+			this.blue
+		].every((value) => Number.isInteger(value) && value >= 0 && value <= 255)) {
 			const colorName = findCssColorName(this.getHex(false, false));
 			if (colorName) return colorName;
 		}
@@ -1782,8 +1787,8 @@ var Hex = class extends Rgb {
 	*/
 	toString(alpha = null, precision = 2, shortenHex = true, name = false) {
 		alpha ??= this.alpha < 1;
-		if (name && this.alpha <= 0) return "transparent";
-		if (name && this.alpha >= 1) {
+		if (name && alpha && this.alpha <= 0) return "transparent";
+		if (name && (!alpha || this.alpha >= 1)) {
 			const colorName = findCssColorName(this.getHex(false, false));
 			if (colorName) return colorName;
 		}

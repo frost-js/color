@@ -62,7 +62,7 @@ Load the bundle from your own copy or a CDN:
 </script>
 ```
 
-The package root resolves to the prebuilt ESM bundle. Published files under `dist/` and `src/` are also available through matching package subpaths.
+The package root resolves to the prebuilt ESM bundle. Bundles under `dist/` are also available through matching package subpaths. For source imports, use `@fr0st/color/src/index.js`, which exports `Color` and all concrete classes with the conversion API initialized. Individual source files are internal implementation details.
 
 ## Quick Start
 

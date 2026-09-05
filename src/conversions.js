@@ -435,7 +435,8 @@ export const srgbToHsl = (r, g, b) => {
     let h;
     let s;
 
-    if (d < 1e-12) {
+    // Saturation is undefined at the lightness boundaries.
+    if (d < 1e-12 || l === 0 || l === 1) {
         h = 0;
         s = 0;
     } else {

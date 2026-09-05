@@ -67,11 +67,12 @@ export default class Rgb extends RgbColor {
     toString(alpha = null, precision = 2, name = false) {
         alpha ??= this.alpha < 1;
 
-        if (name && this.alpha <= 0) {
+        if (name && alpha && this.alpha <= 0) {
             return 'transparent';
         }
 
-        if (name && this.alpha >= 1) {
+        if (name && (!alpha || this.alpha >= 1) &&
+            [this.red, this.green, this.blue].every((value) => Number.isInteger(value) && value >= 0 && value <= 255)) {
             const colorName = findCssColorName(this.getHex(false, false));
 
             if (colorName) {

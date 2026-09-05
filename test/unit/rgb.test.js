@@ -274,6 +274,22 @@ describe('Rgb', function() {
             assert.strictEqual(result, 'lavender');
         });
 
+        it('respects omitted alpha when preferring color names', function() {
+            const color = new Rgb(255, 0, 0, 0);
+
+            assert.strictEqual(color.toString(false, 2, true), 'red');
+            assert.strictEqual(color.withAlpha(0.5).toString(false, 2, true), 'red');
+            assert.strictEqual(color.toString(null, 2, true), 'transparent');
+            assert.strictEqual(color.toString(true, 2, true), 'transparent');
+            assert.strictEqual(color.withAlpha(0.5).toString(null, 2, true), 'rgb(255 0 0 / 50%)');
+        });
+
+        it('preserves fractional and extended channels when preferring color names', function() {
+            for (const color of [new Rgb(254.6, 0.1, 0.1), new Rgb(300, -20, 0)]) {
+                assert.strictEqual(color.toString(false, 2, true), color.toString(false, 2));
+            }
+        });
+
         it('includes alpha when needed', function() {
             const color = Rgb.fromString('rgb(230 230 250 / 50%)');
 

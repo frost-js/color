@@ -452,12 +452,13 @@ export default class Color {
             return fitted.to(this.constructor.COLOR_SPACE);
         }
 
+        const chromaSign = Math.sign(okLch.getChroma());
         let low = 0;
-        let high = Math.max(0, okLch.getChroma());
+        let high = Math.abs(okLch.getChroma());
 
         while (high - low > FIT_GAMUT_PRECISION) {
             const mid = (low + high) / 2;
-            const candidate = okLch.withChroma(mid);
+            const candidate = okLch.withChroma(mid * chromaSign);
 
             if (isInGamut(candidate.to(space), space, FIT_GAMUT_RANGES)) {
                 low = mid;
@@ -466,7 +467,7 @@ export default class Color {
             }
         }
 
-        return okLch.withChroma(low).to(this.constructor.COLOR_SPACE);
+        return okLch.withChroma(low * chromaSign).to(this.constructor.COLOR_SPACE);
     }
 
     /**

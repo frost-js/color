@@ -274,6 +274,16 @@ describe('Hex', function() {
             assert.strictEqual(result, 'lavender');
         });
 
+        it('respects omitted alpha when preferring color names', function() {
+            const color = new Hex(255, 0, 0, 0);
+
+            assert.strictEqual(color.toString(false, 2, true, true), 'red');
+            assert.strictEqual(color.withAlpha(0.5).toString(false, 2, true, true), 'red');
+            assert.strictEqual(color.toString(null, 2, true, true), 'transparent');
+            assert.strictEqual(color.toString(true, 2, true, true), 'transparent');
+            assert.strictEqual(color.withAlpha(0.5).toString(null, 2, true, true), '#ff000080');
+        });
+
         it('includes alpha when needed', function() {
             const color = Hex.fromString('rgb(230 230 250 / 50%)');
 

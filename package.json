@@ -29,7 +29,9 @@
     },
     "license": "MIT",
     "author": "Elusive <elusivecodes@gmail.com>",
-    "sideEffects": false,
+    "sideEffects": [
+        "./src/index.js"
+    ],
     "type": "module",
     "exports": {
         ".": {
@@ -37,7 +39,7 @@
             "default": "./dist/frost-color.esm.js"
         },
         "./dist/*": "./dist/*",
-        "./src/*": "./src/*"
+        "./src/index.js": "./src/index.js"
     },
     "main": "./dist/frost-color.esm.js",
     "jsdelivr": "./dist/frost-color.min.js",

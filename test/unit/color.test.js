@@ -18,7 +18,7 @@ import Color, {
     XyzD50,
     XyzD65,
 } from '../../src/index.js';
-import { assertClose } from '../support/assertions.js';
+import { assertClose, assertObjectClose } from '../support/assertions.js';
 
 describe('Color', function() {
     describe('Exports', function() {
@@ -374,6 +374,22 @@ describe('Color', function() {
             assertFittedColor([0.5, 0.4, 30], 'oklch(0.5 0.2 30deg)');
         });
 
+        it('fits equivalent positive and negative chroma colors consistently', function() {
+            const color = Color.fromOkLch(0.5, -0.4, 30, 0.5);
+            const equivalent = Color.fromOkLch(0.5, 0.4, 210, 0.5);
+
+            for (const space of ['srgb', 'display-p3']) {
+                const result = color.fitGamut(space);
+                const expected = equivalent.fitGamut(space);
+
+                assert.strictEqual(result.constructor, color.constructor);
+                assert.ok(Math.abs(result.getChroma()) > 0.08);
+                assertObjectClose(result.to(space).toObject(), expected.to(space).toObject());
+            }
+
+            assert.strictEqual(color.getChroma(), -0.4);
+        });
+
         it('fits lightness above the upper boundary to white', function() {
             assertFittedColor([2, 0.2, 30, 0.5], 'oklch(1 0 30deg / 0.5)');
         });
@@ -422,6 +438,25 @@ describe('Color', function() {
             assertClose(result.getLightness(), 0.7, 1e-12);
             assertClose(result.getA(), 0.4, 1e-12);
             assertClose(result.getB(), 0.4, 1e-12);
+        });
+    });
+
+    describe('#toHsl', function() {
+        it('handles extended colors at zero and full HSL lightness', function() {
+            for (const [channels, lightness] of [
+                [[1, -1, 0], 0],
+                [[2, 0, 0], 100],
+                [[1.2, 0.8, 0.9], 100],
+            ]) {
+                const result = Color.fromSrgb(...channels, 0.5).toHsl();
+
+                assert.deepStrictEqual(result.toObject(), {
+                    hue: 0,
+                    saturation: 0,
+                    lightness,
+                    alpha: 0.5,
+                });
+            }
         });
     });
 

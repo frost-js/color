@@ -29,11 +29,11 @@ export default class Hex extends Rgb {
         void precision;
         alpha ??= this.alpha < 1;
 
-        if (name && this.alpha <= 0) {
+        if (name && alpha && this.alpha <= 0) {
             return 'transparent';
         }
 
-        if (name && this.alpha >= 1) {
+        if (name && (!alpha || this.alpha >= 1)) {
             const colorName = findCssColorName(this.getHex(false, false));
 
             if (colorName) {
