@@ -27,13 +27,10 @@ Frost Color is a dependency-free JavaScript library for parsing, converting, ins
 npm i @fr0st/color
 ```
 
-Frost Color's package entry point is ESM-only. Import the default `Color` export and any named concrete-class exports in Node and bundlers.
+Frost Color's package entry point is ESM-only. Use `import` syntax in Node and bundlers.
 
 ```js
 import Color, { DisplayP3 } from '@fr0st/color';
-
-const color = Color.fromString('lavender');
-const displayP3 = DisplayP3.fromString('lavender');
 ```
 
 ### Browser (ESM)
@@ -62,7 +59,7 @@ Load the bundle from your own copy or a CDN:
 </script>
 ```
 
-The package root resolves to the prebuilt ESM bundle. Bundles under `dist/` are also available through matching package subpaths. For source imports, use `@fr0st/color/src/index.js`, which exports `Color` and all concrete classes with the conversion API initialized. Individual source files are internal implementation details.
+The package root resolves to the prebuilt ESM bundle. Bundles under `dist/` and the source entry `src/index.js` are also available through matching package subpaths.
 
 ## Quick Start
 
@@ -73,10 +70,10 @@ const source = Color.fromString('color(display-p3 1 0.2 0.1 / 80%)');
 const srgb = source.fitGamut('srgb').toSrgb();
 const translucent = srgb.withAlpha(0.5);
 
-console.log(source.space());       // display-p3
-console.log(srgb.toString());      // color(srgb ... / 0.8)
+console.log(source.space());        // display-p3
+console.log(srgb.toString());        // color(srgb 1 0.28 0.2 / 0.8)
 console.log(translucent.getAlpha()); // 0.5
-console.log(source.getAlpha());    // 0.8; source was not changed
+console.log(source.getAlpha());     // 0.8; source was not changed
 ```
 
 Color instances are immutable and frozen. Conversion and `with...` methods do not mutate their source; they return either a new instance or, when no conversion is needed, the same instance. Channel fields remain readable, but use the provided getters and `with...` methods instead of assigning them.
@@ -103,11 +100,11 @@ const p3 = Color.fromString('color(display-p3 90% 20% 10%)');
 const lab = Color.fromString('lab(60% 30 -20)');
 ```
 
-This is a focused color-value parser, not a complete CSS value engine. CSS-wide keywords, `var()`, `calc()`, relative colors, and custom color profiles are outside its scope.
+This is a focused color-value parser, not a complete CSS value engine. CSS-wide keywords, `currentcolor`, `none` components, `var()`, `calc()`, relative colors, and custom color profiles are outside its scope.
 
 ### Factories and concrete classes
 
-Concrete classes are available both as named exports and as static properties on the default export. Each `from...` factory takes three channels followed by optional `alpha = 1`.
+Concrete classes are available both as named exports and as static properties on the default export. Each numeric `from...` factory accepts three channels, each defaulting to `0`, followed by optional `alpha = 1`.
 
 | Factory or constructor | Concrete class | `space()` identifier | Channels | Native `toString()` form |
 | --- | --- | --- | --- | --- |
@@ -140,6 +137,8 @@ console.log(lab instanceof Color.Lab);     // true
 ```
 
 All channel inputs must be finite numbers. Alpha is clamped to 0–1 and hue is wrapped into 0–360 degrees. Other constructor channels deliberately retain finite extended values rather than being silently clipped, which allows out-of-gamut intermediate results.
+
+Constructors and numeric factories retain negative chroma. Parsing `lch()` and `oklch()` strings clamps negative chroma to zero.
 
 ## Converting colors
 
@@ -175,6 +174,8 @@ The complete named conversion API is:
 
 Alpha is preserved through conversions. Converting to the instance's existing space returns that same instance; other conversions return a new concrete instance.
 
+When converting to HSL, colors whose computed HSL lightness is exactly 0% or 100% use zero hue and saturation. Extended colors at those boundaries therefore become black or white and cannot round-trip through HSL without losing their original channels.
+
 ### Alpha compositing
 
 Use `foreground.composite(background)` to composite a color over a background using source-over alpha compositing in sRGB. The result uses the foreground color's concrete class:
@@ -187,14 +188,14 @@ const result = foreground.composite(background);
 
 ### Gamut fitting
 
-Normal conversions preserve extended channel values. Use `fitGamut(target)` when output must fit a bounded RGB gamut:
+Conversions do not automatically fit colors to the target gamut. Use `fitGamut(target = 'srgb')` when output must fit a bounded RGB gamut:
 
 ```javascript
 const vivid = Color.fromOkLch(0.72, 0.4, 30);
 const displayable = vivid.fitGamut('srgb').toSrgb();
 ```
 
-Gamut fitting maps through OKLCH and uses a precision-bounded binary search to reduce chroma until the converted channels fall within the target range. Colors at or beyond the OKLCH lightness boundaries are fitted to black or white. Otherwise, it preserves OKLCH lightness and returns the result in the source instance's color space. Supported targets are:
+Gamut fitting returns the original instance if it already fits the target gamut. Otherwise, it maps through OKLCH and uses a precision-bounded binary search to reduce chroma magnitude, preserving its sign, until the converted channels fall within the target range. Colors at or beyond the OKLCH lightness boundaries are fitted to black or white. Otherwise, it preserves OKLCH lightness. The result retains alpha and uses the source instance's color space. Supported targets are:
 
 - `a98-rgb`
 - `display-p3`
@@ -253,15 +254,24 @@ const color = Color.fromRgb(102.1234, 51, 153, 0.8);
 
 color.toString();         // rgb(102.12 51 153 / 80%)
 color.toString(false, 0); // rgb(102 51 153)
-color.toHex().toString(); // #663399cc
+color.toHex().toString(); // #639c
 ```
 
 Additional formatting methods and options are:
 
-- `Rgb#getHex(alpha = false, shortenHex = true)` returns hex digits without `#`.
-- `Rgb#toString(alpha = null, precision = 2, name = false)` can prefer an exact CSS color name.
-- `Hex#toString(alpha = null, precision = 2, shortenHex = true, name = false)` can shorten hex and prefer an exact CSS color name. Its `precision` argument is accepted for a consistent signature but is unused.
+- `Rgb#getHex(alpha = false, shortenHex = true)` returns hex digits without `#`. Hex output rounds and clamps RGB channels to 0–255 and encodes alpha as a rounded 0–255 byte when included.
+- `Rgb#toString(alpha = null, precision = 2, name = false)` can prefer an exact CSS color name. Name matching requires the original RGB channels to be integers within 0–255.
+- `Hex#toString(alpha = null, precision = 2, shortenHex = true, name = false)` can shorten hex and prefer a CSS color name matching the rounded, clamped RGB bytes. Its `precision` argument is accepted for a consistent signature but is unused.
 - `toColorString(alpha = null, precision = 2)` is the shared low-level serializer used by spaces whose native representation is `color(...)`.
+
+When `name = true`, a matching opaque keyword can be returned even with `alpha = true`. `transparent` is used only when alpha is included and equals zero. Passing `alpha = false` omits transparency even when names are preferred:
+
+```javascript
+const transparentRed = Color.fromRgb(255, 0, 0, 0);
+
+transparentRed.toString(null, 2, true);  // transparent
+transparentRed.toString(false, 2, true); // red
+```
 
 ## Errors
 
