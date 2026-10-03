@@ -3,17 +3,17 @@ import { describe, it } from 'vitest';
 import { Hex } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
 
-describe('Hex', function() {
-    describe('#constructor', function() {
-        it('preserves extended channels and clamps alpha', function() {
+describe('Hex', () => {
+    describe('#constructor', () => {
+        it('preserves extended channels and clamps alpha', () => {
             const color = new Hex(300, -20, 500, 1.5);
 
             assert.strictEqual(color.toString(), '#f0f');
         });
     });
 
-    describe('#contrast', function() {
-        it('calculates the contrast ratio', function() {
+    describe('#contrast', () => {
+        it('calculates the contrast ratio', () => {
             const color1 = Hex.fromString('lavender');
             const color2 = Hex.fromString('black');
 
@@ -22,43 +22,43 @@ describe('Hex', function() {
         });
     });
 
-    describe('Channel getters', function() {
+    describe('channel getters', () => {
         it.each([
             ['returns the blue channel', 'getBlue', 250.0],
             ['returns the green channel', 'getGreen', 230.0],
             ['returns the red channel', 'getRed', 230.0],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color = Hex.fromString('lavender');
 
             assertClose(color[method](), expected);
         });
     });
 
-    describe('#label', function() {
-        it('returns the closest CSS color name', function() {
+    describe('#label', () => {
+        it('returns the closest CSS color name', () => {
             const color = Hex.fromString('lavender').withGreen(100);
 
             assert.strictEqual(color.label(), 'violet');
         });
     });
 
-    describe('#luma', function() {
-        it('returns the relative luminance', function() {
+    describe('#luma', () => {
+        it('returns the relative luminance', () => {
             const color = Hex.fromString('lavender');
 
             assertClose(color.luma(), 0.8031875051452129);
         });
     });
 
-    describe('#space', function() {
-        it('returns the color space', function() {
+    describe('#space', () => {
+        it('returns the color space', () => {
             const color = new Hex();
 
             assert.strictEqual(color.space(), 'hex');
         });
     });
 
-    describe('Conversions', function() {
+    describe('conversions', () => {
         it.each([
             ['returns the color as A98 RGB', 'toA98Rgb', 'color(a98-rgb 0.9 0.9 0.98)'],
             ['returns the color as Display P3', 'toDisplayP3', 'color(display-p3 0.9 0.9 0.97)'],
@@ -76,7 +76,7 @@ describe('Hex', function() {
             ['returns the color as linear sRGB', 'toSrgbLinear', 'color(srgb-linear 0.79 0.79 0.96)'],
             ['returns the color as XYZ D50', 'toXyzD50', 'color(xyz-d50 0.79 0.8 0.77)'],
             ['returns the color as XYZ D65', 'toXyzD65', 'color(xyz-d65 0.78 0.8 1.02)'],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color1 = Hex.fromString('lavender');
             const color2 = color1[method]();
 
@@ -85,8 +85,8 @@ describe('Hex', function() {
         });
     });
 
-    describe('#toHex', function() {
-        it('returns the color as hexadecimal', function() {
+    describe('#toHex', () => {
+        it('returns the color as hexadecimal', () => {
             const color1 = Hex.fromString('lavender');
             const color2 = color1.toHex();
 
@@ -94,8 +94,8 @@ describe('Hex', function() {
         });
     });
 
-    describe('#toObject', function() {
-        it('returns the color channels', function() {
+    describe('#toObject', () => {
+        it('returns the color channels', () => {
             const color = Hex.fromString('lavender');
 
             assertObjectClose(color.toObject(),
@@ -109,12 +109,12 @@ describe('Hex', function() {
         });
     });
 
-    describe('#toString', function() {
+    describe('#toString', () => {
         it.each([
             ['returns the CSS color string', 'lavender', [], '#e6e6fa'],
             ['returns a CSS color name', 'lavender', [undefined, 2, true, true], 'lavender'],
             ['includes alpha when needed', 'rgb(230 230 250 / 50%)', [], '#e6e6fa80'],
-        ])('%s', function(_, input, args, expected) {
+        ])('%s', (_, input, args, expected) => {
             const color = Hex.fromString(input);
 
             assert.strictEqual(color.toString(...args), expected);
@@ -126,19 +126,19 @@ describe('Hex', function() {
             ['names a transparent color with automatic alpha', 0, null, 'transparent'],
             ['names a transparent color with explicit alpha', 0, true, 'transparent'],
             ['preserves partial alpha when preferring names', 0.5, null, '#ff000080'],
-        ])('%s', function(_, alpha, includeAlpha, expected) {
+        ])('%s', (_, alpha, includeAlpha, expected) => {
             const color = new Hex(255, 0, 0, 0).withAlpha(alpha);
 
             assert.strictEqual(color.toString(includeAlpha, 2, true, true), expected);
         });
     });
 
-    describe('Channel updates', function() {
+    describe('channel updates', () => {
         it.each([
             ['returns a copy with a different blue channel', 'withBlue', 100, '#e6e664'],
             ['returns a copy with a different green channel', 'withGreen', 100, '#e664fa'],
             ['returns a copy with a different red channel', 'withRed', 100, '#64e6fa'],
-        ])('%s', function(_, method, value, expected) {
+        ])('%s', (_, method, value, expected) => {
             const color = Hex.fromString('lavender')[method](value);
 
             assert.strictEqual(color.toString(), expected);

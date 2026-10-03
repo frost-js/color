@@ -3,17 +3,17 @@ import { describe, it } from 'vitest';
 import { Lab } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
 
-describe('Lab', function() {
-    describe('#constructor', function() {
-        it('preserves extended channels and clamps alpha', function() {
+describe('Lab', () => {
+    describe('#constructor', () => {
+        it('preserves extended channels and clamps alpha', () => {
             const color = new Lab(150, -150, 300, 1.5);
 
             assert.strictEqual(color.toString(), 'lab(150% -150 300)');
         });
     });
 
-    describe('#contrast', function() {
-        it('calculates the contrast ratio', function() {
+    describe('#contrast', () => {
+        it('calculates the contrast ratio', () => {
             const color1 = Lab.fromString('lavender');
             const color2 = Lab.fromString('black');
 
@@ -22,43 +22,43 @@ describe('Lab', function() {
         });
     });
 
-    describe('Channel getters', function() {
+    describe('channel getters', () => {
         it.each([
             ['returns the a channel', 'getA', 2.775278467403053],
             ['returns the b channel', 'getB', -9.724279919967449],
             ['returns the lightness channel', 'getLightness', 91.74228613147233],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color = Lab.fromString('lavender');
 
             assertClose(color[method](), expected);
         });
     });
 
-    describe('#label', function() {
-        it('returns the closest CSS color name', function() {
+    describe('#label', () => {
+        it('returns the closest CSS color name', () => {
             const color = Lab.fromString('lavender').withLightness(50);
 
             assert.strictEqual(color.label(), 'slategray');
         });
     });
 
-    describe('#luma', function() {
-        it('returns the relative luminance', function() {
+    describe('#luma', () => {
+        it('returns the relative luminance', () => {
             const color = Lab.fromString('lavender');
 
             assertClose(color.luma(), 0.8031875051452128);
         });
     });
 
-    describe('#space', function() {
-        it('returns the color space', function() {
+    describe('#space', () => {
+        it('returns the color space', () => {
             const color = new Lab();
 
             assert.strictEqual(color.space(), 'lab');
         });
     });
 
-    describe('Conversions', function() {
+    describe('conversions', () => {
         it.each([
             ['returns the color as A98 RGB', 'toA98Rgb', 'color(a98-rgb 0.9 0.9 0.98)'],
             ['returns the color as Display P3', 'toDisplayP3', 'color(display-p3 0.9 0.9 0.97)'],
@@ -76,7 +76,7 @@ describe('Lab', function() {
             ['returns the color as linear sRGB', 'toSrgbLinear', 'color(srgb-linear 0.79 0.79 0.96)'],
             ['returns the color as XYZ D50', 'toXyzD50', 'color(xyz-d50 0.79 0.8 0.77)'],
             ['returns the color as XYZ D65', 'toXyzD65', 'color(xyz-d65 0.78 0.8 1.02)'],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color1 = Lab.fromString('lavender');
             const color2 = color1[method]();
 
@@ -85,8 +85,8 @@ describe('Lab', function() {
         });
     });
 
-    describe('#toLab', function() {
-        it('returns the color as Lab', function() {
+    describe('#toLab', () => {
+        it('returns the color as Lab', () => {
             const color1 = Lab.fromString('lavender');
             const color2 = color1.toLab();
 
@@ -94,8 +94,8 @@ describe('Lab', function() {
         });
     });
 
-    describe('#toObject', function() {
-        it('returns the color channels', function() {
+    describe('#toObject', () => {
+        it('returns the color channels', () => {
             const color = Lab.fromString('lavender');
 
             assertObjectClose(color.toObject(),
@@ -109,23 +109,23 @@ describe('Lab', function() {
         });
     });
 
-    describe('#toString', function() {
+    describe('#toString', () => {
         it.each([
             ['returns the CSS color string', 'lavender', 'lab(91.74% 2.78 -9.72)'],
             ['includes alpha when needed', 'rgb(230 230 250 / 50%)', 'lab(91.74% 2.78 -9.72 / 0.5)'],
-        ])('%s', function(_, input, expected) {
+        ])('%s', (_, input, expected) => {
             const color = Lab.fromString(input);
 
             assert.strictEqual(color.toString(), expected);
         });
     });
 
-    describe('Channel updates', function() {
+    describe('channel updates', () => {
         it.each([
             ['returns a copy with a different a channel', 'withA', 50, 'lab(91.74% 50 -9.72)'],
             ['returns a copy with a different b channel', 'withB', 50, 'lab(91.74% 2.78 50)'],
             ['returns a copy with a different lightness channel', 'withLightness', 50, 'lab(50% 2.78 -9.72)'],
-        ])('%s', function(_, method, value, expected) {
+        ])('%s', (_, method, value, expected) => {
             const color = Lab.fromString('lavender')[method](value);
 
             assert.strictEqual(color.toString(), expected);

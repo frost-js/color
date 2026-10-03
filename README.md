@@ -61,7 +61,7 @@ Load the bundle from your own copy or a CDN:
 
 The package root resolves to the prebuilt ESM bundle. Bundles under `dist/` and the source entry `src/index.js` are also available through matching package subpaths.
 
-## Quick Start
+## Usage
 
 ```javascript
 import Color from '@fr0st/color';
@@ -286,11 +286,17 @@ Frost Color throws `TypeError` when:
 
 ## Development
 
+Install dependencies with `npm ci`.
+
 ```bash
 npm test
 npm run lint
 npm run build
 ```
+
+`npm test` runs the Vitest suite against the source files.
+
+`npm run test:coverage` runs the suite and writes coverage reports to `coverage/`.
 
 ## License
 

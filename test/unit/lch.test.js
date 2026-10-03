@@ -3,17 +3,17 @@ import { describe, it } from 'vitest';
 import { Lch } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
 
-describe('Lch', function() {
-    describe('#constructor', function() {
-        it('preserves extended channels and clamps alpha', function() {
+describe('Lch', () => {
+    describe('#constructor', () => {
+        it('preserves extended channels and clamps alpha', () => {
             const color = new Lch(150, -150, -30, 1.5);
 
             assert.strictEqual(color.toString(), 'lch(150% -150 330deg)');
         });
     });
 
-    describe('#contrast', function() {
-        it('calculates the contrast ratio', function() {
+    describe('#contrast', () => {
+        it('calculates the contrast ratio', () => {
             const color1 = Lch.fromString('lavender');
             const color2 = Lch.fromString('black');
 
@@ -22,43 +22,43 @@ describe('Lch', function() {
         });
     });
 
-    describe('Channel getters', function() {
+    describe('channel getters', () => {
         it.each([
             ['returns the chroma channel', 'getChroma', 10.112556083083701],
             ['returns the hue channel', 'getHue', 285.9285772969358],
             ['returns the lightness channel', 'getLightness', 91.74228613147233],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color = Lch.fromString('lavender');
 
             assertClose(color[method](), expected);
         });
     });
 
-    describe('#label', function() {
-        it('returns the closest CSS color name', function() {
+    describe('#label', () => {
+        it('returns the closest CSS color name', () => {
             const color = Lch.fromString('lavender').withLightness(50);
 
             assert.strictEqual(color.label(), 'slategray');
         });
     });
 
-    describe('#luma', function() {
-        it('returns the relative luminance', function() {
+    describe('#luma', () => {
+        it('returns the relative luminance', () => {
             const color = Lch.fromString('lavender');
 
             assertClose(color.luma(), 0.8031875051452128);
         });
     });
 
-    describe('#space', function() {
-        it('returns the color space', function() {
+    describe('#space', () => {
+        it('returns the color space', () => {
             const color = new Lch();
 
             assert.strictEqual(color.space(), 'lch');
         });
     });
 
-    describe('Conversions', function() {
+    describe('conversions', () => {
         it.each([
             ['returns the color as A98 RGB', 'toA98Rgb', 'color(a98-rgb 0.9 0.9 0.98)'],
             ['returns the color as Display P3', 'toDisplayP3', 'color(display-p3 0.9 0.9 0.97)'],
@@ -76,7 +76,7 @@ describe('Lch', function() {
             ['returns the color as linear sRGB', 'toSrgbLinear', 'color(srgb-linear 0.79 0.79 0.96)'],
             ['returns the color as XYZ D50', 'toXyzD50', 'color(xyz-d50 0.79 0.8 0.77)'],
             ['returns the color as XYZ D65', 'toXyzD65', 'color(xyz-d65 0.78 0.8 1.02)'],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color1 = Lch.fromString('lavender');
             const color2 = color1[method]();
 
@@ -85,8 +85,8 @@ describe('Lch', function() {
         });
     });
 
-    describe('#toLch', function() {
-        it('returns the color as LCH', function() {
+    describe('#toLch', () => {
+        it('returns the color as LCH', () => {
             const color1 = Lch.fromString('lavender');
             const color2 = color1.toLch();
 
@@ -94,8 +94,8 @@ describe('Lch', function() {
         });
     });
 
-    describe('#toObject', function() {
-        it('returns the color channels', function() {
+    describe('#toObject', () => {
+        it('returns the color channels', () => {
             const color = Lch.fromString('lavender');
 
             assertObjectClose(color.toObject(),
@@ -109,23 +109,23 @@ describe('Lch', function() {
         });
     });
 
-    describe('#toString', function() {
+    describe('#toString', () => {
         it.each([
             ['returns the CSS color string', 'lavender', 'lch(91.74% 10.11 285.93deg)'],
             ['includes alpha when needed', 'rgb(230 230 250 / 50%)', 'lch(91.74% 10.11 285.93deg / 0.5)'],
-        ])('%s', function(_, input, expected) {
+        ])('%s', (_, input, expected) => {
             const color = Lch.fromString(input);
 
             assert.strictEqual(color.toString(), expected);
         });
     });
 
-    describe('Channel updates', function() {
+    describe('channel updates', () => {
         it.each([
             ['returns a copy with a different chroma channel', 'withChroma', 50, 'lch(91.74% 50 285.93deg)'],
             ['returns a copy with a different hue channel', 'withHue', 100, 'lch(91.74% 10.11 100deg)'],
             ['returns a copy with a different lightness channel', 'withLightness', 50, 'lch(50% 10.11 285.93deg)'],
-        ])('%s', function(_, method, value, expected) {
+        ])('%s', (_, method, value, expected) => {
             const color = Lch.fromString('lavender')[method](value);
 
             assert.strictEqual(color.toString(), expected);

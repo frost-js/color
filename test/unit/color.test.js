@@ -20,9 +20,9 @@ import Color, {
 } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
 
-describe('Color', function() {
-    describe('Exports', function() {
-        it('exports the default Color API and concrete classes', async function() {
+describe('Color', () => {
+    describe('exports', () => {
+        it('exports the default Color API and concrete classes', async () => {
             const module = await import('../../src/index.js');
 
             assert.deepStrictEqual(Object.keys(module), [
@@ -51,7 +51,7 @@ describe('Color', function() {
         });
     });
 
-    describe('Factories', function() {
+    describe('factories', () => {
         it.each([
             ['fromA98Rgb', [0.9, 0.9, 0.98], A98Rgb, 'color(a98-rgb 0.9 0.9 0.98)'],
             ['fromDisplayP3', [0.9, 0.9, 0.97], DisplayP3, 'color(display-p3 0.9 0.9 0.97)'],
@@ -69,7 +69,7 @@ describe('Color', function() {
             ['fromSrgbLinear', [0.79, 0.79, 0.96], SrgbLinear, 'color(srgb-linear 0.79 0.79 0.96)'],
             ['fromXyzD50', [0.79, 0.8, 0.77], XyzD50, 'color(xyz-d50 0.79 0.8 0.77)'],
             ['fromXyzD65', [0.78, 0.8, 1.02], XyzD65, 'color(xyz-d65 0.78 0.8 1.02)'],
-        ])('#%s creates the expected concrete color', function(method, args, ClassType, expected) {
+        ])('#%s creates the expected concrete color', (method, args, ClassType, expected) => {
             const color = Color[method](...args);
 
             assert.ok(color instanceof ClassType);
@@ -77,7 +77,7 @@ describe('Color', function() {
         });
     });
 
-    describe('Factory validation', function() {
+    describe('factory validation', () => {
         it.each([
             ['rejects a non-finite alpha channel', 'fromSrgb', [0, 0, 0, NaN]],
             ['rejects a non-finite HSL hue channel', 'fromHsl', [Infinity]],
@@ -89,7 +89,7 @@ describe('Color', function() {
             ['rejects a non-finite RGB channel', 'fromRgb', [Infinity]],
             ['rejects a non-finite RGB-style channel', 'fromA98Rgb', [NaN]],
             ['rejects a non-finite XYZ-style channel', 'fromXyzD65', [-Infinity]],
-        ])('%s', function(_, method, args) {
+        ])('%s', (_, method, args) => {
             assert.throws(
                 () => Color[method](...args),
                 (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
@@ -97,7 +97,7 @@ describe('Color', function() {
         });
     });
 
-    describe('#composite', function() {
+    describe('#composite', () => {
         it.each([
             ['composites over an opaque background', 'color(srgb 1 0 0 / 0.5)', 'color(srgb 0 0 1)', 'color(srgb 0.5 0 0.5)'],
             ['preserves an opaque foreground', 'rgb(255 0 0)', 'rgb(0 0 255 / 50%)', 'rgb(255 0 0)'],
@@ -105,7 +105,7 @@ describe('Color', function() {
             ['preserves a foreground over a transparent background', 'rgb(255 0 0 / 50%)', 'rgb(0 0 255 / 0%)', 'rgb(255 0 0 / 50%)'],
             ['preserves the foreground when both colors are transparent', 'rgb(255 0 0 / 0%)', 'rgb(0 0 255 / 0%)', 'rgb(255 0 0 / 0%)'],
             ['uses the background beneath a transparent foreground', 'rgb(255 0 0 / 0%)', 'rgb(0 0 255)', 'rgb(0 0 255)'],
-        ])('%s', function(_, foregroundInput, backgroundInput, expected) {
+        ])('%s', (_, foregroundInput, backgroundInput, expected) => {
             const foreground = Color.fromString(foregroundInput);
             const background = Color.fromString(backgroundInput);
             const result = foreground.composite(background);
@@ -115,11 +115,11 @@ describe('Color', function() {
         });
     });
 
-    describe('#contrast', function() {
+    describe('#contrast', () => {
         it.each([
             ['rejects a translucent source color', [0, 0, 0, 0.5], []],
             ['rejects a translucent comparison color', [], [0, 0, 0, 0.5]],
-        ])('%s', function(_, args, otherArgs) {
+        ])('%s', (_, args, otherArgs) => {
             const color = Color.fromRgb(...args);
             const other = Color.fromRgb(...otherArgs);
 
@@ -130,7 +130,7 @@ describe('Color', function() {
         });
     });
 
-    describe('#fromString', function() {
+    describe('#fromString', () => {
         it.each([
             ['color(a98-rgb 0.9 0.9 0.98)', A98Rgb, 'color(a98-rgb 0.9 0.9 0.98)'],
             ['color(a98-rgb 90% 90% 98%)', A98Rgb, 'color(a98-rgb 0.9 0.9 0.98)'],
@@ -192,14 +192,14 @@ describe('Color', function() {
             ['color(xyz-d65 78% 80% 102%)', XyzD65, 'color(xyz-d65 0.78 0.8 1.02)'],
             ['color(xyz 78% 80% 102%)', XyzD65, 'color(xyz-d65 0.78 0.8 1.02)'],
             [' RGB( 230   230  250 / 50% ) ', Rgb, 'rgb(230 230 250 / 50%)'],
-        ])('parses %s', function(input, ClassType, expected) {
+        ])('parses %s', (input, ClassType, expected) => {
             const color = Color.fromString(input);
 
             assert.ok(color instanceof ClassType);
             assert.strictEqual(color.toString(), expected);
         });
 
-        it('parses transparent', function() {
+        it('parses transparent', () => {
             const color = Color.fromString('transparent');
 
             assert.ok(color instanceof Rgb);
@@ -227,14 +227,14 @@ describe('Color', function() {
             'rgb(1 2)',
             'rgb(1. 2 3)',
             'rgb(1foo 2 3)',
-        ])('rejects invalid color string %s', function(color) {
+        ])('rejects invalid color string %s', (color) => {
             assert.throws(
                 () => Color.fromString(color),
                 (error) => error instanceof TypeError && error.message === `Color string \`${color}\` is not valid.`,
             );
         });
 
-        it('throws a finite-number error for an overflowing channel', function() {
+        it('throws a finite-number error for an overflowing channel', () => {
             assert.throws(
                 () => Color.fromString('rgb(1e309 0 0)'),
                 (error) => error instanceof TypeError && error.message === 'Color channel values must be finite numbers.',
@@ -242,13 +242,13 @@ describe('Color', function() {
         });
     });
 
-    describe('#fitGamut', function() {
+    describe('#fitGamut', () => {
         it.each([
             ['fits lightness below the lower boundary to black', [-1, 0.2, 30, 0.5], 'oklch(0 0 30deg / 0.5)'],
             ['converges for very large chroma values', [0.5, 1e8, 30], 'oklch(0.5 0.2 30deg)'],
             ['reduces chroma to fit the target gamut', [0.5, 0.4, 30], 'oklch(0.5 0.2 30deg)'],
             ['fits lightness above the upper boundary to white', [2, 0.2, 30, 0.5], 'oklch(1 0 30deg / 0.5)'],
-        ])('%s', function(_, values, expected) {
+        ])('%s', (_, values, expected) => {
             const result = Color.fromOkLch(...values).fitGamut();
             const srgb = result.toSrgb();
 
@@ -258,7 +258,7 @@ describe('Color', function() {
             assert.ok(srgb.getBlue() >= -1e-12 && srgb.getBlue() <= 1 + 1e-12);
         });
 
-        it.each(['srgb', 'display-p3'])('fits equivalent positive and negative chroma colors consistently in %s', function(space) {
+        it.each(['srgb', 'display-p3'])('fits equivalent positive and negative chroma colors consistently in %s', (space) => {
             const color = Color.fromOkLch(0.5, -0.4, 30, 0.5);
             const equivalent = Color.fromOkLch(0.5, 0.4, 210, 0.5);
             const result = color.fitGamut(space);
@@ -271,7 +271,7 @@ describe('Color', function() {
         });
     });
 
-    describe('Immutability', function() {
+    describe('immutability', () => {
         it.each([
             ['fromRgb', [1, 2, 3]],
             ['fromHsl', [120, 50, 50]],
@@ -281,11 +281,11 @@ describe('Color', function() {
             ['fromOkLab', [0.5, 0.1, 0.2]],
             ['fromOkLch', [0.5, 0.1, 20]],
             ['fromXyzD65', [0.1, 0.2, 0.3]],
-        ])('freezes instances created by %s', function(method, args) {
+        ])('freezes instances created by %s', (method, args) => {
             assert.ok(Object.isFrozen(Color[method](...args)));
         });
 
-        it('rejects mutation while updates return copies', function() {
+        it('rejects mutation while updates return copies', () => {
             const color = Color.fromRgb(1, 2, 3);
             const changed = color.withRed(10);
 
@@ -298,16 +298,16 @@ describe('Color', function() {
         });
     });
 
-    describe('#getAlpha', function() {
-        it('returns the alpha channel', function() {
+    describe('#getAlpha', () => {
+        it('returns the alpha channel', () => {
             const color = Color.fromString('rgb(230 230 250 / 50%)');
 
             assert.strictEqual(color.getAlpha(), 0.5);
         });
     });
 
-    describe('#toOkLch', function() {
-        it('round-trips through OKLCH', function() {
+    describe('#toOkLch', () => {
+        it('round-trips through OKLCH', () => {
             const color = Color.fromOkLab(0.7, 0.4, 0.4);
             const result = color.toOkLch().toOkLab();
 
@@ -317,12 +317,12 @@ describe('Color', function() {
         });
     });
 
-    describe('#toHsl', function() {
+    describe('#toHsl', () => {
         it.each([
             ['handles extended colors at zero lightness', [1, -1, 0], 0],
             ['handles extended colors at full lightness', [2, 0, 0], 100],
             ['handles fractional extended colors at full lightness', [1.2, 0.8, 0.9], 100],
-        ])('%s', function(_, channels, lightness) {
+        ])('%s', (_, channels, lightness) => {
             const result = Color.fromSrgb(...channels, 0.5).toHsl();
 
             assert.deepStrictEqual(result.toObject(), {
@@ -334,8 +334,8 @@ describe('Color', function() {
         });
     });
 
-    describe('#to', function() {
-        it('throws an error for an invalid color space', function() {
+    describe('#to', () => {
+        it('throws an error for an invalid color space', () => {
             assert.throws(
                 () => Color.fromString('lavender').to('invalid'),
                 (error) => error instanceof TypeError && error.message === 'Color space `invalid` is not valid.',
@@ -343,8 +343,8 @@ describe('Color', function() {
         });
     });
 
-    describe('#toXyzD65', function() {
-        it('round-trips XYZ chromatic adaptation', function() {
+    describe('#toXyzD65', () => {
+        it('round-trips XYZ chromatic adaptation', () => {
             const color = Color.fromXyzD50(0, 0, 1);
             const result = color.toXyzD65().toXyzD50();
 

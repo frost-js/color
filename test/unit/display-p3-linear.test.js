@@ -3,17 +3,17 @@ import { describe, it } from 'vitest';
 import { DisplayP3Linear } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
 
-describe('DisplayP3Linear', function() {
-    describe('#constructor', function() {
-        it('preserves extended channels and clamps alpha', function() {
+describe('DisplayP3Linear', () => {
+    describe('#constructor', () => {
+        it('preserves extended channels and clamps alpha', () => {
             const color = new DisplayP3Linear(2, -1, 3, 1.5);
 
             assert.strictEqual(color.toString(), 'color(display-p3-linear 2 -1 3)');
         });
     });
 
-    describe('#contrast', function() {
-        it('calculates the contrast ratio', function() {
+    describe('#contrast', () => {
+        it('calculates the contrast ratio', () => {
             const color1 = DisplayP3Linear.fromString('lavender');
             const color2 = DisplayP3Linear.fromString('black');
 
@@ -22,43 +22,43 @@ describe('DisplayP3Linear', function() {
         });
     });
 
-    describe('Channel getters', function() {
+    describe('channel getters', () => {
         it.each([
             ['returns the blue channel', 'getBlue', 0.9412381855461356],
             ['returns the green channel', 'getGreen', 0.7912979403326301],
             ['returns the red channel', 'getRed', 0.7912979403326305],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color = DisplayP3Linear.fromString('lavender');
 
             assertClose(color[method](), expected);
         });
     });
 
-    describe('#label', function() {
-        it('returns the closest CSS color name', function() {
+    describe('#label', () => {
+        it('returns the closest CSS color name', () => {
             const color = DisplayP3Linear.fromString('lavender').withGreen(0.5);
 
             assert.strictEqual(color.label(), 'lavender');
         });
     });
 
-    describe('#luma', function() {
-        it('returns the relative luminance', function() {
+    describe('#luma', () => {
+        it('returns the relative luminance', () => {
             const color = DisplayP3Linear.fromString('lavender');
 
             assertClose(color.luma(), 0.8031875051452126);
         });
     });
 
-    describe('#space', function() {
-        it('returns the color space', function() {
+    describe('#space', () => {
+        it('returns the color space', () => {
             const color = new DisplayP3Linear();
 
             assert.strictEqual(color.space(), 'display-p3-linear');
         });
     });
 
-    describe('Conversions', function() {
+    describe('conversions', () => {
         it.each([
             ['returns the color as A98 RGB', 'toA98Rgb', 'color(a98-rgb 0.9 0.9 0.98)'],
             ['returns the color as Display P3', 'toDisplayP3', 'color(display-p3 0.9 0.9 0.97)'],
@@ -76,7 +76,7 @@ describe('DisplayP3Linear', function() {
             ['returns the color as linear sRGB', 'toSrgbLinear', 'color(srgb-linear 0.79 0.79 0.96)'],
             ['returns the color as XYZ D50', 'toXyzD50', 'color(xyz-d50 0.79 0.8 0.77)'],
             ['returns the color as XYZ D65', 'toXyzD65', 'color(xyz-d65 0.78 0.8 1.02)'],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color1 = DisplayP3Linear.fromString('lavender');
             const color2 = color1[method]();
 
@@ -85,8 +85,8 @@ describe('DisplayP3Linear', function() {
         });
     });
 
-    describe('#toDisplayP3Linear', function() {
-        it('returns the color as linear Display P3', function() {
+    describe('#toDisplayP3Linear', () => {
+        it('returns the color as linear Display P3', () => {
             const color1 = DisplayP3Linear.fromString('lavender');
             const color2 = color1.toDisplayP3Linear();
 
@@ -94,8 +94,8 @@ describe('DisplayP3Linear', function() {
         });
     });
 
-    describe('#toObject', function() {
-        it('returns the color channels', function() {
+    describe('#toObject', () => {
+        it('returns the color channels', () => {
             const color = DisplayP3Linear.fromString('lavender');
 
             assertObjectClose(color.toObject(),
@@ -109,23 +109,23 @@ describe('DisplayP3Linear', function() {
         });
     });
 
-    describe('#toString', function() {
+    describe('#toString', () => {
         it.each([
             ['returns the CSS color string', 'lavender', 'color(display-p3-linear 0.79 0.79 0.94)'],
             ['includes alpha when needed', 'rgb(230 230 250 / 50%)', 'color(display-p3-linear 0.79 0.79 0.94 / 0.5)'],
-        ])('%s', function(_, input, expected) {
+        ])('%s', (_, input, expected) => {
             const color = DisplayP3Linear.fromString(input);
 
             assert.strictEqual(color.toString(), expected);
         });
     });
 
-    describe('Channel updates', function() {
+    describe('channel updates', () => {
         it.each([
             ['returns a copy with a different blue channel', 'withBlue', 0.5, 'color(display-p3-linear 0.79 0.79 0.5)'],
             ['returns a copy with a different green channel', 'withGreen', 0.5, 'color(display-p3-linear 0.79 0.5 0.94)'],
             ['returns a copy with a different red channel', 'withRed', 0.5, 'color(display-p3-linear 0.5 0.79 0.94)'],
-        ])('%s', function(_, method, value, expected) {
+        ])('%s', (_, method, value, expected) => {
             const color = DisplayP3Linear.fromString('lavender')[method](value);
 
             assert.strictEqual(color.toString(), expected);

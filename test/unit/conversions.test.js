@@ -29,7 +29,7 @@ const assertArrayClose = (actual, expected) => {
     }
 };
 
-describe('Conversions', function() {
+describe('Conversions', () => {
     it.each([
         ['converts A98 RGB to XYZ D65', a98RgbToXyzD65, [0.25, 0.5, 0.75],
             [0.16773166428519598, 0.19070368921307673, 0.5432420115093654]],
@@ -71,7 +71,7 @@ describe('Conversions', function() {
             [-0.3324071735286689, 0.7268391347390221, 0.7046476761619191]],
         ['converts XYZ D65 to XYZ D50', xyzD65ToXyzD50, [0.25, 0.5, 0.75],
             [0.23581168372015016, 0.4898188162718899, 0.5691225466547007]],
-    ])('%s', function(_, convert, args, expected) {
+    ])('%s', (_, convert, args, expected) => {
         assertArrayClose(convert(...args), expected);
     });
 });

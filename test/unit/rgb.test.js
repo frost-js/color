@@ -3,17 +3,17 @@ import { describe, it } from 'vitest';
 import { Rgb } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
 
-describe('Rgb', function() {
-    describe('#constructor', function() {
-        it('preserves extended channels and clamps alpha', function() {
+describe('Rgb', () => {
+    describe('#constructor', () => {
+        it('preserves extended channels and clamps alpha', () => {
             const color = new Rgb(300, -20, 500, 1.5);
 
             assert.strictEqual(color.toString(), 'rgb(300 -20 500)');
         });
     });
 
-    describe('#contrast', function() {
-        it('calculates the contrast ratio', function() {
+    describe('#contrast', () => {
+        it('calculates the contrast ratio', () => {
             const color1 = Rgb.fromString('lavender');
             const color2 = Rgb.fromString('black');
 
@@ -22,43 +22,43 @@ describe('Rgb', function() {
         });
     });
 
-    describe('Channel getters', function() {
+    describe('channel getters', () => {
         it.each([
             ['returns the blue channel', 'getBlue', 250.0],
             ['returns the green channel', 'getGreen', 230.0],
             ['returns the red channel', 'getRed', 230.0],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color = Rgb.fromString('lavender');
 
             assertClose(color[method](), expected);
         });
     });
 
-    describe('#label', function() {
-        it('returns the closest CSS color name', function() {
+    describe('#label', () => {
+        it('returns the closest CSS color name', () => {
             const color = Rgb.fromString('lavender').withGreen(100);
 
             assert.strictEqual(color.label(), 'violet');
         });
     });
 
-    describe('#luma', function() {
-        it('returns the relative luminance', function() {
+    describe('#luma', () => {
+        it('returns the relative luminance', () => {
             const color = Rgb.fromString('lavender');
 
             assertClose(color.luma(), 0.8031875051452129);
         });
     });
 
-    describe('#space', function() {
-        it('returns the color space', function() {
+    describe('#space', () => {
+        it('returns the color space', () => {
             const color = new Rgb();
 
             assert.strictEqual(color.space(), 'rgb');
         });
     });
 
-    describe('Conversions', function() {
+    describe('conversions', () => {
         it.each([
             ['returns the color as A98 RGB', 'toA98Rgb', 'color(a98-rgb 0.9 0.9 0.98)'],
             ['returns the color as Display P3', 'toDisplayP3', 'color(display-p3 0.9 0.9 0.97)'],
@@ -76,7 +76,7 @@ describe('Rgb', function() {
             ['returns the color as linear sRGB', 'toSrgbLinear', 'color(srgb-linear 0.79 0.79 0.96)'],
             ['returns the color as XYZ D50', 'toXyzD50', 'color(xyz-d50 0.79 0.8 0.77)'],
             ['returns the color as XYZ D65', 'toXyzD65', 'color(xyz-d65 0.78 0.8 1.02)'],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color1 = Rgb.fromString('lavender');
             const color2 = color1[method]();
 
@@ -85,8 +85,8 @@ describe('Rgb', function() {
         });
     });
 
-    describe('#toRgb', function() {
-        it('returns the color as RGB', function() {
+    describe('#toRgb', () => {
+        it('returns the color as RGB', () => {
             const color1 = Rgb.fromString('lavender');
             const color2 = color1.toRgb();
 
@@ -94,8 +94,8 @@ describe('Rgb', function() {
         });
     });
 
-    describe('#toObject', function() {
-        it('returns the color channels', function() {
+    describe('#toObject', () => {
+        it('returns the color channels', () => {
             const color = Rgb.fromString('lavender');
 
             assertObjectClose(color.toObject(),
@@ -109,12 +109,12 @@ describe('Rgb', function() {
         });
     });
 
-    describe('#toString', function() {
+    describe('#toString', () => {
         it.each([
             ['returns the CSS color string', 'lavender', [], 'rgb(230 230 250)'],
             ['returns a CSS color name', 'lavender', [undefined, 2, true], 'lavender'],
             ['includes alpha when needed', 'rgb(230 230 250 / 50%)', [], 'rgb(230 230 250 / 50%)'],
-        ])('%s', function(_, input, args, expected) {
+        ])('%s', (_, input, args, expected) => {
             const color = Rgb.fromString(input);
 
             assert.strictEqual(color.toString(...args), expected);
@@ -126,7 +126,7 @@ describe('Rgb', function() {
             ['names a transparent color with automatic alpha', 0, null, 'transparent'],
             ['names a transparent color with explicit alpha', 0, true, 'transparent'],
             ['preserves partial alpha when preferring names', 0.5, null, 'rgb(255 0 0 / 50%)'],
-        ])('%s', function(_, alpha, includeAlpha, expected) {
+        ])('%s', (_, alpha, includeAlpha, expected) => {
             const color = new Rgb(255, 0, 0, 0).withAlpha(alpha);
 
             assert.strictEqual(color.toString(includeAlpha, 2, true), expected);
@@ -135,19 +135,19 @@ describe('Rgb', function() {
         it.each([
             ['preserves fractional channels when preferring color names', [254.6, 0.1, 0.1]],
             ['preserves extended channels when preferring color names', [300, -20, 0]],
-        ])('%s', function(_, channels) {
+        ])('%s', (_, channels) => {
             const color = new Rgb(...channels);
 
             assert.strictEqual(color.toString(false, 2, true), color.toString(false, 2));
         });
     });
 
-    describe('Channel updates', function() {
+    describe('channel updates', () => {
         it.each([
             ['returns a copy with a different blue channel', 'withBlue', 100, 'rgb(230 230 100)'],
             ['returns a copy with a different green channel', 'withGreen', 100, 'rgb(230 100 250)'],
             ['returns a copy with a different red channel', 'withRed', 100, 'rgb(100 230 250)'],
-        ])('%s', function(_, method, value, expected) {
+        ])('%s', (_, method, value, expected) => {
             const color = Rgb.fromString('lavender')[method](value);
 
             assert.strictEqual(color.toString(), expected);

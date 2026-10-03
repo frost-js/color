@@ -3,17 +3,17 @@ import { describe, it } from 'vitest';
 import { OkLab } from '../../src/index.js';
 import { assertClose, assertObjectClose } from '../support/assertions.js';
 
-describe('OkLab', function() {
-    describe('#constructor', function() {
-        it('preserves extended channels and clamps alpha', function() {
+describe('OkLab', () => {
+    describe('#constructor', () => {
+        it('preserves extended channels and clamps alpha', () => {
             const color = new OkLab(3, -1, 1, 1.5);
 
             assert.strictEqual(color.toString(), 'oklab(3 -1 1)');
         });
     });
 
-    describe('#contrast', function() {
-        it('calculates the contrast ratio', function() {
+    describe('#contrast', () => {
+        it('calculates the contrast ratio', () => {
             const color1 = OkLab.fromString('lavender');
             const color2 = OkLab.fromString('black');
 
@@ -22,43 +22,43 @@ describe('OkLab', function() {
         });
     });
 
-    describe('Channel getters', function() {
+    describe('channel getters', () => {
         it.each([
             ['returns the a channel', 'getA', 0.0073649318907060835],
             ['returns the b channel', 'getB', -0.025915245880047233],
             ['returns the lightness channel', 'getLightness', 0.9309023355374633],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color = OkLab.fromString('lavender');
 
             assertClose(color[method](), expected);
         });
     });
 
-    describe('#label', function() {
-        it('returns the closest CSS color name', function() {
+    describe('#label', () => {
+        it('returns the closest CSS color name', () => {
             const color = OkLab.fromString('lavender').withLightness(0.5);
 
             assert.strictEqual(color.label(), 'dimgray');
         });
     });
 
-    describe('#luma', function() {
-        it('returns the relative luminance', function() {
+    describe('#luma', () => {
+        it('returns the relative luminance', () => {
             const color = OkLab.fromString('lavender');
 
             assertClose(color.luma(), 0.8031875051452128);
         });
     });
 
-    describe('#space', function() {
-        it('returns the color space', function() {
+    describe('#space', () => {
+        it('returns the color space', () => {
             const color = new OkLab();
 
             assert.strictEqual(color.space(), 'oklab');
         });
     });
 
-    describe('Conversions', function() {
+    describe('conversions', () => {
         it.each([
             ['returns the color as A98 RGB', 'toA98Rgb', 'color(a98-rgb 0.9 0.9 0.98)'],
             ['returns the color as Display P3', 'toDisplayP3', 'color(display-p3 0.9 0.9 0.97)'],
@@ -76,7 +76,7 @@ describe('OkLab', function() {
             ['returns the color as linear sRGB', 'toSrgbLinear', 'color(srgb-linear 0.79 0.79 0.96)'],
             ['returns the color as XYZ D50', 'toXyzD50', 'color(xyz-d50 0.79 0.8 0.77)'],
             ['returns the color as XYZ D65', 'toXyzD65', 'color(xyz-d65 0.78 0.8 1.02)'],
-        ])('%s', function(_, method, expected) {
+        ])('%s', (_, method, expected) => {
             const color1 = OkLab.fromString('lavender');
             const color2 = color1[method]();
 
@@ -85,8 +85,8 @@ describe('OkLab', function() {
         });
     });
 
-    describe('#toOkLab', function() {
-        it('returns the color as OKLab', function() {
+    describe('#toOkLab', () => {
+        it('returns the color as OKLab', () => {
             const color1 = OkLab.fromString('lavender');
             const color2 = color1.toOkLab();
 
@@ -94,8 +94,8 @@ describe('OkLab', function() {
         });
     });
 
-    describe('#toObject', function() {
-        it('returns the color channels', function() {
+    describe('#toObject', () => {
+        it('returns the color channels', () => {
             const color = OkLab.fromString('lavender');
 
             assertObjectClose(color.toObject(),
@@ -109,23 +109,23 @@ describe('OkLab', function() {
         });
     });
 
-    describe('#toString', function() {
+    describe('#toString', () => {
         it.each([
             ['returns the CSS color string', 'lavender', 'oklab(0.93 0.01 -0.03)'],
             ['includes alpha when needed', 'rgb(230 230 250 / 50%)', 'oklab(0.93 0.01 -0.03 / 0.5)'],
-        ])('%s', function(_, input, expected) {
+        ])('%s', (_, input, expected) => {
             const color = OkLab.fromString(input);
 
             assert.strictEqual(color.toString(), expected);
         });
     });
 
-    describe('Channel updates', function() {
+    describe('channel updates', () => {
         it.each([
             ['returns a copy with a different a channel', 'withA', 0.2, 'oklab(0.93 0.2 -0.03)'],
             ['returns a copy with a different b channel', 'withB', 0.2, 'oklab(0.93 0.01 0.2)'],
             ['returns a copy with a different lightness channel', 'withLightness', 0.5, 'oklab(0.5 0.01 -0.03)'],
-        ])('%s', function(_, method, value, expected) {
+        ])('%s', (_, method, value, expected) => {
             const color = OkLab.fromString('lavender')[method](value);
 
             assert.strictEqual(color.toString(), expected);
