@@ -105,7 +105,9 @@ export default class Hsl extends Color {
      * @returns {Hsl} A new color instance.
      */
     withHue(hue) {
-        return new this.constructor(hue, this.saturation, this.lightness, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(hue, this.saturation, this.lightness, this.alpha);
     }
 
     /**
@@ -114,7 +116,9 @@ export default class Hsl extends Color {
      * @returns {Hsl} A new color instance.
      */
     withLightness(lightness) {
-        return new this.constructor(this.hue, this.saturation, lightness, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.hue, this.saturation, lightness, this.alpha);
     }
 
     /**
@@ -123,6 +127,8 @@ export default class Hsl extends Color {
      * @returns {Hsl} A new color instance.
      */
     withSaturation(saturation) {
-        return new this.constructor(this.hue, saturation, this.lightness, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.hue, saturation, this.lightness, this.alpha);
     }
 }

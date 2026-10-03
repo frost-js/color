@@ -877,7 +877,8 @@
 		*/
 		withAlpha(alpha) {
 			const [channel1, channel2, channel3] = Object.values(this.toObject());
-			return new this.constructor(channel1, channel2, channel3, alpha);
+			const Constructor = this.constructor;
+			return new Constructor(channel1, channel2, channel3, alpha);
 		}
 	};
 
@@ -943,7 +944,8 @@
 		* @returns {RgbColor} A new color instance.
 		*/
 		withBlue(blue) {
-			return new this.constructor(this.red, this.green, blue, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.red, this.green, blue, this.alpha);
 		}
 		/**
 		* Returns a copy with a different green channel.
@@ -951,7 +953,8 @@
 		* @returns {RgbColor} A new color instance.
 		*/
 		withGreen(green) {
-			return new this.constructor(this.red, green, this.blue, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.red, green, this.blue, this.alpha);
 		}
 		/**
 		* Returns a copy with a different red channel.
@@ -959,7 +962,8 @@
 		* @returns {RgbColor} A new color instance.
 		*/
 		withRed(red) {
-			return new this.constructor(red, this.green, this.blue, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(red, this.green, this.blue, this.alpha);
 		}
 	};
 
@@ -1885,7 +1889,8 @@
 		* @returns {Hsl} A new color instance.
 		*/
 		withHue(hue) {
-			return new this.constructor(hue, this.saturation, this.lightness, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(hue, this.saturation, this.lightness, this.alpha);
 		}
 		/**
 		* Returns a copy with a different lightness channel.
@@ -1893,7 +1898,8 @@
 		* @returns {Hsl} A new color instance.
 		*/
 		withLightness(lightness) {
-			return new this.constructor(this.hue, this.saturation, lightness, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.hue, this.saturation, lightness, this.alpha);
 		}
 		/**
 		* Returns a copy with a different saturation channel.
@@ -1901,7 +1907,8 @@
 		* @returns {Hsl} A new color instance.
 		*/
 		withSaturation(saturation) {
-			return new this.constructor(this.hue, saturation, this.lightness, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.hue, saturation, this.lightness, this.alpha);
 		}
 	};
 
@@ -1993,7 +2000,8 @@
 		* @returns {Hwb} A new color instance.
 		*/
 		withBlackness(blackness) {
-			return new this.constructor(this.hue, this.whiteness, blackness, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.hue, this.whiteness, blackness, this.alpha);
 		}
 		/**
 		* Returns a copy with a different hue channel.
@@ -2001,7 +2009,8 @@
 		* @returns {Hwb} A new color instance.
 		*/
 		withHue(hue) {
-			return new this.constructor(hue, this.whiteness, this.blackness, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(hue, this.whiteness, this.blackness, this.alpha);
 		}
 		/**
 		* Returns a copy with a different whiteness channel.
@@ -2009,7 +2018,8 @@
 		* @returns {Hwb} A new color instance.
 		*/
 		withWhiteness(whiteness) {
-			return new this.constructor(this.hue, whiteness, this.blackness, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.hue, whiteness, this.blackness, this.alpha);
 		}
 	};
 
@@ -2075,7 +2085,8 @@
 		* @returns {LabColor} A new color instance.
 		*/
 		withA(a) {
-			return new this.constructor(this.lightness, a, this.b, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.lightness, a, this.b, this.alpha);
 		}
 		/**
 		* Returns a copy with a different b channel.
@@ -2083,7 +2094,8 @@
 		* @returns {LabColor} A new color instance.
 		*/
 		withB(b) {
-			return new this.constructor(this.lightness, this.a, b, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.lightness, this.a, b, this.alpha);
 		}
 		/**
 		* Returns a copy with a different lightness channel.
@@ -2091,7 +2103,8 @@
 		* @returns {LabColor} A new color instance.
 		*/
 		withLightness(lightness) {
-			return new this.constructor(lightness, this.a, this.b, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(lightness, this.a, this.b, this.alpha);
 		}
 	};
 
@@ -2196,7 +2209,8 @@
 		* @returns {LchColor} A new color instance.
 		*/
 		withChroma(chroma) {
-			return new this.constructor(this.lightness, chroma, this.hue, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.lightness, chroma, this.hue, this.alpha);
 		}
 		/**
 		* Returns a copy with a different hue channel.
@@ -2204,7 +2218,8 @@
 		* @returns {LchColor} A new color instance.
 		*/
 		withHue(hue) {
-			return new this.constructor(this.lightness, this.chroma, hue, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.lightness, this.chroma, hue, this.alpha);
 		}
 		/**
 		* Returns a copy with a different lightness channel.
@@ -2212,7 +2227,8 @@
 		* @returns {LchColor} A new color instance.
 		*/
 		withLightness(lightness) {
-			return new this.constructor(lightness, this.chroma, this.hue, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(lightness, this.chroma, this.hue, this.alpha);
 		}
 	};
 
@@ -2500,7 +2516,8 @@
 		* @returns {XyzColor} A new color instance.
 		*/
 		withX(x) {
-			return new this.constructor(x, this.y, this.z, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(x, this.y, this.z, this.alpha);
 		}
 		/**
 		* Returns a copy with a different y channel.
@@ -2508,7 +2525,8 @@
 		* @returns {XyzColor} A new color instance.
 		*/
 		withY(y) {
-			return new this.constructor(this.x, y, this.z, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.x, y, this.z, this.alpha);
 		}
 		/**
 		* Returns a copy with a different z channel.
@@ -2516,7 +2534,8 @@
 		* @returns {XyzColor} A new color instance.
 		*/
 		withZ(z) {
-			return new this.constructor(this.x, this.y, z, this.alpha);
+			const Constructor = this.constructor;
+			return new Constructor(this.x, this.y, z, this.alpha);
 		}
 	};
 

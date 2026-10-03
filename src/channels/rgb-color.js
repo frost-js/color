@@ -66,7 +66,9 @@ export default class RgbColor extends Color {
      * @returns {RgbColor} A new color instance.
      */
     withBlue(blue) {
-        return new this.constructor(this.red, this.green, blue, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.red, this.green, blue, this.alpha);
     }
 
     /**
@@ -75,7 +77,9 @@ export default class RgbColor extends Color {
      * @returns {RgbColor} A new color instance.
      */
     withGreen(green) {
-        return new this.constructor(this.red, green, this.blue, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.red, green, this.blue, this.alpha);
     }
 
     /**
@@ -84,6 +88,8 @@ export default class RgbColor extends Color {
      * @returns {RgbColor} A new color instance.
      */
     withRed(red) {
-        return new this.constructor(red, this.green, this.blue, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(red, this.green, this.blue, this.alpha);
     }
 }

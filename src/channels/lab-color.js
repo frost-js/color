@@ -66,7 +66,9 @@ export default class LabColor extends Color {
      * @returns {LabColor} A new color instance.
      */
     withA(a) {
-        return new this.constructor(this.lightness, a, this.b, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.lightness, a, this.b, this.alpha);
     }
 
     /**
@@ -75,7 +77,9 @@ export default class LabColor extends Color {
      * @returns {LabColor} A new color instance.
      */
     withB(b) {
-        return new this.constructor(this.lightness, this.a, b, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.lightness, this.a, b, this.alpha);
     }
 
     /**
@@ -84,6 +88,8 @@ export default class LabColor extends Color {
      * @returns {LabColor} A new color instance.
      */
     withLightness(lightness) {
-        return new this.constructor(lightness, this.a, this.b, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(lightness, this.a, this.b, this.alpha);
     }
 }

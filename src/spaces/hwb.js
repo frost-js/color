@@ -105,7 +105,9 @@ export default class Hwb extends Color {
      * @returns {Hwb} A new color instance.
      */
     withBlackness(blackness) {
-        return new this.constructor(this.hue, this.whiteness, blackness, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.hue, this.whiteness, blackness, this.alpha);
     }
 
     /**
@@ -114,7 +116,9 @@ export default class Hwb extends Color {
      * @returns {Hwb} A new color instance.
      */
     withHue(hue) {
-        return new this.constructor(hue, this.whiteness, this.blackness, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(hue, this.whiteness, this.blackness, this.alpha);
     }
 
     /**
@@ -123,6 +127,8 @@ export default class Hwb extends Color {
      * @returns {Hwb} A new color instance.
      */
     withWhiteness(whiteness) {
-        return new this.constructor(this.hue, whiteness, this.blackness, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.hue, whiteness, this.blackness, this.alpha);
     }
 }

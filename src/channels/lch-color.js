@@ -65,7 +65,9 @@ export default class LchColor extends Color {
      * @returns {LchColor} A new color instance.
      */
     withChroma(chroma) {
-        return new this.constructor(this.lightness, chroma, this.hue, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.lightness, chroma, this.hue, this.alpha);
     }
 
     /**
@@ -74,7 +76,9 @@ export default class LchColor extends Color {
      * @returns {LchColor} A new color instance.
      */
     withHue(hue) {
-        return new this.constructor(this.lightness, this.chroma, hue, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.lightness, this.chroma, hue, this.alpha);
     }
 
     /**
@@ -83,6 +87,8 @@ export default class LchColor extends Color {
      * @returns {LchColor} A new color instance.
      */
     withLightness(lightness) {
-        return new this.constructor(lightness, this.chroma, this.hue, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(lightness, this.chroma, this.hue, this.alpha);
     }
 }

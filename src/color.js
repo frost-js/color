@@ -730,6 +730,8 @@ export default class Color {
     withAlpha(alpha) {
         const [channel1, channel2, channel3] = Object.values(this.toObject());
 
-        return new this.constructor(channel1, channel2, channel3, alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(channel1, channel2, channel3, alpha);
     }
 }

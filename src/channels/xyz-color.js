@@ -66,7 +66,9 @@ export default class XyzColor extends Color {
      * @returns {XyzColor} A new color instance.
      */
     withX(x) {
-        return new this.constructor(x, this.y, this.z, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(x, this.y, this.z, this.alpha);
     }
 
     /**
@@ -75,7 +77,9 @@ export default class XyzColor extends Color {
      * @returns {XyzColor} A new color instance.
      */
     withY(y) {
-        return new this.constructor(this.x, y, this.z, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.x, y, this.z, this.alpha);
     }
 
     /**
@@ -84,6 +88,8 @@ export default class XyzColor extends Color {
      * @returns {XyzColor} A new color instance.
      */
     withZ(z) {
-        return new this.constructor(this.x, this.y, z, this.alpha);
+        const Constructor = this.constructor;
+
+        return new Constructor(this.x, this.y, z, this.alpha);
     }
 }
